@@ -1,55 +1,139 @@
-In this tutorial, we’ll cover how to build your first theme in SilverStripe. The SilverStripe installer ships with its own default theme -- _Simple_, but it's more likely you’ll want to override this to use your own custom design.
+### Drop your bags
 
-### What is a theme?
+You know that feeling you get when you've been traveling all day, and you finally breach the door to your hotel room? You drop your bags in the first vacant spot you can find, suspending your impending obligation to unpack and get organised, and gift yourself that moment of relaxation.
 
-In a conventional SilverStripe project, the code and business logic (backend) of a website is kept separate from the UI and design elements (frontend). More specifically, PHP classes and configuration files are kept in the **project directory**, while templates, CSS, images, and Javascript are kept in the **theme directory**.
+When migrating a static site into SilverStripe, it is often helpful to follow that same pattern. In this section, we'll drop all of our HTML and other static assets into their own directory so that they are browseable by our web server and living in our project, albeit as poorly assimilated outsiders. Sure, we've still got a lot of "unpacking" to do, but you'll feel better knowing that everything is where it is supposed to be, under one roof.
 
-In a default installation of SilverStripe, your project directory is called **mysite/**, and lives in the web root. Your theme directory, however, will be located one level deeper, under the **themes/** folder. Because the code layer is detached from the UI, a given project can have multiple themes.
+Let's create a directory called `static/` in our theme. Again, this label is entirely up to you, so if it's more meaningful to you to use something like `html/`, or `raw/`, feel free to invoke that option.
 
-### Building the theme structure
-
-Let’s create our first theme by creating a new folder under **themes/**. The folder name is arbitrary, but must be comprised of only alphanumeric characters, dashes, or underscores. In this lesson, we’ll call the folder **one-ring/**, which refers to the name of our website, but feel free to choose any name you like. Remember the name you choose, as we’ll need to refer to it later.
-
-Underneath your new theme folder, you’ll need to create some new folders, so that your theme has the following structure:
+Your folder structure should now look like this:
 
 *   themes/
     *   one-ring/
         *   css/
         *   images/
         *   javascript/
+        *   static/
         *   templates/
             *   Includes/
             *   Layout/
 
-Most of these folders are self-descriptive, but note that the only folders with compulsory names are `templates/` and `css/`. The `images/` and `javascript/` folders can be named anything you like. In fact, they can even remain absent if you don’t have anything to put there. Further, feel free to add any other folders you like, and subfolders thereof (i.e. a `less/` or `scss/` folder).
+Now we'll simply dump the all the contents of our static site (one-ring-rentals-static.zip) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
 
-Next we’ll create the most fundamental component of a theme -- a template. In SilverStripe, templates are not HTML documents, but rather PHP code that is compiled from SilverStripe’s own template syntax behind the scenes. In alignment with that key that distinction, it is imperative that template files use the `.ss` extension.
+Let's test it out. Navigate your browser to `/themes/one-ring/static/`default.html` off whatever hostname you're using (e.g. http://localhost/), and you should see our home page. Try the same thing for `home.html`.
 
-In your `templates/` directory, create a file called `Page.ss`. Inside that file, create a basic HTML document.
+### SS-izing
 
-```html
-<html>
-  <body>
-    <h1>Hello, world</h1>
-  </body>
-</html>
-```
+Now that we've dropped our bags and have rewarded ourselves with a quick glimpse of our site in living flesh, it's time to start cutting up our static site into SilverStripe templates.
 
-Why `Page.ss`? A default installation of SilverStripe ships with a page type called `Page`. Typically, this page type is used to display the most basic form of content for a project. A common use case is for the “About Us” page, or even something more plain, like “Terms and Conditions.”
+### Copy and correct
 
-### Activating the theme
+We'll start with `default.html`. This mockup is intended to represent the most basic of page types in our site. As discussed earlier, SilverStripe conventionally purposes the `Page.ss` template for this case. Copy the contents of `default.html` into your `templates/Page.ss` file, which currently contains our "Hello, world" proof-of-concept, and reload your site on the base URL (e.g. http://{your hostname}).
 
-To activate the theme, we’ll have to dig into the project directory. Open the file `theme.yml` in the `mysite/_config` directory. Under the heading `SilverStripe\View\SSViewer`, take note of the setting for `themes`, and change it to include your theme name. In this case, we named our theme **one-ring**, so our new configuration file will look like this:
+Look good? No, it shouldn't. It should look like an unstyled mess. Let's copy over all the static assets into our theme. Make the following copies:
 
-```yaml
-SilverStripe\View\SSViewer:
-  themes:
-    - 'one-ring'
-    - '$default'
-```
+<table style="width: 624px; height: 92px;">
 
-In this configuration file, the theme `one-ring` is given the highest priority. If a template can't be found in that theme, SilverStipe will continue working down the list, trying each theme until it finds a match. As a fallback, you'll want to have `$default` as the last entry in your list to ensure the base templates get loaded.
+<tbody>
 
-These files are written in YAML, which is a markup language, similar to JSON or XML, that is very [well-documented](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml). Configuration is a very rich topic in SilverStripe that we’ll cover in later tutorials, but for now, the only important bit you need to know is that any changes you make to these files have to be cleared from cache. To clear the cache, simply access any page on your site and append ?flush to the URL, e.g. `http://{your localhost}/tutorial/?flush`
+<tr>
 
-Once the page is loaded, you should see your “Hello, world” page template. At this time, you can feel free to delete the “simple” theme from your themes directory, as we have now branched out on our own.
+<td><strong>From</strong></td>
+
+<td><strong>To</strong></td>
+
+</tr>
+
+<tr>
+
+<td>themes/one-ring/static/css</td>
+
+<td>themes/one-ring/css</td>
+
+</tr>
+
+<tr>
+
+<td>themes/one-ring/static/js</td>
+
+<td>themes/one-ring/javascript</td>
+
+</tr>
+
+<tr>
+
+<td>themes/one-ring/static/images</td>
+
+<td>themes/one-ring/images</td>
+
+</tr>
+
+<tr>
+
+<td>themes/one-ring/static/fonts</td>
+
+<td>themes/one-ring/fonts</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+The easiest place to start is in your Webkit web inspector tool. Click on the Network tab, and refresh. You should see a lot of red. The first thing we notice is that the CSS is not loading properly. The browser is trying to load `css/bootstrap.min.css`, which is incorrect. Let's update all of the CSS to load from our theme dir. Make the following changes to all of the stylesheet "href" attributes:
+
+<table style="width: 630px; height: 152px;">
+
+<tbody>
+
+<tr>
+
+<td><strong>Original</strong></td>
+
+<td><strong>New</strong></td>
+
+</tr>
+
+<tr>
+
+<td>
+
+css/bootstrap.min.css
+
+</td>
+
+<td>
+
+themes/one-ring/css/bootstrap.min.css
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+css/style.css
+
+</td>
+
+<td>
+
+themes/one-ring/css/style.css
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+Reload the page, and you should see a bit more style.
+
+While the site looks better, a quick glance at the web inspector shows us that there are still a lot of 404s coming through, mostly for our Javascript files. Let's update all the `<script>` tags to point to `themes/one-ring/javascript` instead of `js/`. For example, `js/common/modernizr.js` becomes `themes/one-ring/javascript/common/modernizr.js`. Most of these updates are at the bottom of the document.
+
+Refresh, and you should see a lot less red in your web inspector. The last 404 we need to fix is `logo.png`. Simply prepend `themes/one-ring/` to the <img> tags that reference that file.
+
+Everything should be loading correctly now. You can now delete the `themes/one-ring/static` folder, as we don't need it anymore. We have migrated our static document into a SilverStripe theme.
