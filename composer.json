@@ -1,0 +1,34 @@
+{
+    "name": "silverstripe/installer",
+    "type": "silverstripe-recipe",
+    "description": "The SilverStripe Framework Installer",
+    "require": {
+        "php": ">=5.6.0",
+        "silverstripe/recipe-plugin": ">=0.1@dev <1.0",
+        "silverstripe/recipe-cms": "1.0.0-beta3",
+        "silverstripe-themes/simple": "~3.2.0"
+    },
+    "require-dev": {
+        "phpunit/PHPUnit": "^5.7"
+    },
+    "extra": {
+        "branch-alias": {
+            "4.x-dev": "4.0.x-dev",
+            "dev-master": "5.x-dev"
+        },
+        "project-files-installed": [
+            ".htaccess",
+            "mysite/.htaccess",
+            "mysite/_config.php",
+            "mysite/_config/mysite.yml",
+            "mysite/code/Page.php",
+            "mysite/code/PageController.php",
+            "web.config"
+        ]
+    },
+    "config": {
+        "process-timeout": 600
+    },
+    "prefer-stable": true,
+    "minimum-stability": "dev"
+}
