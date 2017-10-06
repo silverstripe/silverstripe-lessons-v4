@@ -2,6 +2,8 @@
 
 use SilverStripe\CMS\Controllers\ContentController;
 
+use SilverStripe\View\Requirements;
+
 class PageController extends ContentController
 {
     /**
@@ -26,7 +28,16 @@ class PageController extends ContentController
     protected function init()
     {
         parent::init();
-        // You can include any CSS or JS required by your project here.
-        // See: https://docs.silverstripe.org/en/developer_guides/templates/requirements/
+		Requirements::themedCSS("bootstrap.min");
+		Requirements::themedCSS("style");
+		Requirements::themedJavascript("common/modernizr");
+		Requirements::themedJavascript("common/jquery-1.11.1.min");
+		Requirements::themedJavascript("common/bootstrap.min");
+		Requirements::themedJavascript("common/bootstrap-datepicker");
+		Requirements::themedJavascript("common/chosen.min");
+		Requirements::themedJavascript("common/bootstrap-checkbox");
+		Requirements::themedJavascript("common/nice-scroll");
+		Requirements::themedJavascript("common/jquery-browser");
+		Requirements::themedJavascript("scripts");
     }
 }
