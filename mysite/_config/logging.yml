@@ -1,0 +1,31 @@
+---
+Name: lessons-live-logging
+Only:
+  environment: live
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\Log\LoggerInterface:
+    calls:
+      EmailHandler: [ pushHandler, [ %$EmailHandler ] ]
+  EmailHandler:
+      class: Monolog\Handler\NativeMailerHandler
+      constructor:
+        - errors@example.com
+        - Error reported on example.com
+        - admin@example.com
+        - error
+      properties:
+        ContentType: text/html
+        Formatter: %$SilverStripe\Logging\DetailedErrorFormatter
+---
+Name: lessons-all-logging
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\Log\LoggerInterface:
+    calls:
+      FileLogger: [ pushHandler, [ %$FileLogger ] ]
+  FileLogger:
+    class: Monolog\Handler\StreamHandler
+    constructor:
+      - "../errors.log"
+      - "notice"

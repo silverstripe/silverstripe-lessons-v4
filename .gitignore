@@ -25,3 +25,6 @@
 /themes/simple/
 /versioned/
 /testsession/
+
+# ignore error log
+errors.log
