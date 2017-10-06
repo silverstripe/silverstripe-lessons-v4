@@ -69,7 +69,7 @@ CREATE TABLE `ChangeSetItem` (
   `Added` enum('explicitly','implicitly') DEFAULT 'implicitly',
   `ChangeSetID` int(11) NOT NULL DEFAULT '0',
   `ObjectID` int(11) NOT NULL DEFAULT '0',
-  `ObjectClass` enum('SilverStripe\\Lessons\\ArticleCategory','SilverStripe\\Lessons\\Region','SilverStripe\\Assets\\File','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Lessons\\ArticleHolder','SilverStripe\\Lessons\\ArticlePage','SilverStripe\\Lessons\\HomePage','SilverStripe\\Lessons\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash') DEFAULT 'SilverStripe\\Lessons\\ArticleCategory',
+  `ObjectClass` enum('SilverStripe\\Lessons\\ArticleCategory','SilverStripe\\Lessons\\ArticleComment','SilverStripe\\Lessons\\Region','SilverStripe\\Assets\\File','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Lessons\\ArticleHolder','SilverStripe\\Lessons\\ArticlePage','SilverStripe\\Lessons\\HomePage','SilverStripe\\Lessons\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash') DEFAULT 'SilverStripe\\Lessons\\ArticleCategory',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ObjectUniquePerChangeSet` (`ObjectID`,`ObjectClass`,`ChangeSetID`),
   KEY `ClassName` (`ClassName`),
@@ -802,6 +802,38 @@ INSERT INTO `SilverStripe_Lessons_ArticleCategory` VALUES (1,'SilverStripe\\Less
 UNLOCK TABLES;
 
 --
+-- Table structure for table `SilverStripe_Lessons_ArticleComment`
+--
+
+DROP TABLE IF EXISTS `SilverStripe_Lessons_ArticleComment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SilverStripe_Lessons_ArticleComment` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ClassName` enum('SilverStripe\\Lessons\\ArticleComment') DEFAULT 'SilverStripe\\Lessons\\ArticleComment',
+  `LastEdited` datetime DEFAULT NULL,
+  `Created` datetime DEFAULT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `Email` varchar(255) DEFAULT NULL,
+  `Comment` mediumtext,
+  `ArticlePageID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `ClassName` (`ClassName`),
+  KEY `ArticlePageID` (`ArticlePageID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SilverStripe_Lessons_ArticleComment`
+--
+
+LOCK TABLES `SilverStripe_Lessons_ArticleComment` WRITE;
+/*!40000 ALTER TABLE `SilverStripe_Lessons_ArticleComment` DISABLE KEYS */;
+INSERT INTO `SilverStripe_Lessons_ArticleComment` VALUES (1,'SilverStripe\\Lessons\\ArticleComment','2017-09-14 16:52:11','2017-09-14 16:52:11','Test Commenter','tester@example.com','This is a test comment.',10);
+/*!40000 ALTER TABLE `SilverStripe_Lessons_ArticleComment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `SilverStripe_Lessons_ArticlePage`
 --
 
@@ -1483,4 +1515,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-14 16:26:32
+-- Dump completed on 2017-09-14 16:54:34
