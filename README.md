@@ -1,182 +1,375 @@
 ## What we'll cover
-* A brief overview of lists
-* Creating a paginated list
-* Adding pagination links to the template
-* Customising the paginated list
+* Writing the Javascript
+* An overview of ViewableData
+* Rendering a partial template
+* Adding some UX enhancements
 
-## A brief overview of lists
 
-So far, we've only been working with `SilverStripe\ORM\DataList` to render a collection of data, but it's important to note that there are all kinds of lists that SilverStripe Framework offers you, each of which addresses some special concern. Here are a few common lists you might use in the `SilverStripe\ORM` namespace:
-* `ArrayList`: The most primitive type of list. It contains arbitrary data, and doesn't do anything particularly special.
-* `DataList`: Used for data pulled from the database, and provides an API for updating the query that defines its collection of records.
-* `PaginatedList`: Assigns a limit and offset to the result set based on a page derived from the request parameter, and exposes an API for determining what page is active and what pages are available.
-* `GroupedList`: Allows the result set to be grouped into sub-lists each with their own heading, for example, grouped by a common category or city name.
+## Writing the Javascript
 
-All of these lists implement the `SilverStripe\ORM\SS_List` interface, which specifies that they all must know how to perform the basic functions of a list, including:
+In the last tutorial, we added pagination to our list of search results. Let's now enhance the user experience a bit by adding Ajax to the pagination links.
 
-* Iterating over the list
-* Adding to the end of the list (`->add()`)
-* Getting the first or last member of the list (`->first()`)
-* Removing an item of the list (`->remove($item)`)
-* Getting a result from the list that matches (`->find($key, $val)`)
-* Transforming the list into a simple array (`->toArray()`)
-* Getting the size of the list (`->count()`)
+Before we do anything, we'll need to add some JavaScript that will add this functionality. We'll do this in our catch-all JavaScript file, `scripts.js`.
 
-As you can see, `PaginatedList` is just one implementation of this specification, and in addition to all of the above functionality, it provides us with very valuable tools for dealing with pagination, and we'll look at all of that next.
+*themes/one-ring/javascript/scripts.js*
+```js
+// Pagination
+if ($('.pagination').length) {
+  $('.main').on('click','.pagination a', function (e) {
+	    e.preventDefault();
+	    var url = $(this).attr('href');
+	    $.ajax(url)
+	        .done(function (response) {
+	            $('.main').html(response);
+	        })
+	        .fail (function (xhr) {
+	            alert('Error: ' + xhr.responseText);
+	        });
+	});
+}
 
-## Creating a paginated list
-
-In the previous lesson, we created a search form that produced a list of results. Right now, the results are artificially limited to 20, for performance reasons, since there are more than 100 records in the database. Looking at the template, we already have some static HTML for the pagination, so let's work on activating that.
-
-As said before, SilverStripe's `PaginatedList` class is essentially a wrapper for a `DataList` that does a lot of the legwork for us. It will automatically look at the request and add the correct `LIMIT` clause to the DataList, and it will also provide a public API for determining what page is active and what pages, if any, are available.
-
-Let's look at `PropertySearchPage.php` again and find the return value of our `index()` action. Right now, it's returning a `DataList`. Let's have it return a `PaginatedList` instead.
-
-First things first, let's remove the artificial `->limit()` we've applied.
-
-*mysite/code/PropertySearchPageController.php*
-```php
-  public function index(HTTPRequest $request)
-  {
-		$properties = Property::get();
-
-		//...
-	}
 ```
 
-Now, let's wrap the results into a `PaginatedList`.
+This is pretty specific to this use-case. Further down the track, we may find that we're adding a lot of Ajax events that closely resemble this, so we may want to make it more reusable at some point, but for now, let's just get this working.
+
+Let's give this a try. Click on a link in the pagination and see if it works.
+
+It kind of works, right? But we've still got a way to go. The controller is returning the entire page -- from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The Ajax URL is just the `href` attribute, so anything different would be unusual.
+
+So what do we do? Change the URL in our Javascript to use something other than `href`? We could use an alternative URL in something like `data-ajax-url`. That's actually not necessary. We always aim to keep things tidy with single endpoints. The controller ideally know as little about the UI as possible, and setting up a separate endpoint for Ajax requests in this case would be antithetical to that. We'll keep the same endpoint, and we'll just assign the controller the ability to detect Ajax requests.
+
+## Detecting Ajax in a controller
+
+Let's update `PropertySearchPageController.php` to detect Ajax.
 
 *mysite/code/PropertySearchPageController.php*
 ```php
-//...
-use SilverStripe\ORM\PaginatedList;
+public function index(HTTPRequest $request)
+{
+	
+	//...
 
+	if($request->isAjax()) {
+		return "Ajax response!";
+	}
+	
+	return [
+		'Results' => $paginatedProperties
+	];
+}
+```
+
+Now give the link a try, and see what we get. You should see your custom Ajax response. Now we just need to return some partial content. Before we do that, let's talk a bit about a key player in SilverStripe Framework called `ViewableData`.
+
+## An overview of ViewableData
+
+To establish a basis for the next section of this lesson, we'll need to know more about how `ViewableData` objects work. `SilverStripe\View\ViewableData` is a primitive class in SilverStripe that essentially allows its public properties and methods to render content to a template. The most common occurance of `SilverStripe\View\ViewableData` objects is in `SilverStripe\ORM\DataObject` instances, which we've been working with on templates exclusively. But templates are capable of rendering much more than database content. You just need to go further up the inheritance chain, above `DataObject` to `ViewableData`, or a subclass thereof.
+
+Let's look at a simple example of `ViewableData`.
+
+```php
+use SilverStripe\View\ViewableData;
+
+class Address extends ViewableData
+{
+	
+	public $Street = '123 Main Street';
+
+	public $City = 'Compton';
+
+	public $Zip = '90210';
+
+	public $Country = 'US';
+
+	public function Country()
+	{
+		return MyGeoLibrary::get_country_name($this->Country);
+	}
+
+	public function getFullAddress()
+	{
+		return sprintf(
+			'%s<br>%s %s<br>%s'
+			$this->Street,
+			$this->City,
+			$this->Zip,
+			$this->Country() 
+		);
+	}
+}
+```
+
+Now let's create a template to render our `Address` object.
+
+*AddressTemplate.ss*
+```html
+<p>I live on $Street in $City.</p>
+<p>My full address is $FullAddress.</p>
+```
+
+As you can see, we're rendering data using a combination of both methods and properties. `ViewableData` has a very specific way of resolving the template variables on the object:
+
+* Check if there public method on the object called [VariableName]
+* If not, check if a method called "get[VariableName]" exists
+* If not, check if there is a public property named [VariableName]
+* Otherwise, call "getField([VariableName])"
+
+`getField()` is a fallback method. For the base `ViewableData` class, it simply returns `$this->$VariableName`. The idea is that subclasses can invoke their own handlers for this. For example, in `DataObject`, `getField()` looks to the `$db` array.
+
+All `ViewableData` objects know how to render themselves on templates. To do that, simply invoke `renderWith($templateName)` on the object, and the template variables will be scoped to that object.
+
+```php
+$myViewableData = Address::create();
+echo $myViewableData->renderWith('AddressTemplate');
+```
+
+Another really useful feature of `ViewableData` is that the object itself can be called on a template and render itself. If we were to simply call `$MyAddressObject` on a template, SilverStripe would attempt to invoke a method called `forTemplate()` on the object to render it as a string. In our example address object, that might look like this:
+
+```php
+class Address extends ViewableData
+{
+	
+	//...	
+
+	public function forTemplate()
+	{
+		return $this->getFullAddress();
+	}
+}
+```
+
+A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes its `forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
+
+## Rendering a partial template
+
+So now that we have a good understanding of `ViewableData`, let's play around with some of its features. Right now, we're just returning a string to the template for our Ajax response. Let's instead return a partial template.
+
+At the centre of dealing with Ajax responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
+```html
+<!-- BEGIN MAIN CONTENT -->
+<div class="main col-sm-8">
+	<% include SilverStripe/Lessons/PropertySearchResults %>				
+</div>	
+<!-- END MAIN CONTENT -->
+```
+
+Notice that the `Includes/` part of the path is implicit when calling `<% include %>`.
+
+Reload the page with `?flush` to get the new template.
+
+Now, returning an Ajax response is trivial. Simply render the include.
+
+```php
+//...
 class PropertySearchPageController extends PageController
 {
+
 	public function index(HTTPRequest $request)
 	{
-		
+
 		//...
 		
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		);
+		if($request->isAjax()) {
+			return $this->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+		}
+		
+		//..
+	}
+}
+```
+
+This time, we don't benefit from the implicit `Includes/` directory. Unlike the template syntax, we need to specify it when referring to it in controller code.
+
+Let's try this out. It's not quite working right. We're getting a "no results" message when we paginate. That's because the `$Results` variable is not exposed to the template through `renderWith()`. It's just a local variable in our `index()` method. We have two choices here:
+
+* Assign `$paginatedProperties` to a public property on the controller
+* Explicitly pass it to the template using `customise()`.
+
+Of these two options, the latter is much more favourable. There are cases where the first option makes more sense, but in this case, explicitly passing the list makes our `PropertySearchResults` template more reusable, and assigning a new member property would pollute our controller unnecessarily. Let's make that update now.
+
+```php
+//...
+class PropertySearchPageController extends PageController
+{
+
+	public function index(HTTPRequest $request)
+	{
+
+		//...
+		
+		if($request->isAjax()) {
+			return $this->customise([
+				'Results' => $paginatedResults
+			])->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+		}
 
 		return [
 			'Results' => $paginatedProperties
 		];
 	}
+}
 ```
+We now have repeated our array of data, so let's clean that up a bit.
 
-It's really that simple. All we do is pass it the `SS_List` instance that we're working with (usually a `DataList`), and in the interest of keeping the list loosely coupled, we pass the request as well. It may seem odd that we have to do that, but if the list were request aware, it would introduce tight coupling, which makes unit testing more difficult and renders the class less extensible.
-
-Thanks to a wealth of default values that come pre-baked into `PaginatedList`, we're actually ready to just render these results on the template.
-
-## Adding pagination links to the template
-
-Let's have a look at our `PropertySearchPage.ss` template, and find the HTML for the pagination.
-
-Up until now, the only syntax we've really used on a list has been `<% loop %>` blocks, but the list itself actually has properties, too, much like a `DataObject`.
-
-Let's use some of the properties we get from `PaginatedList` to render this pagination.
-
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`*
-```html
-<!-- BEGIN PAGINATION -->
-<% if $Results.MoreThanOnePage %>
-<div class="pagination">
-	<% if $Results.NotFirstPage %>
-	<ul id="previous col-xs-6">
-		<li><a href="$Results.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
-	</ul>
-	<% end_if %>
-	<ul class="hidden-xs">
-		<% loop $Results.Pages %>
-		<li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
-		<% end_loop %>
-	</ul>
-	<% if $Results.NotLastPage %>
-	<ul id="next col-xs-6">
-		<li><a href="$Results.NextLink"><i class="fa fa-chevron-right"></i></a></li>
-	</ul>
-	<% end_if %>
-</div>
-<% end_if %>
-<!-- END PAGINATION -->
-```
-
-We wrap the whole UI in the condition that `$Results.MoreThanOnePage` returns true. None of this should display if there are only a few results. Then, if we're on anything but the first page, we'll use the `$Results.PrevLink` to provide a link to the previous page. We'll do the same with `$Results.NextLink` if we're on anything but the last page. In the middle, we loop through `$Results.Pages`, where each member of the list provides three properties:
-
-* `$PageNum`: The page number
-* `$CurrentBool`: True if the page is current
-* `$Link`: The link to the page
-
-Try out the pagination and see how it works. Notice that it's injecting a request parameter called `start` into the URL. Also note that the search parameters persist through the pagination.
-
-Let's use some more properties of the paginated list to create a summary of the results.
-
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
-```html
-<% if $Results %>
-	<h3>Showing $Results.PageLength results ($Results.getTotalItems total)</h3>					
-	<% loop $Results %>
-```
-
-Lastly, if we have a lot of pages, it might break the UI. Instead of `$Results.Pages`, let's use `$Results.PaginationSummary`, which will just show us some of the nearby pages to the active one. In other words, we don't need to see page 17 of 30 if we're on page 2.
-
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`
-```html
-<ul class="hidden-xs">
-	<% loop $Results.PaginationSummary %>
-		<% if $Link %>
-			<li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
-		<% else %>
-			<li>...</li>
-		<% end_if %>
-	<% end_loop %>
-</ul>
-```
-Notice that we have to check if `$Link` returns anything. If it doesn't, we know this item is the empty result that is intended to show the existence of suppressed pages.
-
-Futher, you can customise how much context you would like by passing an integer to `PaginationSummary`. By default, it shows 4 pages of context.
-
-## Customising the paginated list
-
-This all works great, but the pagination is still configured with default values, most notably, a limit of 10 results per page. Let's update that.
-
-*mysite/code/PropertySearchPageController.php*
 ```php
-	public function index(HTTPRequest $request)
-	{
+//...
+class PropertySearchPageController extends PageController
+{
+
+
+	public function index(HTTPRequest $request) {
 
 		//...
+		
+		$data = [
+			'Results' => $paginatedProperties
+		];
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)->setPageLength(15);
+		if($request->isAjax()) {
+			return $this->customise($data)
+						 ->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+		}
 
-		//...
+		return $data;
 	}
+}
 ```
 
-Another parameter we might want to customise is the request parameter that is used. In some cases, you might have a conflict with the variable `start`, or you may simply prefer something shorter. In that case, use `setPaginationGetVar()`.
+Try it now. It's looking much better!
 
-*mysite/code/PropertySearchPageController.php*
-```php
-	public function index(HTTPRequest $request)
-	{
+## Adding some UX enhancements
 
-		//...
+There are two major shortcomings of this user experience:
+* The scroll stays fixed to the bottom of the results, leaving the user with little indication that the content has been updated
+* The URL is not updated, so a page refresh after paginating will take the user back to the first page
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)
-		    ->setPageLength(15)
-		    ->setPaginationGetVar('s');
+Let's clean up both of these things now, with some updates to our Javascript.
 
-		//...
-	}
+*themes/one-ring/javascript/scripts.js*
+```js
+// Pagination
+if ($('.pagination').length) {
+    var paginate = function (url) {
+        $.ajax(url)
+            .done(function (response) {
+                $('.main').html(response);
+                $('html, body').animate({
+                    scrollTop: $('.main').offset().top
+                });
+                window.history.pushState(
+                    {url: url},
+                    document.title,
+                    url
+                );    
+            })
+            .fail(function (xhr) {
+                alert('Error: ' + xhr.responseText);
+            });
+
+    };
+    $('.main').on('click','.pagination a', function (e) {
+        e.preventDefault();
+        var url = $(this).attr('href');
+        paginate(url);
+    });
+    
+    window.onpopstate = function(e) {
+        if (e.state.url) {
+            paginate(e.state.url);
+        }
+        else {
+            e.preventDefault();
+        }
+    };        
+}
+
 ```
+First, we'll add an `animate()` method that will handle the automatic scrolling. Then, we'll push some state to the browser history using `pushState`.
+
+Lastly, we make export the `.ajax()` call to a function, so that both the pagination links and the browser back button will be able to invoke it when we add an `onpopstate` event.
+
+### Reapplying plugins
+
+A lot of the UI plugins we're using are applied on document load, which means that when part of the DOM gets replaced, they won't be applied. Notice as you paginated through the results that the "sort by" dropdown degrades back to a standard HTML input. Let's ensure the fancy dropdown gets reapplied.
+
+We'll export the `chosen()` plugin to a reusable function and call it when needed.
+
+*themes/one-ring/javascript/scripts.js*
+```js
+(function($) {
+  var applyChosen = function (selector) {
+    if ($(selector).length) {
+      $(selector).chosen({
+        allow_single_deselect: true,
+        disable_search_threshold: 12
+      });
+    }
+  };
+  $(function () {
+
+    applyChosen('select');
+    
+    //...
+```
+
+Now, on the successful ajax response, we'll reapply it.
+
+*themes/one-ring/javascript/scripts.js*
+```js
+  $.ajax(ajaxUrl)
+    .done(function (response) {
+      $('.main').html(response);
+      applyChosen('.main select');
+
+```
+
+### Cache busting
+There's one last idiosyncrasy we need to sort out before we can call this finished. Let's just try paginating a few times, and clicking on a non-Ajax link that will take us to another page. Now click the back button. Yikes! We're only getting back the content for the Ajax request. You may not be able to replicate this in all browsers. Google Chrome seems to reliably reproduce the bug, though. So why is this happening?
+
+The short answer is that good browsers like Google Chrome are really, really smart. That's what makes them so fast. In this case, perhaps it's being a bit too smart, but ultimately, we have made a pretty critical mistake.
+
+Earlier in the tutorial, we talked about a common endpoint for standard HTTP requests and XHRs. While it's true that both types of requests should be piped through the same controller action, the idea that they should share exactly the same URL is flawed. One of the pillars of HTTP caching, and the HTTP protocol in general, is that requests should be deterministic. For any given URL, we should expect the same response. When URLs return various responses based on arbitrary external state like session state or, in our case, the type of request, they are no longer deterministic, and bad things can happen, because the browser has cached that URL, believing that it has already seen the response that it generates. This is great for performance, but bad for the type of turnkey functionality we're trying to implement.
+
+We need to update our Javascript so that the Ajax request has a slightly different URL than the URL that is being stored in history. Let's just append a simple `ajax=1` request parameter to the URL.
+
+```js
+    // Pagination
+    if ($('.pagination').length) {
+        var paginate = function (url) {
+            var param = '&ajax=1',
+                ajaxUrl = (url.indexOf(param) === -1) ? 
+                           url + '&ajax=1' : 
+                           url,
+                cleanUrl = url.replace(new RegExp(param+'$'),'');
+
+            $.ajax(ajaxUrl)
+                .done(function (response) {
+                    $('.main').html(response);
+                    applyChosen('.main select');
+                    $('html, body').animate({
+                        scrollTop: $('.main').offset().top
+                    });
+                    window.history.pushState(
+                        {url: cleanUrl},
+                        document.title,
+                        cleanUrl
+                    );
+                })
+                .fail (function (xhr) {
+                    alert('Error: ' + xhr.responseText);
+                });
+        };
+```
+
+Let's walk through this.
+
+* First, we generate the `ajaxUrl` variable, is whatever URL the function is given, plus an `ajax=1` parameter. Notice that we have to be careful not to add the `ajax` parameter multiple times. We have to do this because the pagination links preserve all the `GET` parameters from the Ajax request, so they will all contain query strings like `?start=10&ajax=1`.
+* Next, we generate the `cleanURL` variable, which is the URL with the `ajax=1` removed. Again, the pagination links all have `ajax=1` on them, so this sanitisation is important.
+* We then update the Ajax request to go to the `ajaxUrl` instead of the given URL.
+* Lastly, we store the `cleanUrl` in the browser history, so that when the back button is pressed, the browser knows that the Ajax request and the standard request are different.
+
+In order to test this, it is imperative that you clear your browser cache. This whole bug revolves around eager caching, so you won't see any results until you do so. If you're using Google Chrome, you may want to try Incognito Mode for this.
+
+Now the back button is returning the expected result, and things are looking and feeling much better.
