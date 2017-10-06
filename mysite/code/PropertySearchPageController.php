@@ -11,6 +11,9 @@ use SilverStripe\Forms\FormAction;
 use SilverStripe\ORM\ArrayLib;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\ORM\PaginatedList;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\View\ArrayData;
+use SilverStripe\Control\HTTP;
 
 class PropertySearchPageController extends PageController
 {
@@ -18,8 +21,14 @@ class PropertySearchPageController extends PageController
     public function index(HTTPRequest $request)
     {
         $properties = Property::get();
+        $activeFilters = ArrayList::create();
 
         if ($search = $request->getVar('Keywords')) {
+            $activeFilters->push(ArrayData::create([
+                'Label' => "Keywords: '$search'",
+                'RemoveLink' => HTTP::setGetVar('Keywords', null, null, '&'),
+            ]));
+
             $properties = $properties->filter(array(
                 'Title:PartialMatch' => $search
             ));
@@ -38,15 +47,20 @@ class PropertySearchPageController extends PageController
         }
 
         $filters = [
-            ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual'],
-            ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual'],
-            ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual'],
-            ['MaxPrice', 'PricePerNight', 'LessThanOrEqual'],
+            ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual', '%s bedrooms'],
+            ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual', '%s bathrooms'],
+            ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual', 'Min. $%s'],
+            ['MaxPrice', 'PricePerNight', 'LessThanOrEqual', 'Max. $%s'],
         ];
 
         foreach($filters as $filterKeys) {
-            list($getVar, $field, $filter) = $filterKeys;
+            list($getVar, $field, $filter, $labelTemplate) = $filterKeys;
             if ($value = $request->getVar($getVar)) {
+                $activeFilters->push(ArrayData::create([
+                    'Label' => sprintf($labelTemplate, $value),
+                    'RemoveLink' => (HTTP::setGetVar($getVar, null, null, '&')),
+                ]));
+
                 $properties = $properties->filter([
                     "{$field}:{$filter}" => $value
                 ]);
@@ -61,7 +75,8 @@ class PropertySearchPageController extends PageController
             ->setPaginationGetVar('s');
 
         $data = [
-            'Results' => $paginatedProperties
+            'Results' => $paginatedProperties,
+            'ActiveFilters' => $activeFilters,
         ];
 
         if ($request->isAjax()) {
