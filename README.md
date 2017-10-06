@@ -1,361 +1,320 @@
-## What we'll cover:
-
-* What is ModelAdmin, and when do I use it?
-* An overview of the CMS taxonomies
-* Building a standalone DataObject
-* Creating a ModelAdmin interface
-* Basic customisations for ModelAdmin
-* Adding our data to the template
-
-## What is ModelAdmin, and when do I use it?
-
-In the last several lessons, we've talked a lot about DataObject content versus Page content. To recap, when content represents an entire page, which is to say, the `$Layout` section of our template, we subclass `Page` and manage this content in the site tree. When content is just part of a page, but merits its own editing interface, we use DataObjects. We looked at DataObject based content in our `RegionsPage`. While each `Region` object is part of a page, it needs its own editing tool. It wouldn't make sense to manage all that structured and repeating content on one page.
-
-That all works great when DataObject content is hosted on a page, but what about generic content that is used all over the site, and doesn't belong to any specific parent? You might have a store that manages products, or a microlending site with many projects. This type of content really merits a dedicated management console in the CMS. Binding it to a page would be both confusing for the content author, and add unnecessary complexity to your data model. Another example is content that you want to manage in the CMS that is never displayed to the public. Think of a business that manages a vast list of customers and orders. This type of content is only visible to admins, and binding it to a page doesn't make any sense.
-
-What we're talking about here is the idea of *standalone* DataObjects. They're free-floating in our system -- managed, but not bound to any specific hierarchy. For this type of content, we use `SilverStripe\Admin\ModelAdmin`.
-
-When we create a ModelAdmin interface, we get a new top-level section of the CMS, living among Pages, Files, Security, etc., that is dedicated to managing content per our specification. The great thing about ModelAdmin is that you can get up and running really fast, and customisations come fairly cheap.
-
-## An overview of CMS taxonomies
+### What we'll cover
+* What are controller actions, and how are they used?
+* Create a controller action to render a DataObject
+* Rendering a DataObject as a page
+* Adding pseudo-page behaviour to a DataObject
 
-Before we start writing code, let's take a step back a bit and look at the bigger picture of how the CMS is architected and how it relates to ModelAdmin.
-
-### LeftAndMain
+### How controller actions work
 
-Every top-level "page" you use in the CMS -- that is, *Pages*, *Files*, *Security*, *Reports*, and *Settings* -- is a subclass of `SilverStripe\Admin\LeftAndMain`. LeftAndMain is kind of the matriarch of the entire CMS. It oversees and handles everything from permissions, to generating edit forms, to CSS and JavaScript bootstrapping, to request negotiation, to saving and deleting records. All of that said, the primary job of this behemoth is to provide a secure user interface that contains a `Left` section, like the site tree, or a search form, and a `Main` section, which is often an edit form. I know you're probably wondering, based on that, how did they come up with the name *LeftAndMain*? If you think of it, please let me know as soon as you figure it out. It's had me puzzled for years.
+Up to this point in our project, for the most part, every page has been on a single URL, which that URL points to a single controller, which renders a single `$Layout` template. However, if you think back to our lesson on forms, you may remember that we were able to extend the URL route for our controller in order to generate and render a form. We did this using a controller action. Forms are just one of many use cases for a controller action.
 
-Any subclass of `LeftAndMain` will automatically get added to the main menu in the CMS. All you have to do is provide templates that define its *Main* section, and another that defines its *Tools* section. ModelAdmin is an example of a class that does that, and it makes a lot of assumptions about what we want in both sections, so it's supremely easy to get started.
+Using controller actions is simple. All we're talking about is appending a URL part to an existing URL that matches the name of a publicly accessible method on the controller. Let's give it a try.
 
-## Building a standalone DataObject
+For this example, we're going to look at our Regions page. You'll see that it resolves to `http://[your base url]/regions`. Try appending a new segment to the URL, like `http://[your base url]/regions/test`. Not surprisingly, we get a 404.
 
-As I said before, in this tutorial we're going to tackle the main content type in our application -- the *property* object, which represents any given holiday rental that an end user can rent, or that any property owner can let out. The property object will undoubtedly continue to grow with our application, but for now, we're just focused on giving them a home in the CMS, so let's keep it simple for now. Let's just give this object all the fields it needs for its representation on the home page.
+#### Breaking down the request 
 
-Looking at the home page, we can see that we need the following fields:
-* Price per night
-* Photo
-* Title
-* Region
-* Number of bedrooms
-* Number of bathrooms
+The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request`.
 
-Further, we know that these properties displaying on the home page must have some special attribute assigned to them, so let's add a `FeaturedOnHomepage` field as well.
+Let's take a look at what's going on here.
 
-*mysite/code/Property.php*
-```php
-namespace SilverStripe\Lessons;
+`Testing '$Action//$ID/$OtherID' with 'test' on SilverStripe\Lessons\RegionsPageController`
 
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\CurrencyField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\ORM\ArrayLib;
-use SilverStripe\Assets\Image;
-use SilverStripe\Forms\TabSet;
+Right out of the gate, we can see that SilverStripe resolved our URL to `RegionsPageController`, which may come as a surprise, since the URL for this page does not include `/test/`, but what has happened is that the request handler has found a match for the URL and will assume that from this point forward, everything in the URL is a parameter being passed to the controller. By default, a controller gives you three extra parameters to pass beyond its base url, as we can see in our debug output.
 
-class Property extends DataObject
-{
-  
-	private static $db = [
-		'Title' => 'Varchar',
-		'PricePerNight' => 'Currency',
-		'Bedrooms' => 'Int',
-		'Bathrooms' => 'Int',
-		'FeaturedOnHomepage' => 'Boolean'
-	];
+* **`$Action`**: Immediately follows the URL. In this case our action is `test`.
+* **`$ID`**: An ID that the controller action may want to use. This value does not have to be numeric. It's arbitrary, and just named `ID` because that's a common use case.
+* **`$OtherID`**: Same as `ID`. You get two. 
 
+You're not limited to this signature of parameters. In future lessons, we'll look at creating custom URL rules, but by default, this is what you get, and it's often all you need.
 
-	private static $has_one = [
-		'Region' => Region::class,
-		'PrimaryPhoto' => Image::class,
-	];
+Let's look at the next line of debug output.
 
+` Rule '$Action//$ID/$OtherID' matched to action 'handleAction' on SilverStripe\Lessons\RegionsPageController. Latest request params: array ( 'Action' => 'test', 'ID' => NULL, 'OtherID' => NULL, )`
 
-	public function getCMSfields()
-	{
-		$fields = FieldList::create(TabSet::create('Root'));
-		$fields->addFieldsToTab('Root.Main', [
-			TextField::create('Title'),
-			CurrencyField::create('PricePerNight','Price (per night)'),
-			DropdownField::create('Bedrooms')
-				->setSource(ArrayLib::valuekey(range(1,10))),
-			DropdownField::create('Bathrooms')
-				->setSource(ArrayLib::valuekey(range(1,10))),
-			DropdownField::create('RegionID','Region')
-				->setSource(Region::get()->map('ID','Title')),
-			CheckboxField::create('FeaturedOnHomepage','Feature on homepage')
-		]);
-		$fields->addFieldToTab('Root.Photos', $upload = UploadField::create(
-			'PrimaryPhoto',
-			'Primary photo'
-		));
+So here we are. The request handler actually did match the `$Action/$ID/$OtherID` pattern, and it's trying to resolve our action, `test`. In the rest of the output, you can see that it fails to do that, and it renders an ErrorPage.
 
-		$upload->getValidator()->setAllowedExtensions(array(
-			'png','jpeg','jpg','gif'
-		));
-		$upload->setFolderName('property-photos');
+Why did it fail? As we said before, the `$Action` parameter should represent a publicly accessible function on the controller. We have no method called `test` right now.
 
-		return $fields;
-	}
-}
-```
+Let's add that controller method now.
 
-Most of this is straightforward, but let's look at a few peculiarities that might be jumping out at you.
-
-* **`Currency` field type**: We have a `Currency` field type in our `$db` array, and a `CurrencyField` in our field list. They work nicely with each other to provide the correct formatting for currency, and ensure that the value is preceded by a currency symbol.
-* **`RegionID` as a name for the DropdownField**: Why do we have to explicitly append *ID* in this case? Other fields, like `UploadField` just accept the name of the `has_one` field, like *Photo*, without the requirement to name the exact database field. It's a bit confusing for sure, but keep in mind that a `DropdownField` doesn't always save to a `has_one`. It could just as well be saving to a text field. Other form fields that work only with data relationships know how to resolve the name of a relationship to a database column, but `DropdownField` is multi-purpose and fairly data model agnostic, so that's all that's going on here.
-* **`->setSource()` on the DropdownField**: Nothing too crazy here. This method tells the dropdown field what options are available in its list. You can provide the list as the third argument to `DropdownField`, but I find that it makes the code more readable to assign it in a chained method.
-* **`ArrayLib::valuekey()`**: Like `CheckboxSetField`, `DropdownField` takes an array where the keys are the data that will be saved when the option is selected, and the values of the array are labels that will be displayed for each option. Often times, they're the same. The `ArrayLib::valuekey()` function just mirrors the keys and values of an array.
-* **`range(1,10)`**: This is a simple PHP function that creates an array containing a range of elements. It doesn't have to be numeric. `range('A', 'C')` will give you an array containing `['A','B','C']`, for instance.
-* **`->setEmptyString()`**: This is the default, dataless option in our list. We don't want the dropdown to default to the first region listed, because that would be arbitrary. Rather, we want the user to explicitly declare the region the property is in. For bedrooms and bathrooms, it's fine if those default to `1`.
-
-Alright, now that we have all that sorted, let's run `dev/build`.
-
-## Creating a ModelAdmin interface
-
-We'll now create the `ModelAdmin` interface that will give us a place to hang all these `Property` records. A basic ModelAdmin interface is exceedingly simple to create.
-
-*mysite/code/PropertyAdmin.php*
-```php
-namespace SilverStripe\Lessons;
-
-use SilverStripe\Admin\ModelAdmin;
-
-class PropertyAdmin extends ModelAdmin
-{
-
-	private static $menu_title = 'Properties';
-
-	private static $url_segment = 'properties';
-
-	private static $managed_models = [
-		Property::class,
-	];
-}
-```
-
-That's it! Let's walk through it:
-* `$menu_title`: The title that will appear in the left-hand menu of the CMS.
-* `$url_segment`: The URL part that will follow `admin/` to access this section. In this case, the path to our ModelAdmin interface will be `admin/properties`.
-* `$managed_models`: An array of class names that will be managed. Each ModelAdmin can manage multiple models. Each one is placed on its own tab across the top of the screen. In this case, we just have one, but we'll be adding more down the track.
-
-We created a new class, so we need to run a `?flush`. Let's do that and go into the CMS to see what we got. You should see a new *Properties* tab on the left. Give it a try, and see if you can add a few new `Property` records.
-
-## Making customisations
-
-Now that we've got our simple editing UI, we can start to customise it a bit to make it more powerful and user-friendly for our content editors.
-
-### Adding $summary_fields
-We'll start with what we've seen before. `$summary_fields` gives us control over what fields display in list view.
-
-*mysite/code/Property.php*
-```php
-  //...
-	private static $summary_fields = [
-		'Title' => 'Title',
-		'Region.Title' => 'Region',
-		'PricePerNight.Nice' => 'Price',
-		'FeaturedOnHomepage.Nice' => 'Featured?'
-	];
-	//...
-```
-
-Notice that we can use dot-seprated syntax to invoke methods on each field. We know that `Region` is a `has_one`, so getting the `RegionID` is useless. We'll instead get the region's title, which is much more friendly. `Region.Title` translates to `$this->Region()->Title`.
-
-We also want to take advantage of the `Currency` field type that we used. Remember that it, too, returns an object. Most of the time, it just renders itself as a string, but we can invoke methods on it. In this, case the `Nice` method offered by the `Currency` class will give us a nicely formatted price with a currency symbol, commas, and decimal values.
-
-`Boolean` field types are quite generous, as well. We can invoke the `Nice()` method to return a value of *Yes* or *No*, translated per the user's locale.
-
-### Providing a custom icon
-
-Right now, the tab for our *Properties* section of the CMS is using a pretty generic icon, and if we have several of these custom admins, they won't be easily distinguished. Let's give it our own icon.
-
-Find the `property.png` file that is included in the `__assets/` directory of this lesson and move it into  `mysite/icons`. Why not our theme? The CMS not theme-aware, so we should avoid mixing the two. If you ever change your theme, that should have no effect on the icons that appear in the CMS. Anything that relates to your code should be kept in your project directory.
-
-```php
-namespace SilverStripe\Lessons;
-
-use SilverStripe\Admin\ModelAdmin;
-
-class PropertyAdmin extends ModelAdmin
-{
-
-	private static $menu_title = 'Properties';
-
-	private static $url_segment = 'properties';
-
-	private static $managed_models = [
-		'Property'
-	];
-
-	private static $menu_icon = 'mysite/icons/property.png';	
-}
-```
-We changed a static property, so we'll run `?flush` and see that we have a new icon.
-
-### Customising the search form
-
-Just like the fields displayed in list view, the fields that appear in the search form are also customisable in the class definition of the DataObject. All we have to do is define a new private static variable called `$searchable_fields`. By default, the DataObject will provide the same fields that are specified in `$summary_fields`, but that may not be what you're looking for. In this case, we have `PricePerNight` in our `$summary_fields`, but that's not necessarily a field we want to search on in the admin, so let's explicitly declare a `$searchable_fields` array to list what we want.
-
-_mysite/code/Property.php_
-```php
-  //...
-	private static $searchable_fields = [
-		'Title',
-		'Region.Title',
-		'FeaturedOnHomepage'
-	];	
-  //...
-```
-
-Run a `?flush` and see that we have a new search form that lets us search by the title of the property, and the title of its associated region.
-
-Searching by region title is nice, but it doesn't make a whole lot of sense for this to be a free text field, since our regions are a known list. It really should be a dropdown that allows us to choose from all the regions that have been added to the database. That way, the user doesn't have to worry about making a spelling error, and has a better idea of what's in the system.
-
-In order to do that, we'll have to write some executable code, which can't placed in a static variable assignment, so let's change `private static $searchable_fields` to `public function searchableFields()`, and we'll return an array.
-
-```php
-namespace SilverStripe\Lessons;
-
-use SilverStripe\ORM\DataObject;
-use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\DropdownField;
-use SilverStripe\Forms\CurrencyField;
-use SilverStripe\Forms\CheckboxField;
-use SilverStripe\AssetAdmin\Forms\UploadField;
-use SilverStripe\ORM\ArrayLib;
-use SilverStripe\Assets\Image;
-use SilverStripe\Forms\TabSet;
-
-class Property extends DataObject
-{
-  //...
-  
-	public function searchableFields()
-	{
-		return [
-			'Title' => [
-				'filter' => 'PartialMatchFilter',
-				'title' => 'Title',
-				'field' => TextField::class,
-			],
-			'RegionID' => [
-				'filter' => 'ExactMatchFilter',
-				'title' => 'Region',
-				'field' => DropdownField::create('RegionID')
-					->setSource(
-						Region::get()->map('ID','Title')
-					)
-					->setEmptyString('-- Any region --')				
-			],
-			'FeaturedOnHomepage' => [
-				'filter' => 'ExactMatchFilter',
-				'title' => 'Only featured'				
-			]
-		];
-	}
-
-  //...     
-}
-```
-When we define `searchableFields()`, we need to be much more explicit about how we want our search form configured. Each field we include has to be mapped to an array containing three keys:
-* **`filter`**: The type of filter that should be used in the search. For a full list of available filters, see `framework/src/ORM/Filters`. For title, we want a fuzzy match, so we use `PartialMatchFilter`, and since regions are filtered by ID, we want that to be an `ExactMatchFilter`.
-* **`title`**: The label that will identify the search field
-* **`field`**: You have three options here. 
-    * You can provide a string, representing the `FormField` class you want, as we  did with `Title`. 
-    * If you want something more complex, however, you can use a `FormField` object. In this case, I've instantiated a `DropdownField` much like the one we used in our `getCMSFields` function. 
-    * Another option is to just leave this undefined, and the DataObject will ask the fieldtype for its default search field, as we did with our `FeaturedOnHomepage` field. Every field type knows how to render its own search field. In this case, `Boolean` gives us a nice dropdown of three options: *Yes*, *No*, or *Any*, which is perfect. A `CheckboxField` would be either on or off. It wouldn't allow us to opt out of that filter.
-
-Give the search form a try now. It feels a little better, right?
-
-### Adding versioning
-
-Properties are perhaps the most important elements on this entire website, so we'll want to ensure they have a draft state. We'll also add an `$owns` property for the primary photo, so it gets published as well.
-
-```php
-```php
-//...
-use SilverStripe\Versioned\Versioned;
-
-class Property extends DataObject
-{
-  //...
-  private static $owns = [
-      'PrimaryPhoto',
-  ];
-
-  private static $extensions = [
-      Versioned::class,
-  ];
-
-  private static $versioned_gridfield_extensions = true;
-  
-	public function searchableFields()
-	{
-    //...
-```
-
-Run a `dev/build` to get the new tables.
-
-### Importing data
-
-If you haven't been doing so all along, it's probably a good time to import a database from the `__assets/database.sql` file in the completed version of this lesson. That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
-
-Don't forget to copy over the `assets/` folder, too. The property photos are in there.
-
-## Adding properties to the template
-
-The last step is simple. Let's just write a method in our `HomePage` controller that gets the featured properties.
-
-*mysite/code/HomePageController.php*
+*mysite/code/RegionsPage.php*
 ```php
 namespace SilverStripe\Lessons;
 
 use PageController;
 
-class HomePageController extends PageController
+class RegionsPageController extends PageController
 {
 
-  //...
-	public function FeaturedProperties()
-	{
-		return Property::get()
-				->filter(array(
-					'FeaturedOnHomepage' => true
-				))
-				->limit(6);
-	}	
+  public function test()
+  {
+		die('it works');
+	}
+	
 }
 ```
 
-Now let's render the output to the template.
+#### Allowed actions
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/HomePage.ss* (line 118)
+Now try accessing the URL `/regions/test`. It still 404s. What's going on here?
+
+If you recall from our Lesson 11 tutorial on forms, we're not quite done yet. We have to whitelist the `test` method as one that can be invoked through the URL. You can imagine the security risk that would be imposed by allowing all public methods on a controller to be invoked arbitrarily in the URL. We don't want that. By default, no methods are allowed to be called through controller actions. You need to specify a list of those that are in a private static variable called `$allowed_actions`.
+
+```php
+namespace SilverStripe\Lessons;
+
+use PageController;
+
+class RegionsPageController extends PageController {
+
+	private static $allowed_actions = [
+		'test'
+	];
+	
+	public function test()
+	{
+		die('it works');
+	}
+
+}
+```
+
+`$allowed_actions` can actually get quite complex. You can map these methods to required permission levels, and even custom functions that evaluate whether they should be accessible at runtime, which is really useful for complex controllers. In this case, we just want to make sure anyone can invoke the `test` action. 
+
+Refresh the page with a `?flush`, as we changed a private static variable. Now it works.
+
+### Creating a controller action to render a DataObject
+
+The most common use for a controller action is to assign a URL to a DataObject that is nested in a Page, and this is, in my opinion, one of the first milestones of becoming a skilled SilverStripe developer.
+
+We know that DataObjects are more primitive than Page objects. They contain none of the functionality for rendering a template, they have no `Link()` method, no meta tags, no controllers, etc. In short, they're not meant to be rendered as full pages. That doesn't mean, however, that you cannot assign them some of the properties necessary to do so. In fact, it often makes a lot of sense to.
+
+Let's keep the focus on our RegionsPage. We have a list of `Region` DataObjects that are related to the page via `has_many`. We want to create a detail view for each one of the regions in our list. The user should be able to click on one of the regions and see more information.
+
+This isn't an ideal use case for a DataObject as a page. These Region objects could just as well be pages in the site tree. It often comes down to a judgment call for the developer, guided by what will work best for the content editor. In a future tutorial, we'll look at creating a detail page for our `Property` DataObject, which, due to their volume, will be much more effective than managing them as pages.
+
+#### Adding a Link() method
+
+We can start with the most fundamental requirement. Regions should be able to produce a distinct link to their detail page. Let's add a `Link()` method to each Region. We'll have it invoke a controller action that we have not yet defined.
+
+```php
+namespace SilverStripe\Lessons;
+
+use SilverStripe\ORM\DataObject;
+
+class Region extends DataObject
+{
+  //...
+	public function Link()
+	{
+		return $this->RegionsPage()->Link('show/'.$this->ID);
+	}
+}
+```
+
+We get the `RegionsPage` that owns this Region via the `has_many` / `has_one` parity, and call its link method. We pass in some extra URL segments we want appended to its link. We specify an `$Action` of *show* and an `$ID` that represents the Region's ID.
+
+Now that we have that method, we'll apply it to the template. Change all the hash (#) links to `$Link`.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage.ss*
 ```html
-<% loop $FeaturedProperties %>
-<div class="item col-md-4">
-	<div class="image">
+<% loop $Regions %>
+<div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
+	<div class="image image-large">
 		<a href="$Link">
-			<h3>$Title</h3>
-			<span class="location">$Region.Title</span>
+			<span class="btn btn-default"><i class="fa fa-file-o"></i> Read More</span>
 		</a>
-		$PrimaryPhoto.Fill(220,194)
+		$Photo.CroppedImage(720,255)
 	</div>
-	<div class="price">
-		<span>$PricePerNight.Nice</span><p>per night<p>
+	<div class="info-blog">
+		<h3>
+			<a href="$Link">$Title</a>
+		</h3>
+		<p>$Description</p>
 	</div>
-	<ul class="amenities">
-		<li><i class="icon-bedrooms"></i> $Bedrooms</li>
-		<li><i class="icon-bathrooms"></i> $Bathrooms</li>
-	</ul>
 </div>
 <% end_loop %>
 ```
+Give it a try. Click on one of the regions. The expected result should be a 404.
 
-You may have noticed that we deliberately added a non-existent method, `$Link` to the property. That's okay. It will just get ignored for now, but in the future, we'll add that method, and we won't have to come back here to make the update.
+#### Getting the DataObject in the action
 
-Reload the page and see your featured properties!
+Fortunately, we know how to fix this 404 now. Let's create a `show` method in `RegionsPageController` and whitelist it in `$allowed_actions`.
+
+```php
+// ...
+use SilverStripe\Control\HTTPRequest;
+
+class RegionsPageController extends PageController
+{
+
+	private static $allowed_actions = [
+		'show'
+	];
+
+	public function show(HTTPRequest $request)
+	{
+		
+	}
+
+}
+```
+
+We're not doing anything new here, other than ensuring that the `show` method gets its `HTTPRequest` argument. We'll need that object for getting the ID.
+
+Now that we have the skeleton of how this is going to work, we'll build out the `show` method to fetch and return the Region being requested.
+
+```php
+
+	public function show(HTTPRequest $request)
+	{
+		$region = Region::get()->byID($request->param('ID'));
+
+		if(!$region) {
+			return $this->httpError(404,'That region could not be found');
+		}
+
+		return [
+			'Region' => $region
+		];
+	}
+
+}
+```
+
+This should be pretty intuitive, but let's walk through it.
+* We get the region by the ID contained in the `ID` request parameter. If that parameter is null, we don't have to worry. The `byID()` method fails gracefully.
+* If a region doesn't exist, return a 404.
+* Return a new variable, `$Region` to the template. (we'll deal with this next)
+
+### Rendering a DataObject as a page
+
+As we saw in the debug output of the request handler, the `$Action` parameter maps to a method called `handleAction` on our controller. While our action method itself is designed to do everything it needs to do, the `handleAction()` method that invokes this method is somewhat opinionated. Specifically, it will automatically select a template for us, unless we declare otherwise.
+
+A controller action will try to render a template following the naming convention ``[PageType]_[actionName].ss``. In our case, that gives us `RegionsPage_show.ss`. Let's create that template.
+
+Copy your `themes/one-ring/templates/Layout/Page.ss` to `RegionsPage_show.ss` in the same location. Remove the `<div class="main ...">` block, and in its place, render some content from the `$Region` object we passed. This is a great opportunity to use the `<% with %>` block.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 5)
+```html
+<div class="main col-sm-8">
+	<% with $Region %>
+		<div class="blog-main-image">
+			$Photo.SetWidth(750)
+		</div>
+		$Description
+	<% end_with %>
+</div>
+```
+
+Try clicking on a region now and see that you get its detail page.
+
+One thing that's a bit odd right now is that the `$Description` field is presented exactly the same way on the list view as it is on the detail view, which makes this click effectively pointless. Let's update the `Region` DataObject to store its `Description` field as an `HTMLText` field so that it could conceivably be much longer.
+
+*mysite/code/Region.php*
+```php
+namespace SilverStripe\Lessons;
+
+use SilverStripe\ORM\DataObject;
+
+class Region extends DataObject
+{
+
+	private static $db = [
+		'Title' => 'Varchar',
+		'Description' => 'HTMLText',
+	];
+```
+
+Run `dev/build`.
+
+We'll also need to update the CMS field for `Description`.
+
+```php
+	public function getCMSFields()
+	{
+		$fields = FieldList::create(
+			TextField::create('Title'),
+			HtmlEditorField::create('Description'),
+			$uploader = UploadField::create('Photo')
+		);
+    //...
+  }
+```
+
+Now on `RegionsPage.ss`, let's just use `$Description.FirstParagraph`.
+
+### Adding pseudo-page behaviour to a DataObject
+
+There are still a few things missing from making this DataObject really feel like a page. The most glaring problem is that the title of the page is still *Regions*, rather than the more appropriate title of the Region we're looking at. Normally, we'd find the `$Title` variable in our template and simply change it to `$Region.Title`, but that variable doesn't live in the `RegionsPage_show.ss` template, so we'll need to override it in the controller.
+
+#### Overloading model properties in the controller
+
+Remember the array we passed to the template containing our custom variable `$Region`? We can use that to overload properties that the template would normally infer from the model. Let's add `Title` to that list.
+
+*mysite/code/RegionsPage.php*
+```php
+	public function show(HTTPRequest $request)
+	{
+    //...
+		return [
+			'Region' => $region,
+			'Title' => $region->Title
+		];
+	}
+```
+
+Refresh the page and see that we get a new title.
+
+While the new title is showing on the page itself, it is not affecting the `<title>` tag. That's because, back in Lesson 3, we handed over control over the title tag to `$MetaTags`. Back in that lesson, we discussed the option to pass a parameter of `false` to the `$MetaTags` function to suppress the title tag, and customise it as we see fit. Let's do that now.
+
+*themes/one-ring/templates/Page.ss* (line 8)
+```html
+	$MetaTags(false)
+	<title>One Ring Rentals: $Title</title>
+```
+Refresh the page, and see that the title tag is now working.
+
+#### Creating peer navigation
+
+Another enhancement we can make is the perception of hierarchy. We can use our subnavigation section to display all the peer regions, with some state applied to the current one.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 15)
+```html
+<div class="sidebar gray col-sm-4">
+	<h2 class="section-title">Regions</h2>
+	<ul class="categories subnav">
+		<% loop $Regions %>
+			<li class="$LinkingMode"><a class="$LinkingMode" href="$Link">$Title</a></li>
+		<% end_loop %>
+	</ul>
+</div>
+```
+
+Remember that, even though the content is all driven by the `Region` object, we're still in the scope of `RegionsPageController`, so we step into `<% loop $Regions %>` to get that `has_many` relation that we also use on list view.
+
+Refresh the page and see that the regions are now all displaying.
+
+#### Adding navigational state
+
+We're still missing the "current" state for the region. That's because the method `$LinkingMode` doesn't exist on a DataObject by default, so we need to write our own.
+
+*mysite/code/Region.php*
+```php
+//..
+use SilverStripe\Control\Controller;
+
+class Region extends DataObject
+{
+  //...
+  
+	public function LinkingMode()
+	{
+		return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
+	}
+}
+```
+Remember that we're in the context of a simple DataObject here, so we don't have any awareness of the request. `Controller::curr()` is a useful method that gets us the currently active controller. Off that object, we can get the request object that has been assigned to it, and look for `->param('ID')`, the same way we did in our `show()` action. If the ID in the URL matches this region, we return `current`, otherwise we return `link`. We don't have to worry about `section` for something this simple.
+
+Refresh the page and see that the current region is now indicated.
