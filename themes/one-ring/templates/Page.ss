@@ -5,7 +5,8 @@
 <!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
 <head>
 	<% base_tag %>
-	$MetaTags	
+	$MetaTags(false)
+	<title>One Ring Rentals: $Title</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 
 	
