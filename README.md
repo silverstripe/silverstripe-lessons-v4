@@ -1,375 +1,217 @@
 ## What we'll cover
-* Writing the Javascript
-* An overview of ViewableData
-* Rendering a partial template
-* Adding some UX enhancements
+* What are we working towards?
+* Updating the template: Working backwards
+* Updating the controller to use generic data
 
+## What are we working towards?
 
-## Writing the Javascript
+Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. Often times, however, the template and the database are not so tightly coupled. There's actually no rule saying that all template data has to come from the database
 
-In the last tutorial, we added pagination to our list of search results. Let's now enhance the user experience a bit by adding Ajax to the pagination links.
+Ultimately what we're teaching in this lesson is the concept of *composable UI elements*. As you may know, composable components are a rapidly accelerating trend in application development as developers and designers seek to maintain a high level of agility and reusability.
 
-Before we do anything, we'll need to add some JavaScript that will add this functionality. We'll do this in our catch-all JavaScript file, `scripts.js`.
+Being composable, these components are essentially "dumb" and only really know how to do one thing, which is render some UI based on the configuration that has been passed to them, which is what we'll call a *composition*.
 
-*themes/one-ring/javascript/scripts.js*
-```js
-// Pagination
-if ($('.pagination').length) {
-  $('.main').on('click','.pagination a', function (e) {
-	    e.preventDefault();
-	    var url = $(this).attr('href');
-	    $.ajax(url)
-	        .done(function (response) {
-	            $('.main').html(response);
-	        })
-	        .fail (function (xhr) {
-	            alert('Error: ' + xhr.responseText);
-	        });
-	});
-}
+In the context of our project, we'll be lighting up the search filter toggle buttons in the sidebar of our property search page. The purpose of these buttons is to show the user what search filters have been applied, and to offer an option to remove them and refresh the search page.
 
+## Updating the template: Working backwards
+
+A lot of developers, including myself, find it easier to work backwards with problems like this, which means starting from the template and adding the backend afterward. Let's look at these filter buttons and try to abtract them into something we can use.
+
+As we can see, they're all statically contained in a `ul` tag at the moment.
+
+```html
+<ul class="chzn-choices">
+   <li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
+   <li class="search-choice"><span>Residential</span><a href="#" class="search-choice-close"></a></li>
+   <li class="search-choice"><span>3 bedrooms</span><a href="#" class="search-choice-close"></a></li>
+   <li class="search-choice"><span>2 bathrooms</span><a href="#" class="search-choice-close"></a></li>
+   <li class="search-choice"><span>Min. $150</span><a href="#" class="search-choice-close"></a></li>
+   <li class="search-choice"><span>Min. $400</span><a href="#" class="search-choice-close"></a></li>
+</ul>
 ```
 
-This is pretty specific to this use-case. Further down the track, we may find that we're adding a lot of Ajax events that closely resemble this, so we may want to make it more reusable at some point, but for now, let's just get this working.
+### The wrong way to do it
 
-Let's give this a try. Click on a link in the pagination and see if it works.
+One approach that may come to mind is using a long series of display logic to output all of the possible options, like so:
 
-It kind of works, right? But we've still got a way to go. The controller is returning the entire page -- from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The Ajax URL is just the `href` attribute, so anything different would be unusual.
+```html
+<ul class="chzn-choices">
+<% if $LocationFilter %>
+   <li class="search-choice"><span>$LocationFilter</span><a href="#" class="search-choice-close"></a></li>
+<% end_if %>
 
-So what do we do? Change the URL in our Javascript to use something other than `href`? We could use an alternative URL in something like `data-ajax-url`. That's actually not necessary. We always aim to keep things tidy with single endpoints. The controller ideally know as little about the UI as possible, and setting up a separate endpoint for Ajax requests in this case would be antithetical to that. We'll keep the same endpoint, and we'll just assign the controller the ability to detect Ajax requests.
+<% if $BedroomFilter %>
+   <li class="search-choice"><span>$BedroomFilter bedrooms</span><a href="#" class="search-choice-close"></a></li>
+<% end_if %>
 
-## Detecting Ajax in a controller
+<!-- etc... -->
+</ul>
+```
 
-Let's update `PropertySearchPageController.php` to detect Ajax.
+This might look reasonable at first, it's going to lead to nothing but problems. There are a number of things wrong with this approach.
+
+* It pollutes your template with syntax, and a lot of repeated markup
+* It pollutes your controller with a lot of repetative property assignments and/or methods
+* It creates more parity between your controller and your template. If you ever want to add or remove a new search option, you have to remember to update the template.
+* We have to repurpose the *value* of the filter as its *label*, e.g. `$BedroomFilter bedrooms`, and at some point that's just not going to work. Search filters are often not human-readable, such as IDs.
+
+### A better approach
+
+If the sight of `li` tags nested in a `ul` is becoming almost synonymous with the `<% loop %>` control to you, that's a good sign. We're definitely going to need a loop here. This will keep the UI much cleaner, and it will give us more control over the output, as we'll have a chance to *compose* each member of the loop. Let's add that now, and make up the rest as we go.
+
+```html
+<ul class="chzn-choices">
+   <% loop $ActiveFilters %>
+     	<li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
+   <% end_loop %>
+</ul>
+```
+
+Make sense so far? Again, we're working backwards, so the `$ActiveFilters` piece is merely semantic right now. 
+
+Let's now just go through brainstorm some property names for all the dynamic content.
+
+```html
+<% if $ActiveFilters %>
+<div class="chzn-container-multi">
+  <ul class="chzn-choices">
+     <% loop $ActiveFilters %>
+        <li class="search-choice"><span>$Label</span><a href="$RemoveLink" class="search-choice-close"></a></li>
+     <% end_loop %>
+  </ul>
+</div>
+<% end_if %>
+```
+
+We've added the properties `$Label` and `$RemoveLink`, which we can assume are the only two distinguishing traits of each filter button.
+
+## Updating the controller
+
+Now that our template syntax is in place, we need to configure the controller to feed this data to the template. We could write a new method called `ActiveFilters()` (or `getActiveFilters()`) that inspects the request and returns something, but given that there's only one endpoint for our search page, I think it makes more sense at this point in the project to create the filter UI elements as they're being applied to the list.
+
+### Creating an arbitrary list
+
+In order to invoke the `<% loop %>` block, we of course will need some kind of iteratable list. So far, we've been using `SilverStripe\ORM\DataList`, which represents a list of records associated with a database query. Since our filter UI elements are not coming from the database, we'll need something more primitive. In this case, `SilverStripe\ORM\ArrayList` is an ideal choice.
+
+At the top of our `index()` action, let's instantiate that list.
 
 *mysite/code/PropertySearchPageController.php*
 ```php
-public function index(HTTPRequest $request)
+//...
+use SilverStripe\ORM\ArrayList;
+
+class PropertySearchPageController extends PageController
 {
+	public function index(HTTPRequest $request)
+	{
+		$properties = Property::get();
+		$activeFilters = ArrayList::create();
 	
+		//...
+	}
 	//...
-
-	if($request->isAjax()) {
-		return "Ajax response!";
-	}
-	
-	return [
-		'Results' => $paginatedProperties
-	];
-}
 ```
+Now, we just need to fill our list with data.
 
-Now give the link a try, and see what we get. You should see your custom Ajax response. Now we just need to return some partial content. Before we do that, let's talk a bit about a key player in SilverStripe Framework called `ViewableData`.
+### Remember ViewableData?
+To populate the list, we'll revisit our old friend `SilverStripe\View\ViewableData` from the previous tutorial. Just as a recap, `ViewableData` is a primitive object that is ready to be rendered on a template. One type of `ViewableData` is `DataObject`, which we've been using all along to render content from the database.
 
-## An overview of ViewableData
+You will rarely need to use the `ViewableData` class itself, but its immediate descendant, `SilverStripe\View\ArrayData` is very flexible and couldn't be simpler to implement. It's basically just a glorified array. All you have to do is instantiate it with an array of key/value pairs that will translate to `$Variable` template variables, and render their associated values.
 
-To establish a basis for the next section of this lesson, we'll need to know more about how `ViewableData` objects work. `SilverStripe\View\ViewableData` is a primitive class in SilverStripe that essentially allows its public properties and methods to render content to a template. The most common occurance of `SilverStripe\View\ViewableData` objects is in `SilverStripe\ORM\DataObject` instances, which we've been working with on templates exclusively. But templates are capable of rendering much more than database content. You just need to go further up the inheritance chain, above `DataObject` to `ViewableData`, or a subclass thereof.
+Let's add the filter for the `Keywords` filter.
 
-Let's look at a simple example of `ViewableData`.
-
-```php
-use SilverStripe\View\ViewableData;
-
-class Address extends ViewableData
-{
-	
-	public $Street = '123 Main Street';
-
-	public $City = 'Compton';
-
-	public $Zip = '90210';
-
-	public $Country = 'US';
-
-	public function Country()
-	{
-		return MyGeoLibrary::get_country_name($this->Country);
-	}
-
-	public function getFullAddress()
-	{
-		return sprintf(
-			'%s<br>%s %s<br>%s'
-			$this->Street,
-			$this->City,
-			$this->Zip,
-			$this->Country() 
-		);
-	}
-}
-```
-
-Now let's create a template to render our `Address` object.
-
-*AddressTemplate.ss*
-```html
-<p>I live on $Street in $City.</p>
-<p>My full address is $FullAddress.</p>
-```
-
-As you can see, we're rendering data using a combination of both methods and properties. `ViewableData` has a very specific way of resolving the template variables on the object:
-
-* Check if there public method on the object called [VariableName]
-* If not, check if a method called "get[VariableName]" exists
-* If not, check if there is a public property named [VariableName]
-* Otherwise, call "getField([VariableName])"
-
-`getField()` is a fallback method. For the base `ViewableData` class, it simply returns `$this->$VariableName`. The idea is that subclasses can invoke their own handlers for this. For example, in `DataObject`, `getField()` looks to the `$db` array.
-
-All `ViewableData` objects know how to render themselves on templates. To do that, simply invoke `renderWith($templateName)` on the object, and the template variables will be scoped to that object.
-
-```php
-$myViewableData = Address::create();
-echo $myViewableData->renderWith('AddressTemplate');
-```
-
-Another really useful feature of `ViewableData` is that the object itself can be called on a template and render itself. If we were to simply call `$MyAddressObject` on a template, SilverStripe would attempt to invoke a method called `forTemplate()` on the object to render it as a string. In our example address object, that might look like this:
-
-```php
-class Address extends ViewableData
-{
-	
-	//...	
-
-	public function forTemplate()
-	{
-		return $this->getFullAddress();
-	}
-}
-```
-
-A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes its `forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
-
-## Rendering a partial template
-
-So now that we have a good understanding of `ViewableData`, let's play around with some of its features. Right now, we're just returning a string to the template for our Ajax response. Let's instead return a partial template.
-
-At the centre of dealing with Ajax responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
-
-*themes/one-ring/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
-```html
-<!-- BEGIN MAIN CONTENT -->
-<div class="main col-sm-8">
-	<% include SilverStripe/Lessons/PropertySearchResults %>				
-</div>	
-<!-- END MAIN CONTENT -->
-```
-
-Notice that the `Includes/` part of the path is implicit when calling `<% include %>`.
-
-Reload the page with `?flush` to get the new template.
-
-Now, returning an Ajax response is trivial. Simply render the include.
-
+*mysite/code/PropertySearchPageController.php*
 ```php
 //...
+use SilverStripe\View\ArrayData;
+use SilverStripe\Control\HTTP;
+
 class PropertySearchPageController extends PageController
 {
 
 	public function index(HTTPRequest $request)
 	{
-
+		
 		//...
 		
-		if($request->isAjax()) {
-			return $this->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+		if ($search = $request->getVar('Keywords')) {
+			$activeFilters->push(ArrayData::create([
+				'Label' => "Keywords: '$search'",
+				'RemoveLink' => HTTP::setGetVar('Keywords', null, null, '&'),
+			]));
+
+			$properties = $properties->filter([
+				'Title:PartialMatch' => $search
+			]);
 		}
 		
 		//..
-	}
-}
+
 ```
 
-This time, we don't benefit from the implicit `Includes/` directory. Unlike the template syntax, we need to specify it when referring to it in controller code.
+Using the `push()` method on `ArrayList`, we add `ArrayData` objects to it. Each one has `Label` and `RemoveLink` properties, as required by the template. The `RemoveLink` property implements an obscure utility method from the `SilverStripe\Control\HTTP` helper class. All it does is take the current URI and set a given query parameter to a given value. In this case, we're setting it to `null` to effectively remove the filter.
 
-Let's try this out. It's not quite working right. We're getting a "no results" message when we paginate. That's because the `$Results` variable is not exposed to the template through `renderWith()`. It's just a local variable in our `index()` method. We have two choices here:
+The next filter is for the availability date range. It actually doesn't offer a whole lot of utility to the user to display this as a toggleable filter, especially since it's actually a composite filter of `ArrivalDate` and `Nights`, so let's skip this one.
 
-* Assign `$paginatedProperties` to a public property on the controller
-* Explicitly pass it to the template using `customise()`.
+The next several, which are all part of our tidy loop, are pretty straightforward. We'll add another member to the `$filterKeys` list, which will be a `sprintf()` compatible template to generate the label for each filter.
 
-Of these two options, the latter is much more favourable. There are cases where the first option makes more sense, but in this case, explicitly passing the list makes our `PropertySearchResults` template more reusable, and assigning a new member property would pollute our controller unnecessarily. Let's make that update now.
-
+*mysite/code/PropertySearchPageController.php*
 ```php
-//...
-class PropertySearchPageController extends PageController
-{
-
 	public function index(HTTPRequest $request)
 	{
-
-		//...
 		
-		if($request->isAjax()) {
-			return $this->customise([
-				'Results' => $paginatedResults
-			])->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
-		}
-
-		return [
-			'Results' => $paginatedProperties
-		];
-	}
-}
-```
-We now have repeated our array of data, so let's clean that up a bit.
-
-```php
-//...
-class PropertySearchPageController extends PageController
-{
-
-
-	public function index(HTTPRequest $request) {
-
 		//...
-		
-		$data = [
-			'Results' => $paginatedProperties
-		];
 
-		if($request->isAjax()) {
-			return $this->customise($data)
-						 ->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
-		}
+    $filters = [
+        ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual', '%s bedrooms'],
+        ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual', '%s bathrooms'],
+        ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual', 'Min. $%s'],
+        ['MaxPrice', 'PricePerNight', 'LessThanOrEqual', 'Max. $%s'],
+    ];
 
-		return $data;
-	}
-}
-```
+    foreach($filters as $filterKeys) {
+        list($getVar, $field, $filter, $labelTemplate) = $filterKeys;
+        if ($value = $request->getVar($getVar)) {
+            $activeFilters->push(ArrayData::create([
+                'Label' => sprintf($labelTemplate, $value),
+                'RemoveLink' => HTTP::setGetVar($getVar, null, null, '&'),
+            ]));
 
-Try it now. It's looking much better!
-
-## Adding some UX enhancements
-
-There are two major shortcomings of this user experience:
-* The scroll stays fixed to the bottom of the results, leaving the user with little indication that the content has been updated
-* The URL is not updated, so a page refresh after paginating will take the user back to the first page
-
-Let's clean up both of these things now, with some updates to our Javascript.
-
-*themes/one-ring/javascript/scripts.js*
-```js
-// Pagination
-if ($('.pagination').length) {
-    var paginate = function (url) {
-        $.ajax(url)
-            .done(function (response) {
-                $('.main').html(response);
-                $('html, body').animate({
-                    scrollTop: $('.main').offset().top
-                });
-                window.history.pushState(
-                    {url: url},
-                    document.title,
-                    url
-                );    
-            })
-            .fail(function (xhr) {
-                alert('Error: ' + xhr.responseText);
-            });
-
-    };
-    $('.main').on('click','.pagination a', function (e) {
-        e.preventDefault();
-        var url = $(this).attr('href');
-        paginate(url);
-    });
-    
-    window.onpopstate = function(e) {
-        if (e.state.url) {
-            paginate(e.state.url);
+            $properties = $properties->filter([
+                "{$field}:{$filter}" => $value
+            ]);
         }
-        else {
-            e.preventDefault();
-        }
-    };        
-}
-
-```
-First, we'll add an `animate()` method that will handle the automatic scrolling. Then, we'll push some state to the browser history using `pushState`.
-
-Lastly, we make export the `.ajax()` call to a function, so that both the pagination links and the browser back button will be able to invoke it when we add an `onpopstate` event.
-
-### Reapplying plugins
-
-A lot of the UI plugins we're using are applied on document load, which means that when part of the DOM gets replaced, they won't be applied. Notice as you paginated through the results that the "sort by" dropdown degrades back to a standard HTML input. Let's ensure the fancy dropdown gets reapplied.
-
-We'll export the `chosen()` plugin to a reusable function and call it when needed.
-
-*themes/one-ring/javascript/scripts.js*
-```js
-(function($) {
-  var applyChosen = function (selector) {
-    if ($(selector).length) {
-      $(selector).chosen({
-        allow_single_deselect: true,
-        disable_search_threshold: 12
-      });
     }
-  };
-  $(function () {
 
-    applyChosen('select');
-    
-    //...
-```
-
-Now, on the successful ajax response, we'll reapply it.
-
-*themes/one-ring/javascript/scripts.js*
-```js
-  $.ajax(ajaxUrl)
-    .done(function (response) {
-      $('.main').html(response);
-      applyChosen('.main select');
+		//...
+	}
 
 ```
 
-### Cache busting
-There's one last idiosyncrasy we need to sort out before we can call this finished. Let's just try paginating a few times, and clicking on a non-Ajax link that will take us to another page. Now click the back button. Yikes! We're only getting back the content for the Ajax request. You may not be able to replicate this in all browsers. Google Chrome seems to reliably reproduce the bug, though. So why is this happening?
+### Passing the filters to the template
 
-The short answer is that good browsers like Google Chrome are really, really smart. That's what makes them so fast. In this case, perhaps it's being a bit too smart, but ultimately, we have made a pretty critical mistake.
+Just like our custom variable `Results`, we'll pass the `ActiveFilters` list to the template through an array.
 
-Earlier in the tutorial, we talked about a common endpoint for standard HTTP requests and XHRs. While it's true that both types of requests should be piped through the same controller action, the idea that they should share exactly the same URL is flawed. One of the pillars of HTTP caching, and the HTTP protocol in general, is that requests should be deterministic. For any given URL, we should expect the same response. When URLs return various responses based on arbitrary external state like session state or, in our case, the type of request, they are no longer deterministic, and bad things can happen, because the browser has cached that URL, believing that it has already seen the response that it generates. This is great for performance, but bad for the type of turnkey functionality we're trying to implement.
+*mysite/code/PropertySearchPageController.php*
+```php
+	public function index(HTTPRequest $request)
+	{
+		
+		//...
 
-We need to update our Javascript so that the Ajax request has a slightly different URL than the URL that is being stored in history. Let's just append a simple `ajax=1` request parameter to the URL.
+		$paginatedProperties = PaginatedList::create(
+			$properties,
+			$request
+		)->setPageLength(15)
+		 ->setPaginationGetVar('s');
 
-```js
-    // Pagination
-    if ($('.pagination').length) {
-        var paginate = function (url) {
-            var param = '&ajax=1',
-                ajaxUrl = (url.indexOf(param) === -1) ? 
-                           url + '&ajax=1' : 
-                           url,
-                cleanUrl = url.replace(new RegExp(param+'$'),'');
+		$data = array (
+			'Results' => $paginatedProperties,
+			'ActiveFilters' => $activeFilters			
+		);
 
-            $.ajax(ajaxUrl)
-                .done(function (response) {
-                    $('.main').html(response);
-                    applyChosen('.main select');
-                    $('html, body').animate({
-                        scrollTop: $('.main').offset().top
-                    });
-                    window.history.pushState(
-                        {url: cleanUrl},
-                        document.title,
-                        cleanUrl
-                    );
-                })
-                .fail (function (xhr) {
-                    alert('Error: ' + xhr.responseText);
-                });
-        };
+		//...
+	}
 ```
 
-Let's walk through this.
-
-* First, we generate the `ajaxUrl` variable, is whatever URL the function is given, plus an `ajax=1` parameter. Notice that we have to be careful not to add the `ajax` parameter multiple times. We have to do this because the pagination links preserve all the `GET` parameters from the Ajax request, so they will all contain query strings like `?start=10&ajax=1`.
-* Next, we generate the `cleanURL` variable, which is the URL with the `ajax=1` removed. Again, the pagination links all have `ajax=1` on them, so this sanitisation is important.
-* We then update the Ajax request to go to the `ajaxUrl` instead of the given URL.
-* Lastly, we store the `cleanUrl` in the browser history, so that when the back button is pressed, the browser knows that the Ajax request and the standard request are different.
-
-In order to test this, it is imperative that you clear your browser cache. This whole bug revolves around eager caching, so you won't see any results until you do so. If you're using Google Chrome, you may want to try Incognito Mode for this.
-
-Now the back button is returning the expected result, and things are looking and feeling much better.
+Reload the page, and you should have working filter buttons now!
