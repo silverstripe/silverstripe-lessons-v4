@@ -1,217 +1,397 @@
+In this lesson we'll talk about filtering a list of items on a template. In a previous tutorial, we looked at filtering through form inputs. Now, we'll explore how to do that through the navigation.
+
 ## What we'll cover
-* What are we working towards?
-* Updating the template: Working backwards
-* Updating the controller to use generic data
+* Setting up new relationships
+* Adding lists of filter links
+* Setting up the filtered routes
+* Adding filtered link methods to DataObjects
+* Filtering through controller actions
+* Adding filter headers
 
-## What are we working towards?
+Having a rich supply of data to work with is paramount to getting value out of this lesson, so once you get the code changes in place, it's a good idea to import the `database.sql` file that is included in the completed version of this lesson. It will provide you with a hundred or so randomly composed `ArticlePage` records that we'll be filtering.
 
-Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. Often times, however, the template and the database are not so tightly coupled. There's actually no rule saying that all template data has to come from the database
+## Setting up new relationships
 
-Ultimately what we're teaching in this lesson is the concept of *composable UI elements*. As you may know, composable components are a rapidly accelerating trend in application development as developers and designers seek to maintain a high level of agility and reusability.
+Looking at our Travel Guides page, we see that there are a number of different filters we can apply in the sidebar. We have a list of categories, an archive of previous months and years, as well as tags. We won't be using tags for these articles, so let's remove that. We'll be replacing it with a filter for regions, because, optionally, each of these travel guides can pertain to a region.
 
-Being composable, these components are essentially "dumb" and only really know how to do one thing, which is render some UI based on the configuration that has been passed to them, which is what we'll call a *composition*.
+Before we add the filter, let's set up that relationship. We'll add a `has_one` to `Region` on `ArticlePage` and a `has_many` from `Region` back to `ArticlePage`.
 
-In the context of our project, we'll be lighting up the search filter toggle buttons in the sidebar of our property search page. The purpose of these buttons is to show the user what search filters have been applied, and to offer an option to remove them and refresh the search page.
-
-## Updating the template: Working backwards
-
-A lot of developers, including myself, find it easier to work backwards with problems like this, which means starting from the template and adding the backend afterward. Let's look at these filter buttons and try to abtract them into something we can use.
-
-As we can see, they're all statically contained in a `ul` tag at the moment.
-
-```html
-<ul class="chzn-choices">
-   <li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
-   <li class="search-choice"><span>Residential</span><a href="#" class="search-choice-close"></a></li>
-   <li class="search-choice"><span>3 bedrooms</span><a href="#" class="search-choice-close"></a></li>
-   <li class="search-choice"><span>2 bathrooms</span><a href="#" class="search-choice-close"></a></li>
-   <li class="search-choice"><span>Min. $150</span><a href="#" class="search-choice-close"></a></li>
-   <li class="search-choice"><span>Min. $400</span><a href="#" class="search-choice-close"></a></li>
-</ul>
-```
-
-### The wrong way to do it
-
-One approach that may come to mind is using a long series of display logic to output all of the possible options, like so:
-
-```html
-<ul class="chzn-choices">
-<% if $LocationFilter %>
-   <li class="search-choice"><span>$LocationFilter</span><a href="#" class="search-choice-close"></a></li>
-<% end_if %>
-
-<% if $BedroomFilter %>
-   <li class="search-choice"><span>$BedroomFilter bedrooms</span><a href="#" class="search-choice-close"></a></li>
-<% end_if %>
-
-<!-- etc... -->
-</ul>
-```
-
-This might look reasonable at first, it's going to lead to nothing but problems. There are a number of things wrong with this approach.
-
-* It pollutes your template with syntax, and a lot of repeated markup
-* It pollutes your controller with a lot of repetative property assignments and/or methods
-* It creates more parity between your controller and your template. If you ever want to add or remove a new search option, you have to remember to update the template.
-* We have to repurpose the *value* of the filter as its *label*, e.g. `$BedroomFilter bedrooms`, and at some point that's just not going to work. Search filters are often not human-readable, such as IDs.
-
-### A better approach
-
-If the sight of `li` tags nested in a `ul` is becoming almost synonymous with the `<% loop %>` control to you, that's a good sign. We're definitely going to need a loop here. This will keep the UI much cleaner, and it will give us more control over the output, as we'll have a chance to *compose* each member of the loop. Let's add that now, and make up the rest as we go.
-
-```html
-<ul class="chzn-choices">
-   <% loop $ActiveFilters %>
-     	<li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
-   <% end_loop %>
-</ul>
-```
-
-Make sense so far? Again, we're working backwards, so the `$ActiveFilters` piece is merely semantic right now. 
-
-Let's now just go through brainstorm some property names for all the dynamic content.
-
-```html
-<% if $ActiveFilters %>
-<div class="chzn-container-multi">
-  <ul class="chzn-choices">
-     <% loop $ActiveFilters %>
-        <li class="search-choice"><span>$Label</span><a href="$RemoveLink" class="search-choice-close"></a></li>
-     <% end_loop %>
-  </ul>
-</div>
-<% end_if %>
-```
-
-We've added the properties `$Label` and `$RemoveLink`, which we can assume are the only two distinguishing traits of each filter button.
-
-## Updating the controller
-
-Now that our template syntax is in place, we need to configure the controller to feed this data to the template. We could write a new method called `ActiveFilters()` (or `getActiveFilters()`) that inspects the request and returns something, but given that there's only one endpoint for our search page, I think it makes more sense at this point in the project to create the filter UI elements as they're being applied to the list.
-
-### Creating an arbitrary list
-
-In order to invoke the `<% loop %>` block, we of course will need some kind of iteratable list. So far, we've been using `SilverStripe\ORM\DataList`, which represents a list of records associated with a database query. Since our filter UI elements are not coming from the database, we'll need something more primitive. In this case, `SilverStripe\ORM\ArrayList` is an ideal choice.
-
-At the top of our `index()` action, let's instantiate that list.
-
-*mysite/code/PropertySearchPageController.php*
+*mysite/code/ArticlePage.php*
 ```php
 //...
-use SilverStripe\ORM\ArrayList;
+	private static $has_one = [
+		'Photo' => Image::class,
+		'Brochure' => File::class,
+		'Region' => Region::class,
+	];
+//...
 
-class PropertySearchPageController extends PageController
-{
-	public function index(HTTPRequest $request)
+	public function getCMSFields()
 	{
-		$properties = Property::get();
-		$activeFilters = ArrayList::create();
-	
 		//...
+		$fields->addFieldToTab('Root.Main', DropdownField::create(
+			'RegionID',
+			'Region',
+			Region::get()->map('ID','Title')
+		)->setEmptyString('-- None --'), 'Content');
+
+		return $fields;
+
 	}
-	//...
 ```
-Now, we just need to fill our list with data.
 
-### Remember ViewableData?
-To populate the list, we'll revisit our old friend `SilverStripe\View\ViewableData` from the previous tutorial. Just as a recap, `ViewableData` is a primitive object that is ready to be rendered on a template. One type of `ViewableData` is `DataObject`, which we've been using all along to render content from the database.
-
-You will rarely need to use the `ViewableData` class itself, but its immediate descendant, `SilverStripe\View\ArrayData` is very flexible and couldn't be simpler to implement. It's basically just a glorified array. All you have to do is instantiate it with an array of key/value pairs that will translate to `$Variable` template variables, and render their associated values.
-
-Let's add the filter for the `Keywords` filter.
-
-*mysite/code/PropertySearchPageController.php*
+*mysite/code/Region.php*
 ```php
 //...
-use SilverStripe\View\ArrayData;
-use SilverStripe\Control\HTTP;
+	private static $has_many = [
+		'Articles' => ArticlePage::class,
+	];
+//...
+```
 
-class PropertySearchPageController extends PageController
-{
+Run a `dev/build?flush`. If you've already done the database import, there should be no changes to the database, but it's still critical to update the model.
 
-	public function index(HTTPRequest $request)
+## Adding lists of filter links
+
+Now we can get into the meat of the lesson and start creating some filters.Let's look at our `ArticleHolderController` and make sure it can feed regions into its sidebar. Add a method called `Regions()` to `ArticleHolder` that simply dumps out all the regions on the Regions page.
+
+*mysite/code/ArticleHolder.php*
+```php
+//...
+class ArticleHolder extends Page {
+
+  //...
+	public function Regions ()
 	{
-		
-		//...
-		
-		if ($search = $request->getVar('Keywords')) {
-			$activeFilters->push(ArrayData::create([
-				'Label' => "Keywords: '$search'",
-				'RemoveLink' => HTTP::setGetVar('Keywords', null, null, '&'),
-			]));
+		$page = RegionsPage::get()->first();
 
-			$properties = $properties->filter([
-				'Title:PartialMatch' => $search
-			]);
+		if($page) {
+			return $page->Regions();
 		}
-		
-		//..
-
-```
-
-Using the `push()` method on `ArrayList`, we add `ArrayData` objects to it. Each one has `Label` and `RemoveLink` properties, as required by the template. The `RemoveLink` property implements an obscure utility method from the `SilverStripe\Control\HTTP` helper class. All it does is take the current URI and set a given query parameter to a given value. In this case, we're setting it to `null` to effectively remove the filter.
-
-The next filter is for the availability date range. It actually doesn't offer a whole lot of utility to the user to display this as a toggleable filter, especially since it's actually a composite filter of `ArrivalDate` and `Nights`, so let's skip this one.
-
-The next several, which are all part of our tidy loop, are pretty straightforward. We'll add another member to the `$filterKeys` list, which will be a `sprintf()` compatible template to generate the label for each filter.
-
-*mysite/code/PropertySearchPageController.php*
-```php
-	public function index(HTTPRequest $request)
-	{
-		
-		//...
-
-    $filters = [
-        ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual', '%s bedrooms'],
-        ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual', '%s bathrooms'],
-        ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual', 'Min. $%s'],
-        ['MaxPrice', 'PricePerNight', 'LessThanOrEqual', 'Max. $%s'],
-    ];
-
-    foreach($filters as $filterKeys) {
-        list($getVar, $field, $filter, $labelTemplate) = $filterKeys;
-        if ($value = $request->getVar($getVar)) {
-            $activeFilters->push(ArrayData::create([
-                'Label' => sprintf($labelTemplate, $value),
-                'RemoveLink' => HTTP::setGetVar($getVar, null, null, '&'),
-            ]));
-
-            $properties = $properties->filter([
-                "{$field}:{$filter}" => $value
-            ]);
-        }
-    }
-
-		//...
 	}
+  //...
+```
+In practice, you'd probably want to add a `sort()` and/or `limit()` to that list, but for demonstration purposes, a generic query will do fine.
 
+Note that we don't just want to dump out `Region::get()`. This is a common mistake. If the Regions page were ever deleted and replaced, you'd end up with orphaned Regions that would then end up in that list.
+
+We'll need to add these to the template. Replace the "tags" section with the list of regions.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+```html
+	</div>
+	<!-- END  ARCHIVES ACCORDION -->
+					
+	<h2 class="section-title">Regions</h2>
+	<ul class="categories">
+	<% loop $Regions %>
+		<li><a href="$ArticlesLink">$Title <span>($Articles.count)</span></a></li>
+	<% end_loop %>
+	</ul>
+	
+	<!-- BEGIN LATEST NEWS -->
+	<h2 class="section-title">Latest News</h2>
 ```
 
-### Passing the filters to the template
+Getting the number of articles associated with the region is a simple call to the `Articles` relation. Every list in SilverStripe (the `SS_List` interface) exposes a `count()` method.
 
-Just like our custom variable `Results`, we'll pass the `ActiveFilters` list to the template through an array.
+Notice that we're calling a non-existent method on `Region` called `$ArticlesLink`. This will return a URL to the Travel Guides section with the appropriate region filter applied. Don't worry about that just yet. We'll create it later in this lesson. It's just a placeholder for now.
 
-*mysite/code/PropertySearchPageController.php*
-```php
-	public function index(HTTPRequest $request)
-	{
+While we're in this section, we should light up the list of categories in the sidebar. This is actually a bit easier than the list of regions, because `ArticleHolder` already has a `has_many` for `Categories`.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+```html
+	<!-- BEGIN SIDEBAR -->
+	<div class="sidebar gray col-sm-4">
 		
-		//...
+		<h2 class="section-title">Categories</h2>
+		<ul class="categories">
+		<% loop $Categories %>
+			<li><a href="$Link">$Title <span>($Articles.count)</span></a></li>
+		<% end_loop %>
+		</ul>
+```
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)->setPageLength(15)
-		 ->setPaginationGetVar('s');
+Again, we invoke the aggregate method `count()` against the `ArticleCategory` object to get the number of articles it relates to. We can do this thanks to the `belongs_many_many` we defined on `ArticleCategory`.
 
-		$data = array (
-			'Results' => $paginatedProperties,
-			'ActiveFilters' => $activeFilters			
+Take a look in *ArticleCategory.php*. Remember this?
+```php
+	private static $belongs_many_many = [
+		'Articles' => ArticlePage::class,
+	];
+```
+
+It's now coming in really useful!
+
+Like we did before, we've called a non-existent `Link()` method on the category object that we'll define later. 
+
+Refresh the page and see that our categories are appearing correctly.
+
+If you're wondering about the difference in semantics (`ArticlesLink()` vs `Link()`), it's just a matter of context. An `ArticleCategory` object's canonical link should be to a list of articles. It really isn't used anywhere else. A region, however, has its own detail page, so `Link()` is already claimed for that canonical state. Using a region to filter a list of articles is a special use of a region, so we should use a specially named method.
+
+We're going to save the date archive links until the next lesson, as it introduces some complexity, but we'll lay down the basics. Let's get a few things working before we dive into that.
+
+## Setting up the filtered routes
+
+Let's think about what we want out of these links. We essentially have four states:
+
+* The default state (no filters)
+* Filtered by region
+* Filtered by category
+* Filtered by date
+
+A good place to start is to envision what you want the routes to look like for each one of these states. We can pretty easily imagine something like this:
+
+* `travel-guides/region/123` (show articles related to Region ID #123)
+* `travel-guides/category/123` (show articles related to Category ID #123)
+* `travel-guides/date/2017/05` (show articles from May 2017)
+
+Optionally, it may be nice if we allowed the user to omit the month to show an entire year. Intuitive and semantically correct URL routes always earn big points.
+
+The first thing we'll need in our controller is a list of allowed actions.
+
+*mysite/code/ArticleHolderController.php*
+```php
+//...
+class ArticleHolderController extends PageController
+{
+
+	private static $allowed_actions = [
+		'category',
+		'region',
+		'date'
+	];
+```
+
+Since we've updated a private static variable, be sure to run `?flush` at this point.
+
+## Adding filtered link methods to DataObjects
+
+Now that we know what our routes will look like, let's get back to the `Region` and `ArticleCategory` classes to define those link methods.
+
+*mysite/code/Region.php*
+```php
+  //...
+	public function ArticlesLink()
+	{
+		$page = ArticleHolder::get()->first();
+
+		if($page) {
+			return $page->Link('region/'.$this->ID);
+		}
+	}
+  //...
+```
+
+It's always a good idea to put a guard around the page actually existing. Never assume that the site tree will always be the same. This can cause real problems when a user has installed the project from the code repository but has not yet imported a database.
+
+Interesting to note, the `LinkingMode()` method in our `Region` object is agnostic enough to still work on our `ArticleHolder` page:
+
+```php
+	public function LinkingMode()
+	{
+		return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
+	}
+```
+
+Let's now add the `Link()` method to the categories.
+
+*mysite/code/ArticleCategory.php*
+```php
+   //...
+	public function Link()
+	{
+		return $this->ArticleHolder()->Link(
+			'category/'.$this->ID
+		);
+	}
+  //...
+```
+
+Refresh the page and see that the categories and regions link to the correct URLs.
+
+
+## Filtering through controller actions
+
+Let's start by defining the base list of articles. We know at minimum that we want only articles that are children of this page, sorted in reverse chronological order. `ArticlePage::get()->sort('Date DESC')` may yield the same thing, but in the long term, that's not a great solution. We may someday have multiple `ArticleHolder` pages.
+
+Ultimately what we want is for the controller to start with this base list, and each controller action will filter it down further. This is a great use case for the `init()` method, as it is executed before any actions.
+
+*mysite/code/ArticleHolderController.php*
+```php
+//...
+class ArticleHolderController extends PageController
+{
+
+	//...
+
+	protected $articleList;
+
+	protected function init ()
+	{
+		parent::init();
+
+		$this->articleList = ArticlePage::get()->filter([
+			'ParentID' => $this->ID
+		])->sort('Date DESC');
+	}
+```
+
+If you're wondering why we don't just use `Children()`, which effectively does the same thing, that's because `Children()` is a special method that modifies its list post-query. It actually returns an `ArrayList`, not a `DataList`, which would preclude us from adding filters.
+
+We're going to want the articles paginated, so let's create a method that applies a `PaginatedList` to the `$articleList` member variable. This will be our single point of access to the list of articles that we're building.
+
+*mysite/code/ArticleHolderController.php*
+```php
+//...
+use SilverStripe\ORM\PaginatedList;
+
+class ArticleHolderController extends PageController
+{
+  //...
+	public function PaginatedArticles ($num = 10)
+	{		
+		return PaginatedList::create(
+			$this->articleList,
+			$this->getRequest()
+		)->setPageLength($num);
+	}
+```
+
+Back in the template, change the `<% loop %>` block to use the `$PaginatedArticles` method.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+```html
+	<div id="blog-listing" class="list-style clearfix">
+		<div class="row">
+			<% loop $PaginatedArticles %>
+			<div class="item col-md-6">
+			<!-- .... -->
+			</div>
+			<% end_loop %>
+```
+
+For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax. We'll address this duplication in an upcoming lesson.
+
+Take a deep breath, and copy and paste away. No one will know. Just make sure you change `$Results` to `$PaginatedArticles`.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+```html
+	<!-- BEGIN PAGINATION -->
+	<% if $PaginatedArticles.MoreThanOnePage %>
+	<div class="pagination">
+		<% if $PaginatedArticles.NotFirstPage %>
+		<ul id="previous col-xs-6">
+			<li><a href="$PaginatedArticles.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
+		</ul>
+		<% end_if %>
+		<ul class="hidden-xs">
+			<% loop $PaginatedArticles.PaginationSummary %>
+				<% if $Link %>
+					<li <% if $CurrentBool %>class="active"<% end_if %>>
+						<a href="$Link">$PageNum</a>
+					</li>
+				<% else %>
+					<li>...</li>
+				<% end_if %>
+			<% end_loop %>
+		</ul>
+		<% if $PaginatedArticles.NotLastPage %>
+		<ul id="next col-xs-6">
+			<li><a href="$PaginatedArticles.NextLink"><i class="fa fa-chevron-right"></i></a></li>
+		</ul>
+		<% end_if %>
+	</div>
+	<% end_if %>
+	<!-- END PAGINATION -->
+```
+
+Now we're ready to add our first filter, for category. Let's define the `category()` action.
+
+*mysite/code/ArticleHolderController.php*
+```php
+use SilverStripe\Control\HTTPRequest;
+
+class ArticleHolderController extends PageController
+{
+	
+	//...
+	public function category (HTTPRequest $r)
+	{
+		$category = ArticleCategory::get()->byID(
+			$r->param('ID')
 		);
 
-		//...
+		if(!$category) {
+			return $this->httpError(404,'That category was not found');
+		}
+
+		$this->articleList = $this->articleList->filter([
+			'Categories.ID' => $category->ID
+		]);
+
+		return [
+			'SelectedCategory' => $category
+		];
 	}
 ```
 
-Reload the page, and you should have working filter buttons now!
+We start first by checking if the category exists. If not, we throw a 404. Then, we update the article list by filtering the current one against the `many_many` relation, `Categories`. This is a wonderful example of the power of the ORM. Its abstraction layer allows us to filter by a parameter that is not necessarily a field in the database, but rather, a named relationship in our code. The filter `Categories.ID => $category->ID` simply asks for all the articles that contain the given category ID in their list of their related category IDs.
+
+At the end of the function, we return the selected category to the template. This will be important when adding text to the page that shows the filtered state.
+
+Notice also that we don't return a list of articles in the controller action. The articles are going to be paginated, and we want to avoid the redundancy of creating a `PaginatedList` in each controller action. We'll create a central place for that to happen in just a bit.
+
+Test it out and see that the new filtered category state is working as expected.
+
+Let's add our next filter for regions. It will work much the same way.
+
+*mysite/code/ArticleHolderController.php*
+```php
+//...
+use SilverStripe\Control\HTTPRequest;
+
+class ArticleHolderController extends PageController
+{
+	//...
+
+	public function region (HTTPRequest $r)
+	{
+		$region = Region::get()->byID(
+			$r->param('ID')
+		);
+
+		if(!$region) {
+			return $this->httpError(404,'That region was not found');
+		}
+
+		$this->articleList = $this->articleList->filter([
+			'RegionID' => $region->ID
+		]);
+
+		return [
+			'SelectedRegion' => $region
+		];
+	}
+```
+
+Test the regions filter in your browser and see that it's working.
+
+## Adding filter headers
+
+The last thing we need to do is pull our filter headers into the listings to show the user the state of the list. Each controller action returns its own custom template variables that we can check.
+
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+```html
+	<div id="blog-listing" class="list-style clearfix">
+		<div class="row">
+			<% if $SelectedRegion %>
+				<h3>Region: $SelectedRegion.Title</h3>
+			<% else_if $SelectedCategory %>
+				<h3>Category: $SelectedCategory.Title</h3>
+			<% end_if %>
+
+```
+Give that a try and see that you now get some nice headings showing the state of the list.
+
+One missing piece you'll notice is that the detail page still has a static sidebar. Getting this to work requires teaching a new concept, and we'll address that in the next couple of lessons.
