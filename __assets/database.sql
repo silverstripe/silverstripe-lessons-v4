@@ -1083,6 +1083,11 @@ CREATE TABLE `SiteConfig` (
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers') DEFAULT 'Anyone',
   `CanEditType` enum('LoggedInUsers','OnlyTheseUsers') DEFAULT 'LoggedInUsers',
   `CanCreateTopLevelType` enum('LoggedInUsers','OnlyTheseUsers') DEFAULT 'LoggedInUsers',
+  `FacebookLink` varchar(255) DEFAULT NULL,
+  `TwitterLink` varchar(255) DEFAULT NULL,
+  `GoogleLink` varchar(255) DEFAULT NULL,
+  `YouTubeLink` varchar(255) DEFAULT NULL,
+  `FooterContent` mediumtext,
   PRIMARY KEY (`ID`),
   KEY `ClassName` (`ClassName`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -1094,7 +1099,7 @@ CREATE TABLE `SiteConfig` (
 
 LOCK TABLES `SiteConfig` WRITE;
 /*!40000 ALTER TABLE `SiteConfig` DISABLE KEYS */;
-INSERT INTO `SiteConfig` VALUES (1,'SilverStripe\\SiteConfig\\SiteConfig','2017-09-12 11:04:00','2017-09-12 11:04:00','Your Site Name','your tagline here','Anyone','LoggedInUsers','LoggedInUsers');
+INSERT INTO `SiteConfig` VALUES (1,'SilverStripe\\SiteConfig\\SiteConfig','2017-09-25 13:56:01','2017-09-12 11:04:00','Your Site Name','your tagline here','Anyone','LoggedInUsers','LoggedInUsers','https://facebook.com','https://twitter.com','https://google.com','https://youtube.com',NULL);
 /*!40000 ALTER TABLE `SiteConfig` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1515,4 +1520,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-09-14 16:54:34
+-- Dump completed on 2017-09-25 13:58:02
