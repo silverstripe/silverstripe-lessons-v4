@@ -28,16 +28,16 @@ class PageController extends ContentController
     protected function init()
     {
         parent::init();
-		Requirements::themedCSS("bootstrap.min");
-		Requirements::themedCSS("style");
-		Requirements::themedJavascript("common/modernizr");
-		Requirements::themedJavascript("common/jquery-1.11.1.min");
-		Requirements::themedJavascript("common/bootstrap.min");
-		Requirements::themedJavascript("common/bootstrap-datepicker");
-		Requirements::themedJavascript("common/chosen.min");
-		Requirements::themedJavascript("common/bootstrap-checkbox");
-		Requirements::themedJavascript("common/nice-scroll");
-		Requirements::themedJavascript("common/jquery-browser");
-		Requirements::themedJavascript("scripts");
+        Requirements::themedCSS("bootstrap.min");
+        Requirements::themedCSS("style");
+        Requirements::themedJavascript("common/modernizr");
+        Requirements::themedJavascript("common/jquery-1.11.1.min");
+        Requirements::themedJavascript("common/bootstrap.min");
+        Requirements::themedJavascript("common/bootstrap-datepicker");
+        Requirements::themedJavascript("common/chosen.min");
+        Requirements::themedJavascript("common/bootstrap-checkbox");
+        Requirements::themedJavascript("common/nice-scroll");
+        Requirements::themedJavascript("common/jquery-browser");
+        Requirements::themedJavascript("scripts");
     }
 }
