@@ -1,220 +1,332 @@
-### Taking inventory of custom fields
+Let's take a quick look at the gaps we're trying to close in this tutorial. First, we see that the list view of articles has a small image on the left that ostensibly represents a photo that is associated with the article. On the detail view, we have a larger photo. The design doesn't explicitly dictate whether these are different images or the same image just sized differently, but for the purposes of this tutorial, we're going to assume the user only has to upload a single image.
 
-In the previous lesson, we developed a structure for our **Travel Guides** section that provides a list view of articles, each with a link to their own detail page. Most of these templates are still hardcoded with static content, however, and need to be integrated with the CMS. In this lesson, we'll start looking at how to add some custom fields to these pages to make them really come to life.
+The client has also informed us that he will sometimes want to attach a PDF travel brochure to each travel guide, so we'll need to make a provision in the CMS for a file upload as well.
 
-Let's first look at the list page and see if we can identify some fields that will be need to be editable in the CMS. At first glance, the following fields stand out:
+### Common approaches to file storage against database records
 
-**The date of the article**: Every record in is timestamped with its creation time, which is contained in the `$Created` variable. This could work in a pinch, but most of the time, content authors will want to use a custom date for the articles, since the date they are created is not necessarily they are published to the website. We'll therefore need to create a custom field for the date.
+If you've used other web application frameworks or CMS's, you may have a few ideas about how files can be persisted to database records. Let's cover a few common approaches:
 
-**The number of comments**: We can skip this one for now, as that will be addressed when we cover adding comments to the articles.
+##### 1. Save a local file path to a text field on the record
 
-**The list of categories**: This is another piece that we can cover in a future lesson that will cover handling data relationships.
+While this solution scores a lot of points for its simplicity, it has serious shortcomings in its longevity. If the file ever moves to a different place, you have to backfill the records that refer to the file with the new path, which makes this a particularly fragile method.
 
-**The image**: Each article should have its own image that will render as a thumbnail in list view and full size on the detail page. We'll need the CMS to provide an image uploader for each article, which is a bit out of scope for this lesson, so we'll skip it for now.
+##### 2. Upload the file to a CDN, and save an absolute URI to the file on the record
 
-**The teaser**: The short snippet of text that appears in list view to give a preview of the article contents is often called a "teaser." Often times, this is just the first sentence or paragraph of the article, but to give the content author more control, we'll provide a custom field for the teaser. If it isn't populated, we'll fallback on the first sentence of the article. That will cover our bases nicely.
+This is a wonderfully scalable solution, as it leverages the nearly infinite storage limits of cloud hosting. Cloud hosted files tend to be pretty robust and permanent, so it's unlikely to have the same syncing issues as a local file, but pulling the file remotely hampers our ability to manipulate it, as we're working over HTTP rather than the local file system.
 
-Clicking through to the detail page, we see that one additional field has been added for the **author** of the post.
+##### 3. Store the file in a BLOB field
 
-### Adding new database fields
+Blobs are a special type database field that store arbitrary binary data, which makes them a great candidate for persisting files. Since it allows you to basically upload directly into the record, this approach has none of the syncing issues that you have with a filesystem, which makes it fairly reliable. The downside is that you can very quickly bloat your database, and it presents a poor separation of concerns. Your database can quickly become repurposed into a de-facto file server if you're not judicious about how much you're using it.
 
-Since all these fields appear on the `ArticlePage` records, we'll only need to be working with that class. Remember, even though we see the fields on the `ArticleHolder` template, it doesn't necessarily mean those fields belong to the ArticleHolder. In this case, they appear in a loop of `ArticlePage` records, so that's where we'll define them. It's very important to maintain a clear conceptual separation of the template and the model.
+All of these techniques make sense in certain contexts, of course, but a framework tries to serve a broad range of implementations, and SilverStripe therefore chooses its own flavour of file storage that balances ease of use, reliability, and scalability.
 
-Let's define a new private static variable in `ArticlePage.php` called `$db`. Set it to an empty array.
+### How SilverStripe handles files
+
+As of the 4.0 release, all of the above approaches are possible through configuration. In SilverStripe, the storage of files and all of its moving pieces have been abstracted and exposed to the user as composable services. A `File` object doesn't need to know anything about where files live or how to stream them to the browser. As long as a service is in place to provide the mechanics to do that, files will use it to do what they need to do, without regard for how the internals work. Fortunately, SilverStripe comes pre-configured with a fairily common and robust implementation of file storage that you should only have to override if you have specific needs, such as storage in a CDN like Amazon S3.
+
+Fundamentally, files in SilverStripe are objects, with its their own table in the database, which essentially keeps a leger of all the files in the filesystem. The responsibility of keeping it in sync is left entirely to these file records. Any pages or other types of database content that rely on files do not have to worry about this problem. Instead, all they need to store is the `ID` of the file they need. An `ID`, as you might know, is considered immutable in the database world, and therefore, no matter what happens to the file -- whether it moves, changes its name, or gets replaced -- the page doesn't need to be informed. It retains the `ID` of the file, and can acquire all of its metadata when it needs to.
+
+
+### Introducing the has_one
+
+So far we've been talking about fields that are native to the page type. `$Author`, `$Date`, and `$Teaser` are all stored on the `ArticlePage` table, and are stored in the `$db` array. Sometimes fields are stored on foreign table, and all the native table needs is a reference to the `ID` of the foreign record. The main advantage of this design is that if the foreign content ever changes, all the records who refer to it don't need to worry about staying up to date.
+
+To relate a page type to a foreign object, you might think all you need is afield in the `$db` array, cast as an `Int`, storing the ID of the foreign record. That's an option, but it's much more clean to set up that field as a foreign key, so that both the database and the SilverStripe framework will know how to handle it properly.
+
+Let's create a new private static array in the `ArticlePage` class called `$has_one`. This works much like the `$db` array, only instead of mapping the field names to field types, we'll map them to the class name (or table name) of the related object. Let's call our image field "Photo" and our file field "Brochure".
 
 ```php
+namespace SilverStripe\Lessons;
+
+use SilverStripe\Assets\Image;
+use SilverStripe\Assets\File;
+
 class ArticlePage extends Page 
 {
- 
-  private static $db = [];
-  
+
+    // ...
+
+    private static $has_one = [
+  		'Photo' => Image::class,
+  		'Brochure' => File::class
+  	];
+
+  	// …
 }
 ```
 
-The `$db` array is the cornerstone of data modelling in SilverStripe. Its function is pretty simple -- it maps a field name to a field type. So the keys of the array are going to represent the variables that you can invoke on the object, such as `$Content`, `$Title`, etc, and the values of the array will be the field type. We'll talk more about field types in just a moment, but for now, let's populate this array with the fields we need.
+Notice that `Image` has its own class. Appropriately, it's a subclass of `File`, but offers its own set of special features, particularly around resizing and resampling.
+
+Run `dev/build` and notice the new fields that are created. They take on the names `PhotoID` and `BrochureID`. SilverStripe automatically appends `ID` to any `$has_one` field. After all, the only thing that will be stored here is the `ID` of a foreign record.
+
+### Adding file upload fields
+
+Let's now add some upload functionality to our `getCMSFields` function. For file relations, `UploadField` is the best choice. For tidiness, we'll put the uploaders on their own tab.
 
 ```php
+namespace SilverStripe\Lessons;
+
+use SilverStripe\Assets\Image;
+use SilverStripe\Assets\File;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+
 class ArticlePage extends Page 
 {
+  	// ...
+  	public function getCMSFields() {
+         $fields = parent::getCMSFields();
+         // ...
 
-  private static $db = [
-    'Date' => 'Date',
-    'Teaser' => 'Text',
-    'Author' => 'Varchar',
-  ];
+         $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
+         $fields->addFieldToTab('Root.Attachments', UploadField::create('Brochure','Travel brochure, optional (PDF only)'));
+
+    	   return $fields;
+    }
+}
 ```
 
-We've defined a field called `$Date` that will store, appropriately, as a date. The `$Teaser` field will be simple text, and the `$Author` field will also be text, but since we know it will contain a short string of characters (a person's name), we can declare this as a `Varchar`, which by default is limited to 100 characters.
+Log into the CMS and try uploading a few files. Save, and see that the fields hold their state.
 
-Since we made changes to the database, let's run `/dev/build` and we should see some green text indicating that new fields were created.
+This works well, but we can tighten it up a bit. First, giving a written indication of the file type we're expecting (PDF) is good, but it would be better if we could actually enforce that constraint. After all, we should always expect that if it can be broken, a user will break it.
 
-### About Field Types
-
-If you've done a bit of databasing, you're probably familiar with field types. Simply put, it's a bit of metadata that informs the database what type of data will be stored in a given column. There are a number of reasons why this is a good idea. First, it wouldn't make sense to allocate the same amount of memory to a field that will only ever contain a postal code as you would a field that will contain 100,000 words of content. Second, by assigning a field type, the database can interact with each column in its own way, for instance, two date fields will compare differently than two text fields, and trying to store the text "lol fail" in a decimal field will simply... fail.
-
-Common field types in MySQL include:
-
-*   **Varchar**: A string of characters, with variable length
-*   **Boolean**: True or false values
-*   **Integer**: A number, with no decimals
-*   **Date**: The year, month, and day
-
-And many, many more.
-
-SilverStripe puts its own layer of abstraction over these database field types. While many of them overlap, such as "Varchar," "Boolean," and "Date," a lot of them are unique to the SilverStripe Framework, as well. This is because a field type in SilverStripe not only informs the database how to store the data, but also how the template should display the data. For instance, a field with the type `Text` is will escape any HTML, but `HTMLText` will not. In the database, they're both stored as `Text`, but the custom field type `HTMLText` has a very important effect on how SilverStripe handles the rendering of the data. We'll talk more about all the features afforded by custom field types in future lessons, but for now, it is important to be mindful of what kinds of data you expect to be storing in each field and how you will display it.
-
-So how do you know which field types are available? Your best resource in this case is the source code. Just browse `framework/src/ORM/FieldType` and you'll see a list of PHP classes whose names can all be used as field types. In version 4, they include:
-
-* DBBigint
-* DBBoolean
-* DBClassName
-* DBComposite
-* DBCurrency
-* DBDate
-* DBDatetime
-* DBDecimal
-* DBDouble
-* DBEnum
-* DBField
-* DBFloat
-* DBForeignKey
-* DBHTMLText
-* DBHTMLVarchar
-* DBIndexable
-* DBInt
-* DBLocale
-* DBMoney
-* DBMultiEnum
-* DBPercentage
-* DBPolymorphicForeignKey
-* DBPrimaryKey
-* DBString
-* DBText
-* DBTime
-* DBVarchar
-* DBYear
-
-Note that while all these field types are prefixed with `DB`, most of them are aliased so that they will work in the `$db` array without that prefix, e.g. `SilverStripe\ORM\FieldType\DBVarchar` can be referred to simply with `Varchar`.
-
-It looks a bit daunting, but rest assured that 90% of the time, you're going to using one of six or seven common field types.
-
-### Adding CMS Interface
-
-Our database is ready to store these new fields on our page type, so now it's time to offer the user a way to populate those fields in the CMS. Once again, we'll be dealing strictly with the **ArticlePage** class for this.
-
-Let's define a new method that exposes the API for updating the CMS interface for this page.
-
-```php
-class ArticlePage extends Page 
-{
-  private static $db = [
-    'Date' => 'Date',
-    'Teaser' => 'Text',
-    'Author' => 'Varchar',
-  ];
-
-  public function getCMSFields() 
-  {
-    $fields = parent::getCMSFields();
-
-    return $fields;
-  }
-```
-
-The method `getCMSFields` is what the CMS invokes to create all of the tabs and fields that we see in the editing interface. It should return a `FieldList` object. By storing the result of `parent::getCMSFields()` in a variable, we can start with all of the fields that are in the parent class. If we skipped this step, the page would be missing many critical fields, such as Title, `Content`, `URLSegment`, etc. We can always remove some of those fields piecemeal, but it's best to start with everything in the parent class and make our changes from there.
-
-In this case, we're going to want three new fields. Let's use the `FieldList` API to add some new form inputs.
-
-```php
-use SilverStripe\Forms\DateField;
-use SilverStripe\Forms\TextareaField;
-use SilverStripe\Forms\TextField;
-
-// ...
-
-  public function getCMSFields() 
-  {
-    $fields = parent::getCMSFields();
-    $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'));   
-    $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser'));
-    $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'));
-
-    return $fields;
-  }
-```
-
-Let's walk through this step by step:
-
-**addFieldToTab('Root.Main')**: The tabs in a field list are identified using dot-separated syntax. This is because tabs can be nested in other tabsets, and digging through several levels to get the one tab set you want to add to would be tedious. The dot-separated string identifier allows you traverse the tab set ancestrally, where the highest level is on the left, and the tab you want to add to is all the way on the right. The 'Root' tab is the highest level tab set, assigned to all pages. Most fields in the CMS are on the "Main" tab, including Title, MenuTitle, and Content, but if you were to choose any arbitrary name, such as ‘Root.Sausages', the FieldList would automatically create that new tab for you.
-
-**[SilverStripe\Forms\FormField]::create()**: Every form input has its own class in SilverStripe, and the number of available form fields reaches far beyond just those that are in the HTML5 specification, for instance, the rich text editor you see in the CMS is an `HtmlEditorField`. Form fields aren't about HTML abstraction so much as they are about creating a UI for storing data. It is not uncommon in a SilverStripe project to create your own custom form fields that offer the rich editing experience you'd like to have.
-
-The first argument of the form field constructor is the field name. This should correspond exactly to the `$db` field it is saving to. The second argument is an optional label for the field. If left null, the label will be the name of the field, as we see in the case of our `Teaser` field.
-
-Let's go into the CMS and edit any ArticlePage. Notice our new fields at the bottom of the page. Try populating them, and ensure that it saves state.
-
-There are a couple usability issues we can address here. One is that the fields are all pinned to the bottom of the page, below the content editor, making it difficult for the user to find. Fortunately, the `addFieldToTab()` method accepts an optional argument to specify an existing field that the new field should come before. In this case, we want these fields before the `Content` field.
-
-```php
-  public function getCMSFields() 
-  {
-    $fields = parent::getCMSFields();
-    $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'),'Content');
-    $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser'),'Content');
-    $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
-
-    return $fields;
-  }
-```
-
-Second, it might not be too clear to the user what "teaser" means. Let's add some help text.
+For this, we'll tap into the UploadField's **validator**.
 
 ```php
   public function getCMSFields()
   {
-    $fields = parent::getCMSFields();
-    $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'), 'Content');
-    $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser')
-    	->setDescription('This is the summary that appears on the article list page.'),
-    	'Content'
-    );
-    $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
+        $fields = parent::getCMSFields();
 
-    return $fields;
+        // ..
+
+        $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
+        $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create(
+          'Brochure',
+          'Travel brochure, optional (PDF only)'
+        ));
+
+        $brochure->getValidator()->setAllowedExtensions(['pdf']);
+
+        return $fields;
   }
 ```
 
-Every form field exposes a public API that you can use to configure the field. Other useful methods include `setMaxLength()` or `setRows()` and `setCols()` for textareas.
+Notice that we can use the shortcut of concurrently adding the field to the tab, and assigning it to a variable. This technique is often used when making updates to form fields after instantiation.
 
+Now when we try to upload anything but a PDF to the brochure field, it refuses it, and throws an error.
 
-Reload the edit screen in the CMS and see that our changes have taken effect.
+It would also be nice if the uploader put all the files in a folder of our choosing. By default, everything will end up in `assets/Uploads`, and that directly can become quite polluted if you don't stay on top of configuring your upload directories.
 
-### Adding the fields to the template
+We can use `setFolderName()` on the `UploadField` to assign a folder, relative to `assets/*. If the folder doesn't exist, it will be created, along with any non-existent ancestors your specify, i.e. "does/not/exist" would create three new folders.
 
-Most of the hard work is done now. It's time to insert all the variables in to our templates to pull in the CMS content. In `ArticleHolder.ss` and `ArticlePage.ss` replace any references to the date with `$Date`, the author with `$Author`, and the teaser with `$Teaser`. Reload the page to see the the articles are pulling in the new content.
+```php
+	public function getCMSFields() {
+          $fields = parent::getCMSFields();
 
-One issue we can see is that the date is not formatting the way it should. Since we casted the field as Date, we have some control over that at the template level. The Long method will give us what we need. Replace $Date with `$Date.Long`.
+          //...
 
-There are a number of other methods available on the Date class to help you get the format you want. You might try `$Date.Nice`, or, if you're in the USA, `$Date.NiceUS` for a format that puts the month first. If all else fails, you can always invoke `$Date.Format` which essentially exposes PHP's date() method, allowing you to pass a string of text to get the format you need.
+          $fields->addFieldToTab('Root.Attachments', $photo = UploadField::create('Photo'));
+          $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create('Brochure','Travel brochure, optional (PDF only)'));
 
-Lastly, we said earlier that we would like the teaser to be an optional field, falling back on the first sentence of the content if it isn't populated. Let's set that up.
+          $photo->setFolderName('travel-photos');
+          $brochure
+            ->setFolderName('travel-brochures')
+            ->getValidator()->setAllowedExtensions(array('pdf'));
+
+          return $fields;
+	}
+```
+Try uploading a new file, and see that it goes to the appropriate place.
+
+### Working with files on the template
+
+Because we declared the file relation as a `$has_one`, we can access the properties of the File record just as if it's a native field. SilverStripe will automatically handle all the querying for us.
+
+Let's make an update to `ArticlePage.ss` to show a download button for the brochure, if one exists. Below `<div class="share-wrapper" />`, add the following:
 
 ```html
-    <div class="info-blog">
-      <ul class="top-info">
-        <li><i class="fa fa-calendar"></i> July 30, 2014</li>
-        <li><i class="fa fa-comments-o"></i> 2</li>
-        <li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
-      </ul>
-      <h3>
-        <a href="$Link">$Title</a>
-      </h3>
-        <% if $Teaser %>
-          <p>$Teaser</p>
-        <% else %>
-          <p>$Content.FirstSentence</p>
-        <% end_if %>
-    </div>
+    <% if $Brochure %>
+      <div class="row">
+        <div class="col-sm-12"><a class="btn btn-warning btn-block" href="$Brochure.URL"> Download brochure ($Brochure.Extension, $Brochure.Size)</a>
+        </div>
+      </div>
+    <% end_if %>
 ```
 
-All text-based field types in SilverStripe offer methods such as `FirstSentence`, `FirstParagraph`, `LimitCharacterCount`, and more, to give you some control over the presentation on the template. Using these methods to create teasers is very common.
+Calling the property `$Brochure`, as defined in our `$has_one` gets us a `File` object with its own set of properties. We'll display some of them, but there are many others made available to you, including `$Brochure.Filename`, `$Brochure.Title`, and more.
+
+Reload the page and give it a test. You should be able to download your PDF.
+
+### The <% with %> block
+
+This file download works great, but we can clean up the template syntax a bit. There are multiple references to properties that we're getting by traversing the `$Brochure` object. We can remove all that dot-separated syntax by wrapping the whole thing in a scope block, known as `<% with %>`.
+
+```html
+    <% if $Brochure %>
+    <div class="row">
+    	<% with $Brochure %>
+    	<div class="col-sm-12">
+    		<a href="$URL" class="btn btn-warning btn-block"><i class="fa fa-download"></i> Download brochure [$Extension] ($Size)</a>					
+    	</div>
+    	<% end_with %>
+    </div>
+    <% end_if %>
+```
+While there's little, if any, performance gain to this approach, some may find it easier to read. Some developers make more use of scope operators than others. Generally speaking, the more properties you're getting of the object, the more utility you'll get out of a `<% with %>` block.
+
+### How image resampling works
+
+You might have noticed that we've only chosen to use a single upload field for what appears to be two different photo sizes -- a small one in list view, and a larger one on the detail view. This is because, when dealing with images, we're only concerned about distinct content. The sizing and resampling of the photos is done on page load through function calls on the template, effectively giving you an unlimited number of different sizes and formats of any given image.
+
+If you're even remotely concerned about page optimisation, the very thought of resampling images on page load is probably turning your stomach. Fortunately, as we'll see in a moment, it's not quite that simple.
+
+Given the image field `Photo`, we can simply invoke `$Photo` to create an image tag for the photo, as it was uploaded, in its raw form. Generally speaking, you want to avoid this, as in most use cases, images can be layout-breaking, and we don't want to blindly trust what a CMS user uploaded (i.e. a 5MB JPEG).
+
+If we invoke a an image resampling function against the photo, we'll get the same image tag, only to a new version of the image, to the size of our choice.
+
+The following syntax will show the photo at a width of 600 pixels, with unconstrained height, reduced proportionately:
+
+```
+    $Photo.ScaleWidth(600)
+```
+
+It's effectively the same as reducing a photo by dragging the corner box while holding the shift key in image editing software.
+
+Does this seem like a lot of overhead to add to your templates? Most of the time, it's almost nothing. Here's how it works:
+
+SilverStripe generates a sku for the resampled image based on the original filename, the resampling method, and the argument(s) passed to it. For example, given the filename "photo.jpeg", the above function will generate an image like this:
+
+`ScaleWidth600-photo.jpeg`
+
+When the `ScaleWidth()` method is called, SilverStripe generates the file name, and checks to see if it exists. If it does, it renders the existing image. If not, it creates it, and returns the path to the new file. Either way, you still get your image tag, and the resampling is transparent to you.
+
+The benefit of this approach is that it's fantastically simple and declarative, but the downside of declarative programming is that it obscures the developer from what is really happening under the hood. In this case, the developer should be aware that the first page load after adding or modifying a resizing function will always be slower than subsequent page loads. How much slower depends on how many images you have. Most of the time, you'll never notice, but it's important to be aware that if you're rendering a lot of new photos (say, 10 or more), you probably want to hit the page once to ensure that all those photos get cached. It is never a good idea to put hundreds of new photos on a page and attempt to resample them all in a single page load, as you're likely to timeout your PHP process.
+
+There are many image resampling functions that ship with the default install of SilverStripe. It's also very easy to create your own, which will cover in another tutorial. Here are a few common methods you might find useful:
+
+<div dir="ltr">
+
+<table>
+
+<tbody>
+
+<tr>
+
+<td>
+
+$Image.ScaleWidth(width)
+
+</td>
+
+<td>
+
+Resize the image proportionately to fit inside the given width
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+$Image.ScaleHeight(height)
+
+</td>
+
+<td>
+
+Resize the image proportionately to fit inside the given height
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+$Image.FixMax(width, height)
+
+</td>
+
+<td>
+
+Force the image to be a certain width and height. If one dimension falls short, add padding.
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+$Image.Fit(width, height)
+
+</td>
+
+<td>
+
+Resize to the given width and height, cropping it if necessary to maintain the aspect ratio.
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+### Adding images to the template
+
+Now that we understand how images work, this last step should be pretty straightforward. On `ArticleHolder.ss`, we see that the photos in list view are about `242x156` pixels. Let's use `CroppedImage` for these, as more important that they maintain a uniform size than it is to show all their content.
+
+Replace the placeholder image in the `<% loop $Children %>` with `$Photo.Fit(242,156)`.
+
+On `ArticlePage.ss`, the photo is larger, and it's important that we show all of its content, since this is the detail view. Let's use `SetWidth(750)` for this one.
+
+Replace the placeholder image in `<div class="blog-main-image" />` with `$Photo.ScaleWidth(750)`.
+
+Reload the page, and see that your images are displaying properly.
+
+### Customising the image tag
+
+As we've stated in previous lessons, the situations where SilverStripe does not give you full control over your HTML are few and far between. Image tags are no exception.
+
+Let's imagine that we need to add a custom class name to our image tag. Right now, our `ScaleWidth()` and `Fit()` functions are outputting the entire string of HTML, so we have no control over that.
+
+The good news is that these methods actually don't return strings of text. They give us an Image object that contains all of the properties we would expect a file to have, such as `$URL`, `$Extension`, `$Size`, and anything we would expect an image to have, such as `$Width`, and `$Height`.
+
+Let's rewrite those template variables to output custom HTML.
+
+```html
+    <img class="my-custom-class" src="$Photo.ScaleWidth(750).URL" alt="" width="$Photo.ScaleWidth(750).Width" height="$Photo.ScaleWidth(750).Height" />
+```
+
+That gets a bit unwieldy, so let's revisit that `<% with %>` block that we used earlier to clean things up a bit.
+```html
+    <% with $Photo.ScaleWidth(750) %>
+    <img class="my-custom-class" src="$URL" alt="" width="$Width" height="$Height" />
+    <% end_with %>
+```
+
+### Adding ownership
+
+Try previewing your article page in another browser, where you're not logged in as an admin. Notice that the images are missing. That's because files, like pages have a published and draft state. As fresh uploads, these files are still in draft.
+
+So how do you publish files? The most obvious way is in the **Files** section of the CMS. But in this case, it would be nice if when we published the article, any attached files became implicitly published as well. For that, we need to declare ownership of the files to ensure they receive publication by association.
+
+```
+class Article extends Page
+{
+	//...
+	private static $owns = [
+		'Photo',
+		'Brochure',
+	];
+}
+```
+
+Now the attached files will be sympathetic to the publication state of their containing page.
