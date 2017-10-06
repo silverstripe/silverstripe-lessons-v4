@@ -20,7 +20,7 @@
 					<ul>
 						<li><i class="fa fa-calendar"></i> July 30, 2014</li>
 						<li><i class="fa fa-comments-o"></i> 3 Comments</li>
-						<li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
+						<li><i class="fa fa-tags"></i> $CategoriesList</li>
 					</ul>
 					
 					<div id="post-author"><i class="fa fa-pencil"></i> By John Doe</div>
