@@ -6,7 +6,7 @@ While the step-by-step details of creating a local web server are out of scope f
 
 ### Virtualisation
 
-Installing a virtual web server, on on your local machine is fast, fairly easy, and eliminates many of the variables and unknowns that are often hasardous to local development. There are a two main players in this space:
+Installing a virtual web server, on on your local machine is fast, fairly easy, and eliminates many of the variables and unknowns that are often hazardous to local development. There are a two main players in this space:
 
 * [Vagrant](https://www.vagrantup.com/), which runs on top of [VirtualBox](https://www.virtualbox.org/wiki/Downloads), providing you a simple configuration layer and tools for running your virtual machine. There are many pre-cooked environments ready for you to download and consume, such as [Scotch Box](https://box.scotch.io/)
 * [Docker](https://www.docker.com/), which creates a "container" for your virtual environment, sharing the same operating system as the the host (your computer).
@@ -27,7 +27,7 @@ While less flexible than building an environment from scratch or using a virtual
 * [AMPPS](http://www.ampps.com/download)
 * [Uniform Server](http://www.uniformserver.com/).
 
-What these products offer in ease of use and simplicity they revoke in the form of flexiblity. They are often pretty rigid and cannot be extended without a lot of work and/or hacking. SilverStripe requires the `php-intl` extension, for instance, which is not included in all of these products.
+What these products offer in ease of use and simplicity they revoke in the form of flexibility. They are often pretty rigid and cannot be extended without a lot of work and/or hacking. SilverStripe requires the `php-intl` extension, for instance, which is not included in any of these products.
 
 
 ## Introducing Composer
@@ -36,7 +36,7 @@ Before we get into installing Composer, we should probably go over what exactly 
 
 ### What is Composer, and why do I need it?
 
-[Composer](https://getcomposer.org/) is a dependency manager for PHP. Dependency managers are increasingly popular these days, especially for front-end libraries. You may have heard of [NPM](https://www.npmjs.com/). At their most fundamental level, dependency managers are simply abstractions of a source code repository. They obscure all the minute details about where the projects live and what branches are available, and they allow you to simply refer to packages semantically by name and by version number. 
+[Composer](https://getcomposer.org/) is a dependency manager for PHP. Dependency managers are increasingly popular these days, especially for front-end libraries; You may have heard of [NPM](https://www.npmjs.com/). At their most fundamental level, dependency managers are simply abstractions of a source code repository. They obscure all the minute details about where the projects live and what branches are available, and they allow you to simply refer to packages semantically by name and by version number. 
 
 A key feature of Composer is that it resolves dependencies. When one module requires one or more other modules in order to work properly, Composer will sort all that out and pull down everything you need. Further, Composer applies version constraints. So if a package requires a module that doesn't work with something you already have installed, it will apprise you of that conflict and halt the installation so that your project doesn't break. 
 
@@ -49,7 +49,7 @@ Let's say you want to get a gallery module for your website. You go out to some 
  
   
 
-Now your project is hosed. You go and find the slideshow module. After some digging, you're able to track it down. You drop it in, hoping this will make your gallery module happy. 
+Now your project is hosed until you satisfy this dependency. So you go and find the slideshow module, and after some digging you're able to track it down. You drop it in, hoping this will make your gallery module happy. 
 
 
 <img width="600" src="https://silverstripe.org/assets/lessons/lessson-0/lesson0-7.png">
@@ -128,11 +128,15 @@ Now that we've installed SilverStripe, let's finely tune our development environ
 
 ### .env
 
-The main ingredient in environment management in SilverStripe is the `.env` file. This file provides a shared configuration across all your projects through the injection of environment variables. It should contain information such as database credentials, as those are most likely to be shared across all your projects. 
+The main ingredient in environment management in SilverStripe is the `.env` file. This file provides a shared configuration across all your projects through the injection of environment variables. It should contain information such as database credentials, as those are most likely to be shared across all of your local development projects. 
 
 It can also include other application settings. You might have API keys or email addresses in there that you want to specify as globally accessible by all projects. 
 
-The key attribute of the `.env` file, however, is that it does not have to ship with the project. It can live outside the web root, outside of source control. When you deploy this project from your local environment to somewhere else, that remote environment might have its own configuration, so having the file outside the project means you don't have to worry about overriding settings.
+The key attribute of the `.env` file, however, is that it should not ship with the project. It can live outside the web root, outside of source control. When you deploy this project from your local environment to somewhere else, that remote environment should have its own configuration, so having the file outside the project (or at least ignored by your source control system) means you don't have to worry about accidentally overriding settings.
+
+<div class="alert alert-danger">
+	The `.env` file is meant for development environments only. While it could theoretically be used in production this is *not* recommended, and should only be used as a last resort in hosting environments where setting server level or true environment variables is not an option. Please see the documentation for your web server for more information. E.g. [Apache](https://httpd.apache.org/docs/2.4/mod/mod_env.html#setenv)
+</div>
 
 ### How .env works
 
@@ -156,6 +160,11 @@ You can place an `.env` file in, say project B, and it will override the parent 
     * project-a/
     * project-b/ [ .env ]*
     * project-c/
+	
+
+<div class="alert alert-info">
+	The `.env` file is searched for in the project root, and then its parent directory only. Only the first file found is loaded.
+</div>
 
 
 ### Some common configurations
@@ -196,9 +205,11 @@ Some of the fields have been populated for you, such as the database username an
 
 Click "Install SilverStripe," and once again, clear out those install files. 
 
-Let's now take this a step further. There are some more things we want to throw into our `.env` file. We can use `SS_DATABASE_CHOOSE_NAME` to tell SilverStripe to intelligently determine a database name so that you don't have to. It will look at the filesystem, see where the project is installed, and choose a database name based on that.
+### Going further
 
-Also, you can specify the default admin username and password. For local development, you're probably not too concerned about security. So having something easy to remember, like *root/root*, is just fine. 
+Let's now take this a step further. There are some more things we want to throw into our `.env` file. We can use `SS_DATABASE_CHOOSE_NAME` to tell SilverStripe to intelligently determine a database name so that you don't have to. It will look at the filesystem, see where the project is installed, and choose a database name based on that. By default this takes the form of e.g. `SS_project-a`, keeping with the examples above.
+
+Also, you can specify the default admin username and password. For local development you're probably not too concerned about security, so having something easy to remember such as *root/root*, is just fine. 
 
 *your-web-root/.env*
 ```php
@@ -206,7 +217,7 @@ SS_DATABASE_SERVER='localhost'
 SS_DATABASE_USERNAME='root'
 SS_DATABASE_PASSWORD='root'
 SS_ENVIRONMENT_TYPE='dev'
-SS_DATABASE_CHOOSE_NAME= true
+SS_DATABASE_CHOOSE_NAME=true
 SS_DEFAULT_ADMIN_USERNAME='root'
 SS_DEFAULT_ADMIN_PASSWORD='root'
 ```
@@ -216,9 +227,9 @@ For a full list of settings you can go to the docs and just look up [environment
 
 Let's save the changes to `.env`, and apply those new settings.
 
-When we go to the http://{your localhost}/example3 URL, you'll notice that we bypass the install page. That's because SilverStripe has learned everything it needed to know about this project from `.env`. 
+When we go to the http://{your localhost}/example3 URL, you'll notice that we bypass the install page. That's because SilverStripe has learnt everything it needed to know about running this project from `.env`. 
 
-This is a really quick way is to light up a project and do some testing. You can just throw this project away when you're done and do it again, and you don't have to go through that install process every single time. `.env` comes in really useful here, as it applies all the settings you want for every single project. 
+This is a really quick way to light up a project and do some testing. You can just throw this project away when you're done and do it again, and you don't have to go through that install process every single time. `.env` comes in really useful here, as it applies all the settings you want for every single project. 
 
 We're now off and running with a local development environment for SilverStripe development.
 
