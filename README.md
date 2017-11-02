@@ -80,7 +80,7 @@ Look good? No, it shouldn't. It should look like an unstyled mess. Let's copy ov
 
 </table>
 
-The easiest place to start is in your Webkit web inspector tool. Click on the Network tab, and refresh. You should see a lot of red. The first thing we notice is that the CSS is not loading properly. The browser is trying to load `css/bootstrap.min.css`, which is incorrect. Let's update all of the CSS to load from our theme dir. Make the following changes to all of the stylesheet "href" attributes:
+The easiest place to start is in your browser's inspector dev-tool. Click on the Network tab, and refresh. You should see a lot of red. The first thing we notice is that the CSS is not loading properly. The browser is trying to load `css/bootstrap.min.css`, which is incorrect. Let's update all of the CSS to load from our theme directory. Make the following changes to all of the stylesheet "href" attributes:
 
 <table style="width: 630px; height: 152px;">
 
