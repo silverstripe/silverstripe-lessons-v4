@@ -5,8 +5,8 @@ The ORM provides a layer of abstraction between your PHP code and the contents o
 Here's an easy way to conceptualise the ORM:
 
 *   **Classes** refer to tables
-*   **Instances** of classes refer to records
-*   **Properties** of objects refer to columns
+*   **Instances** of classes refer to record rows
+*   **Properties** of objects refer to field columns
 
 For a class to follow this paradigm, it must be a descendant of `SilverStripe\ORM\DataObject`. So far, we've been dealing only with subclasses of `Page`, which is itself a DataObject (SilverStripe\ORM\DataObject -> SilverStripe\CMS\Model\SiteTree -> Page). For generic data types that do not need page functionality, you can go further up the inheritance chain and simply subclass DataObject directly. We'll be talking a lot more about non-page database content in the next tutorial.
 
@@ -29,9 +29,9 @@ class Product extends DataObject
 The DataObject class gives us four properties to start with:
 
 *   **ID** - primary key
-*   **ClassName** - a hint to ORM what class should be created for the record. In this case its default value is “Product.”
-*   **Created** - a timestamp of when the record was stored in the database first time
-*   **LastEdited** - a timestamp that is updated every time the record is written to the database.
+*   **ClassName** - direct the ORM on which class should be created for the record. In this case its default value is “Product.”
+*   **Created** - a time stamp of when the record was first stored in the database
+*   **LastEdited** - a time stamp that is updated every time the record is written to the database.
 
 In adherence to the ORM pattern, creating a record is as simple as creating an instance of your DataObject subclass.
 
@@ -67,7 +67,8 @@ Further, the `create()` method can populate the object with data if passed an ar
 To delete a record, call `delete()`.
 
 ```php
-    $product->delete();echo $product->ID; // 0
+    $product->delete();
+    echo $product->ID; // 0
 ```
 
 To update it, just modify the properties of the object, then invoke `write()`.
@@ -91,11 +92,11 @@ $sql = “SELECT ID, Created, LastEdited, Title, Price FROM Product WHERE Price 
 $sql = “SELECT ID, Created, LastEdited, Title, Price FROM Product WHERE Price > 100 LIMIT 5”;
 ```
 
-On top of that, you need to deal with the boilerplate of suppressing SQL injection and other foundational elements of database integration. Further, if you ever change database platform, the code doesn't ship well.
+On top of that, you need to deal with the boilerplate of suppressing SQL injection and other fundamental elements of database integration. Further, if you ever change database platform (or work with more than one), the code doesn't ship well.
 
-You might create helper functions to assemble queries like this, but ultimately, this approach doesn't scale. Frameworks unanimously prefer to hand off database all database work to its own layer.
+You might create helper functions to assemble queries like this, but ultimately, this approach doesn't scale. Frameworks unanimously prefer to hand off all database work to its own layer.
 
-Because database queries are about lists of records, not individual records, the methods we're going to use are all scoped to the class definition. As stated before, a class is essentially a reference to a table, so this should make sense. In object-oriented programing, methods invoked not against an instance of a class, but rather the class itself, are referred to as **static methods**. Let's take a look at how this works.
+Because database queries are about lists of records, not individual records, the methods we're going to use are all scoped to the class definition. As stated before, a class is essentially a reference to a table, so this should make sense. In object-oriented programing, methods invoked against a class (rather than an _instance_ of a class) are referred to as **static methods**. Let's take a look at how this works.
 
 First, we'll get all of our products.
 
@@ -108,7 +109,7 @@ Now, let's get all products that cost $100.
 ```php
 $products = Product::get()->filter([
   'Price' => 100
-)];
+]);
 ```
 
 Now, let's get the top five most expensive products under $100:
@@ -130,7 +131,9 @@ $products->limit(5);
 echo $products->sql(); // does not contain a limit clause
 ```
 
-> Note: the `sql()` method is rarely needed. It is typically only used for debugging.`
+<div class="alert alert-info">
+The `sql()` method is rarely needed. It is typically only used for debugging.
+</div>
 
 This is a very common mistake that people make with the ORM. If we were writing jQuery, the above approach would have applied both methods to the instance, but the ORM does not follow that pattern. [Immutable data structures](http://en.wikipedia.org/wiki/Persistent_data_structure) are becoming increasingly more common in web frameworks.
 
@@ -155,8 +158,8 @@ Let's look at the following example:
 ```
 
 Common thinking would tell us that the get() method we invoked would execute a query similar to this:
-```php
-    “SELECT ID, Created, LastEdited, Title, Price FROM Product”
+```sql
+    SELECT "ID", "Created", "LastEdited", "Title", "Price" FROM "Product"
 ```
 
 In actuality, no query is run when this method is called. Rather, SilverStripe just makes a note that at some point, you may be interested in getting all the products.
@@ -170,7 +173,7 @@ Let's take it a step further:
     }
 ```
 
-Now we have run a query, because the foreach loop has told the ORM that the we need the records, and it's time to act. Up until then, the list of products was merely an idea.
+This time we have run a query, because the `foreach` loop has told the ORM that the we need the records, and it's time to act. Up until then, the list of products was merely an idea.
 
 What's so great about this? Several things. One is that we have far fewer “wasted” queries. For example:
 
@@ -184,7 +187,7 @@ What's so great about this? Several things. One is that we have far fewer “was
     }
 ```
 
-Even though we're invoking several methods on the query, only one is actually executed.
+Even though we're invoking several methods to manipulate a selection of data, only one query is actually executed.
 
 Further, lazy loading presents the ORM with an opportunity to optimise the query just before it executes.
 
@@ -195,14 +198,14 @@ Further, lazy loading presents the ORM with an opportunity to optimise the query
 
 Rather than returning something like a `sizeof()` on the resulting array of records, the ORM is smart enough to see that all you really want is a count, and it executes something like the following:
 
-```php
-    “SELECT COUNT(*) FROM Product”
+```sql
+    SELECT COUNT(*) FROM "Product"
 ```
-Typically in SilverStripe, it is a `<% loop %>` block on your template, if not a `foreach` in your controller, that actually tells the query to run.
+Typically in SilverStripe, it is a `<% loop %>` block on your template, or a `foreach` in your controller, that actually tells the ORM to execute a query.
 
 ### Using the ORM in a controller
 
-Let's now take all of this into practice and add a custom database query to a controller. Looking at the home page, we see there is a section where the latest articles are syndicated. To get these to display, we'll need to write a method in our controller to fetch the list. Let's call it `LatestArticles`.
+Let's put all of this into practice and add a custom database query to a controller. Looking at the home page, we see there is a section where the latest articles are syndicated. To get these to display, we'll need to write a method in our controller to fetch the list. Let's call it `LatestArticles`.
 
 ```php
 namespace SilverStripe\Lessons;
@@ -215,7 +218,7 @@ class HomePageController extends PageController
   public function LatestArticles() 
   { 
     return ArticlePage::get()
-               ->sort('Created', 'DESC')
+               ->sort('Date', 'DESC')
                ->limit(3);
   } 
 }
@@ -246,10 +249,10 @@ There is no need to pass this method into the template. Because it's in the cont
 			<p><% if $Teaser %>$Teaser<% else %>$Content.FirstSentence<% end_if %></p>
 		</div>
 	</div>
-	<% end_loop %>
+  <% end_loop %>
 </div>
 ```
-There's one minor improvement we can make to this function. Right now, the limit of three records is hardcoded in the controller, which isn't very configurable. The reason we're limiting the result set is due to the constraints imposed by the layout, so it makes more sense to assign this value on the template.
+There's one minor improvement we can make to this function. Right now, the limit of three records is hard-coded in the controller, which isn't very configurable. The reason we're limiting the result set is due to the constraints imposed by the layout, so it makes more sense to assign this value on the template.
 
 Update the `LatestArticles` function to accept a `$count` parameter, and set its default value to `3`. Pass this parameter into the `limit()` method.
 
