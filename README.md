@@ -7,9 +7,9 @@
 * Pulling the results into the template
 
 ## Setting expectations: Searching vs. filtering
-Before we begin, it's important that we set a baseline for what we're looking to accomplish in this tutorial, because search, as you may know, is a real can of worms.
+Before we begin, it's important that we set a baseline for what we're looking to accomplish in this tutorial. Because search, as you may know, is a real can of worms.
 
-Search is an inexact science. It seeks to deliver to the user the most accurate results per his or her input. It's highly subjective, and it is therefore always being tuned to increase the likelihood of it satisfying the largest volume of users. It is never perfect. To this end, there are many third-party search tools available that do a lot of the work for you, and you can integrate them into just about any database-driven project. Some popular options include [Solr](http://lucene.apache.org/solr/), [Sphinx](http://sphinxsearch.com/), and [Elastic Search](https://www.elastic.co/). Even MySQL itself has some [basic search functionality](https://dev.mysql.com/doc/refman/5.0/en/fulltext-search.html) that is often all you need.
+Search is an inexact science. It seeks to deliver to the user the most accurate results per their input. It's highly subjective, and it is therefore always being tuned to increase the likelihood of it satisfying the largest volume of users. It is never perfect. To this end, there are many third-party search tools available that do a lot of the work for you, and you can integrate them into just about any database-driven project. Some popular options include [Solr](http://lucene.apache.org/solr/), [Sphinx](http://sphinxsearch.com/), and [Elastic Search](https://www.elastic.co/). Even MySQL itself has some [basic search functionality](https://dev.mysql.com/doc/refman/5.7/en/fulltext-search.html) that is often all you need.
 
 High-powered, intelligent keyword searching is perhaps a topic for another tutorial, because in this lesson, while we will be covering "search" in the academic sense, what we're really talking about is *filtering*. Unlike searching, filtering should provide expected results 100% of the time, because all you're doing is objectively matching key/value pairs in the user's input to key/value pairs stored on individual records that are part of a collection. Since this is an introductory lesson, we'll be dealing mostly with simple filtering of records, but we will do a bit of keyword matching, as well. Just understand that it won't be the optimal free text search solution for most projects.
 
@@ -25,7 +25,7 @@ Let's look at the search form on the home page. We have four parameters we can u
 
 The last two are pretty straightforward, but as for the first two, we have not made any accommodations for the availability of the rentals. That will come in the future, when we add functionality that allows users to book rentals for a given span of dates.
 
-In the interest of teaching the concept over meeting the requirements of an imaginary website, we're going to create some temporary fields on the `Property` objects that store this data natively on the record. Once users can book rentals, we'll remove these fields, but for now, we just want to get our search form working, so let's add the following:
+In the interest of teaching the concept over meeting the requirements of an imaginary website, we're going to create some temporary fields on the `Property` objects that store this data natively on the record. Once users can book rentals, we'll remove these fields, but for now we just want to get our search form working, so let's add the following:
 
 *mysite/code/Property.php*
 ```php
