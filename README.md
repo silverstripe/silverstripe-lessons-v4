@@ -7,7 +7,7 @@
 
 ## Writing the Javascript
 
-In the last tutorial, we added pagination to our list of search results. Let's now enhance the user experience a bit by adding Ajax to the pagination links.
+In the last tutorial, we added pagination to our list of search results. Let's now enhance the user experience a bit by adding AJAX to the pagination links.
 
 Before we do anything, we'll need to add some JavaScript that will add this functionality. We'll do this in our catch-all JavaScript file, `scripts.js`.
 
@@ -30,17 +30,17 @@ if ($('.pagination').length) {
 
 ```
 
-This is pretty specific to this use-case. Further down the track, we may find that we're adding a lot of Ajax events that closely resemble this, so we may want to make it more reusable at some point, but for now, let's just get this working.
+This is pretty specific to this use-case. Further down the track, we may find that we're adding a lot of AJAX events that closely resemble this, so we may want to make it more reusable at some point, but for now, let's just get this working.
 
 Let's give this a try. Click on a link in the pagination and see if it works.
 
-It kind of works, right? But we've still got a way to go. The controller is returning the entire page -- from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The Ajax URL is just the `href` attribute, so anything different would be unusual.
+It kind of works, right? But we've still got a way to go. The controller is returning the entire page -- from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The AJAX URL is just the `href` attribute, so anything different would be unusual.
 
-So what do we do? Change the URL in our Javascript to use something other than `href`? We could use an alternative URL in something like `data-ajax-url`. That's actually not necessary. We always aim to keep things tidy with single endpoints. The controller ideally know as little about the UI as possible, and setting up a separate endpoint for Ajax requests in this case would be antithetical to that. We'll keep the same endpoint, and we'll just assign the controller the ability to detect Ajax requests.
+So what do we do? Change the URL in our Javascript to use something other than `href`? We could use an alternative URL in something like `data-ajax-url`. That's actually not necessary, and we should always aim to keep things tidy with single endpoints. The controller ideally knows as little about the UI as possible, and setting up a separate endpoint for AJAX requests in this case would be antithetical to that. We'll keep the same endpoint, and we'll just assign the controller the ability to detect AJAX requests.
 
-## Detecting Ajax in a controller
+## Detecting AJAX in a controller
 
-Let's update `PropertySearchPageController.php` to detect Ajax.
+Let's update `PropertySearchPageController.php` to detect AJAX.
 
 *mysite/code/PropertySearchPageController.php*
 ```php
@@ -50,7 +50,7 @@ public function index(HTTPRequest $request)
 	//...
 
 	if($request->isAjax()) {
-		return "Ajax response!";
+		return "AJAX response!";
 	}
 	
 	return [
@@ -59,11 +59,11 @@ public function index(HTTPRequest $request)
 }
 ```
 
-Now give the link a try, and see what we get. You should see your custom Ajax response. Now we just need to return some partial content. Before we do that, let's talk a bit about a key player in SilverStripe Framework called `ViewableData`.
+Now give the link a try, and see what we get. You should see your custom AJAX response. Now we just need to return some partial content. Before we do that, let's talk a bit about a key player in SilverStripe Framework called `ViewableData`.
 
 ## An overview of ViewableData
 
-To establish a basis for the next section of this lesson, we'll need to know more about how `ViewableData` objects work. `SilverStripe\View\ViewableData` is a primitive class in SilverStripe that essentially allows its public properties and methods to render content to a template. The most common occurance of `SilverStripe\View\ViewableData` objects is in `SilverStripe\ORM\DataObject` instances, which we've been working with on templates exclusively. But templates are capable of rendering much more than database content. You just need to go further up the inheritance chain, above `DataObject` to `ViewableData`, or a subclass thereof.
+To establish a basis for the next section of this lesson, we'll need to know more about how `ViewableData` objects work. `SilverStripe\View\ViewableData` is a primitive class in SilverStripe that essentially allows its public properties and methods to render content to a template. The most common occurrence of `SilverStripe\View\ViewableData` objects is in `SilverStripe\ORM\DataObject` instances, which we've been working with on templates exclusively. But templates are capable of rendering much more than database content. You just need to go further up the inheritance chain, above `DataObject` to `ViewableData`, or a subclass thereof.
 
 Let's look at a simple example of `ViewableData`.
 
@@ -109,10 +109,10 @@ Now let's create a template to render our `Address` object.
 
 As you can see, we're rendering data using a combination of both methods and properties. `ViewableData` has a very specific way of resolving the template variables on the object:
 
-* Check if there public method on the object called [VariableName]
-* If not, check if a method called "get[VariableName]" exists
-* If not, check if there is a public property named [VariableName]
-* Otherwise, call "getField([VariableName])"
+1. Check if there public method on the object called [VariableName]
+2. If not, check if a method called "get[VariableName]" exists
+3. If not, check if there is a public property named [VariableName]
+4. Otherwise, call "getField([VariableName])"
 
 `getField()` is a fallback method. For the base `ViewableData` class, it simply returns `$this->$VariableName`. The idea is that subclasses can invoke their own handlers for this. For example, in `DataObject`, `getField()` looks to the `$db` array.
 
@@ -138,13 +138,13 @@ class Address extends ViewableData
 }
 ```
 
-A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes its `forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
+A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes `Image::forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
 
 ## Rendering a partial template
 
-So now that we have a good understanding of `ViewableData`, let's play around with some of its features. Right now, we're just returning a string to the template for our Ajax response. Let's instead return a partial template.
+So now that we have a good understanding of `ViewableData`, let's play around with some of its features. At the moment we're just returning a string to the template for our AJAX response. Let's instead return a partial template.
 
-At the centre of dealing with Ajax responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
+At the centre of dealing with AJAX responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
 
 *themes/one-ring/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
 ```html
@@ -159,7 +159,7 @@ Notice that the `Includes/` part of the path is implicit when calling `<% includ
 
 Reload the page with `?flush` to get the new template.
 
-Now, returning an Ajax response is trivial. Simply render the include.
+Now returning an AJAX response is trivial. Simply render the include.
 
 ```php
 //...
@@ -180,14 +180,14 @@ class PropertySearchPageController extends PageController
 }
 ```
 
-This time, we don't benefit from the implicit `Includes/` directory. Unlike the template syntax, we need to specify it when referring to it in controller code.
+This time we don't benefit from the implicit `Includes/` directory. Unlike the template `include` syntax, we need to specify the path when referring to it in controller code.
 
 Let's try this out. It's not quite working right. We're getting a "no results" message when we paginate. That's because the `$Results` variable is not exposed to the template through `renderWith()`. It's just a local variable in our `index()` method. We have two choices here:
 
 * Assign `$paginatedProperties` to a public property on the controller
 * Explicitly pass it to the template using `customise()`.
 
-Of these two options, the latter is much more favourable. There are cases where the first option makes more sense, but in this case, explicitly passing the list makes our `PropertySearchResults` template more reusable, and assigning a new member property would pollute our controller unnecessarily. Let's make that update now.
+Of these two options, the latter is much more favourable. There are cases where the first option makes more sense, but in this case explicitly passing the list makes our `PropertySearchResults` template more reusable, and assigning a new member property would pollute our controller unnecessarily. Let's make that update now.
 
 ```php
 //...
@@ -238,6 +238,10 @@ class PropertySearchPageController extends PageController
 ```
 
 Try it now. It's looking much better!
+
+<div class="alert alert-info">
+It is worth noting that to _return_ an array from an action such as `index` is actually a shortcut to `customise` with the same array.
+</div>
 
 ## Adding some UX enhancements
 
@@ -314,7 +318,7 @@ We'll export the `chosen()` plugin to a reusable function and call it when neede
     //...
 ```
 
-Now, on the successful ajax response, we'll reapply it.
+Now, on the successful AJAX response, we'll reapply it.
 
 *themes/one-ring/javascript/scripts.js*
 ```js
@@ -326,13 +330,13 @@ Now, on the successful ajax response, we'll reapply it.
 ```
 
 ### Cache busting
-There's one last idiosyncrasy we need to sort out before we can call this finished. Let's just try paginating a few times, and clicking on a non-Ajax link that will take us to another page. Now click the back button. Yikes! We're only getting back the content for the Ajax request. You may not be able to replicate this in all browsers. Google Chrome seems to reliably reproduce the bug, though. So why is this happening?
+There's one last idiosyncrasy we need to sort out before we can call this finished. Let's just try paginating a few times, and clicking on a non-AJAX link that will take us to another page. Now click the back button. Yikes! We're only getting back the content for the AJAX request. You may not be able to replicate this in all browsers. Google Chrome seems to reliably reproduce the bug, though. So why is this happening?
 
 The short answer is that good browsers like Google Chrome are really, really smart. That's what makes them so fast. In this case, perhaps it's being a bit too smart, but ultimately, we have made a pretty critical mistake.
 
-Earlier in the tutorial, we talked about a common endpoint for standard HTTP requests and XHRs. While it's true that both types of requests should be piped through the same controller action, the idea that they should share exactly the same URL is flawed. One of the pillars of HTTP caching, and the HTTP protocol in general, is that requests should be deterministic. For any given URL, we should expect the same response. When URLs return various responses based on arbitrary external state like session state or, in our case, the type of request, they are no longer deterministic, and bad things can happen, because the browser has cached that URL, believing that it has already seen the response that it generates. This is great for performance, but bad for the type of turnkey functionality we're trying to implement.
+Earlier in the tutorial, we talked about a common endpoint for standard HTTP requests and XHRs. While it's true that both types of requests should be piped through the same controller action, the idea that they should share exactly the same URL is flawed. One of the pillars of HTTP caching, and the HTTP protocol in general, is that requests should be deterministic. For any given URL, we should expect the same response. When URLs return various responses based on arbitrary external state like session state, or in our case the type of request, they are no longer deterministic and bad things can happen, because the browser has cached that URL believing that it has already seen the response that it generates. This is great for performance, but bad for the type of turnkey functionality we're trying to implement.
 
-We need to update our Javascript so that the Ajax request has a slightly different URL than the URL that is being stored in history. Let's just append a simple `ajax=1` request parameter to the URL.
+We need to update our Javascript so that the AJAX request has a slightly different URL than the URL that is being stored in history. Let's just append a simple `ajax=1` request parameter to the URL.
 
 ```js
     // Pagination
@@ -365,10 +369,10 @@ We need to update our Javascript so that the Ajax request has a slightly differe
 
 Let's walk through this.
 
-* First, we generate the `ajaxUrl` variable, is whatever URL the function is given, plus an `ajax=1` parameter. Notice that we have to be careful not to add the `ajax` parameter multiple times. We have to do this because the pagination links preserve all the `GET` parameters from the Ajax request, so they will all contain query strings like `?start=10&ajax=1`.
+* First, we generate the `ajaxUrl` variable; which is whatever URL the function is given, plus an `ajax=1` parameter. Notice that we have to be careful not to add the `ajax` parameter multiple times. We have to do this because the pagination links preserve all the `GET` parameters from the AJAX request, so they will all contain query strings like `?start=10&ajax=1`.
 * Next, we generate the `cleanURL` variable, which is the URL with the `ajax=1` removed. Again, the pagination links all have `ajax=1` on them, so this sanitisation is important.
-* We then update the Ajax request to go to the `ajaxUrl` instead of the given URL.
-* Lastly, we store the `cleanUrl` in the browser history, so that when the back button is pressed, the browser knows that the Ajax request and the standard request are different.
+* We then update the AJAX request to go to the `ajaxUrl` instead of the given URL.
+* Lastly, we store the `cleanUrl` in the browser history, so that when the back button is pressed, the browser knows that the AJAX request and the standard request are different.
 
 In order to test this, it is imperative that you clear your browser cache. This whole bug revolves around eager caching, so you won't see any results until you do so. If you're using Google Chrome, you may want to try Incognito Mode for this.
 
