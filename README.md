@@ -2,7 +2,7 @@ In the previous tutorial, we activated most of the sidebar filters for our Trave
 
 ### Adding date filter links to the template
 
-Looking at the template, we first have to generate a list of all the distinct month/year combinations for all the articles. Let's start by working backwards, and we want the end result to be on the template.
+Looking at the template, we first have to generate a list of all the distinct month/year combinations for all the articles. Let's start by working backwards again, where we want the end result to be on the template.
 
 *themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
@@ -58,7 +58,7 @@ class ArticleHolder extends Page
 ```
 ### Running a custom SQL query
 
-We're going to need to run a pretty specific query against the database to get all of the distinct month/year pairs, and this actually pushes the boundaries and practicality of the ORM. In rare cases such as this one, we can execute arbitrary SQL using `DB::query()`.
+We're going to need to run a pretty specific query against the database to get all of the distinct month/year pairs, and this actually pushes the boundaries and practicality of the ORM. In rare cases such as this one, we can build and execute arbitrary SQL by using the appropriate concrete subclass of `SQLExpression`.
 
 *mysite/code/ArticleHolder.php*
 ```php
@@ -69,34 +69,38 @@ use SilverStripe\ORM\Queries\SQLSelect;
 
 class ArticleHolder extends Page
 {
-	public function ArchiveDates()
-	{
-		$list = ArrayList::create();
-		$stage = Versioned::get_stage();		
-    $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
-    $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
+    public function ArchiveDates()
+    {
+        $list = ArrayList::create();
+        $stage = Versioned::get_stage();		
+        $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
+        $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
 
-    $query = SQLSelect::create()
-        ->setSelect([])
-        ->selectField("DATE_FORMAT(`Date`,'%Y_%M_%m')", "DateString")
-        ->setFrom($tableName)
-        ->setOrderBy("DateString", "ASC")
-        ->setDistinct(true);
+        $query = SQLSelect::create()
+            ->setSelect([])
+            ->selectField("DATE_FORMAT(\"Date\",'%Y_%M_%m')", "DateString")
+            ->setFrom($tableName)
+            ->setOrderBy("DateString", "ASC")
+            ->setDistinct(true);
 
-    $result = $query->execute();
+        $result = $query->execute();
 ```
 To work outside the ORM, we can use the `SilverStripe\ORM\Queries\SQLSelect` class to procedurally build a string of selecting SQL. We pass an empty array to the constructor, because by default it will select `*`. We then just build the query using self-descriptive, chainable methods.
+
+<div class="alert alert-warning">
+If you're used to MySQL flavour of database, you may notice that the `Date` field is delimited by double quotes instead of backticks, as you may be accustomed to. This is because SilverStripe puts the database connection into [ANSI mode](https://dev.mysql.com/doc/refman/5.7/en/compatibility.html) when opening a connection - backticks are not valid in this more strictly standards compliant mode, and will cause the query to error.
+</div>
 
 The main advantage to this layer of abstraction is that it's platform agnostic, so that if someday you change database platforms, you don't need to update any syntax. All select queries end up in `SQLSelect` eventually. `SiteTree::get()` is just a higher level of abstraction that builds an `SQLSelect` object. To build a really custom query, we're just going further down the food chain, so to speak.
 
 We get the name of the table for `ArticlePage` from the `DataObjectSchema` class. This class contains a lot of valuable information for introspecting the abstractions of the ORM. You can ask it for the table name for a given class, get the database column for a given field, get all the database fields for a given class, and much more. In this case, we get the table name from the schema. Table names are user-configurable, but by default it follows the simple pattern of replacing the backslashes in the fully-qualified class name to underscores. In this case, `SilverStripe_Lessons_ArticlePage` is returned by the `tableName` function.
 
-One major drawback of working outside the ORM is that we can no longer take versioning for granted. We have to be explicit about what table we want to select from. It is therefore imperative to check the current stage, and apply the necessary suffix to the table, e.g. *ArticlePage_Live*. Again, it's rare that you have to deal with stuff like this.
+One major drawback of working outside the ORM is that we can no longer take versioning for granted. We have to be explicit about what table we want to select from. It is therefore imperative to check the current stage, and apply the necessary suffix to the table, e.g. *ArticlePage_Live*.
 
-Don't worry too much if this query is over your head. It's not often that we have to do things like this. What this query is doing is creating a SKU for each article that contains its year, month number, and month name, separated by underscores, like this:
+Don't worry too much if this query is over your head. It's quite rare that we have to do things like this. What this query is doing is creating a unique string for each article that contains its year, month number, and month name, separated by underscores, like this:
 
 ```
-2015_05_May
+2015_May_05
 ```
 
 We then use the `setDistinct()` method to ensure we only get one of each.
@@ -118,36 +122,38 @@ Now all we have to do is loop through that database result to create our final l
 					'Link' => $this->Link("date/$year/$monthNumber"),
 					'ArticleCount' => ArticlePage::get()->where([
 							"DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
-							"\"ParentID\"" => $this->ID
+							'"ParentID"' => $this->ID
 						])->count()
 				]));
 			}
 		}
 ```
 
-We loop through each record using the `nextRecord()` method. For each record, we explode the SKU into its component variables -- the year, the month number, and the month name -- and assign them to properties of an `ArrayData` object. We also create a link to the `date/$year/$monthNumber` route that we created in `ArticleHolder`. Lastly, we run a query against `ArticlePage` to get the number of articles that match this date SKU. Notice that in this case, we can safely just match the year and month number.
+We loop through each record using the `nextRecord()` method. For each record, we explode the composite date string into its component variables -- the year, the month name, and the month number -- and assign them to properties of an `ArrayData` object. We also create a link to the `date/$year/$monthNumber` route that we created in `ArticleHolder`. Lastly, we run a query against `ArticlePage` to get the number of articles that match this date. Notice that in this case, we can safely just match the year and month number.
 
+<div class="alert alert-success">
 Notice that the `where()` method affords us parameterised queries. The shorthand of `'fieldName' => 'value'` should be used whenever possible to ensure your queries are safe from injection.
+</div>
 
 Here's the complete `ArchiveDates()` function:
 
 *mysite/code/ArticleHolder.php*
 ```php
-	public function ArchiveDates()
-	{
-		$list = ArrayList::create();
-		$stage = Versioned::get_stage();		
-    $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
-    $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
+    public function ArchiveDates()
+    {
+        $list = ArrayList::create();
+        $stage = Versioned::get_stage();		
+        $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
+        $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
 
-    $query = SQLSelect::create()
-        ->setSelect([])
-        ->selectField("DATE_FORMAT(`Date`,'%Y_%M_%m')", "DateString")
-        ->setFrom($tableName)
-        ->setOrderBy("DateString", "ASC")
-        ->setDistinct(true);
+        $query = SQLSelect::create()
+            ->setSelect([])
+            ->selectField("DATE_FORMAT(`Date`,'%Y_%M_%m')", "DateString")
+            ->setFrom($tableName)
+            ->setOrderBy("DateString", "ASC")
+            ->setDistinct(true);
 
-    $result = $query->execute();
+        $result = $query->execute();
 		
 		if ($result) {
 			while($record = $result->nextRecord()) {
@@ -167,6 +173,7 @@ Here's the complete `ArchiveDates()` function:
 		}
 		
 		return $list;
+    }
 ```
 
 Alright, get up, walk around. Have a (non-alcoholic) drink. Then refresh the page to see the fruits of your labour.
@@ -206,7 +213,7 @@ Now, we'll create the boundary for the end date, and run the query.
 		$adder = $month ? '+1 month' : '+1 year';
 		$endDate = date('Y-m-d', strtotime(
 		    $adder, 
-				strtotime($startDate)
+            strtotime($startDate)
 		));
 
 		$this->articleList = $this->articleList->filter([
@@ -252,7 +259,7 @@ class ArticleHolderController extends PageController
 		$adder = $month ? '+1 month' : '+1 year';
 		$endDate = date('Y-m-d', strtotime(
 		    $adder, 
-				strtotime($startDate)
+            strtotime($startDate)
 		));
 
 		$this->articleList = $this->articleList->filter([
