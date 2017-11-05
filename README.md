@@ -13,7 +13,7 @@ In the last several lessons, we've talked a lot about DataObject content versus 
 
 That all works great when DataObject content is hosted on a page, but what about generic content that is used all over the site, and doesn't belong to any specific parent? You might have a store that manages products, or a microlending site with many projects. This type of content really merits a dedicated management console in the CMS. Binding it to a page would be both confusing for the content author, and add unnecessary complexity to your data model. Another example is content that you want to manage in the CMS that is never displayed to the public. Think of a business that manages a vast list of customers and orders. This type of content is only visible to admins, and binding it to a page doesn't make any sense.
 
-What we're talking about here is the idea of *standalone* DataObjects. They're free-floating in our system -- managed, but not bound to any specific hierarchy. For this type of content, we use `SilverStripe\Admin\ModelAdmin`.
+What we're talking about here is the idea of *standalone* DataObjects. They're free-floating in our system -- managed, but not bound to any specific hierarchy. For managing this type of content in the CMS, we use `SilverStripe\Admin\ModelAdmin`.
 
 When we create a ModelAdmin interface, we get a new top-level section of the CMS, living among Pages, Files, Security, etc., that is dedicated to managing content per our specification. The great thing about ModelAdmin is that you can get up and running really fast, and customisations come fairly cheap.
 
@@ -23,7 +23,7 @@ Before we start writing code, let's take a step back a bit and look at the bigge
 
 ### LeftAndMain
 
-Every top-level "page" you use in the CMS -- that is, *Pages*, *Files*, *Security*, *Reports*, and *Settings* -- is a subclass of `SilverStripe\Admin\LeftAndMain`. LeftAndMain is kind of the matriarch of the entire CMS. It oversees and handles everything from permissions, to generating edit forms, to CSS and JavaScript bootstrapping, to request negotiation, to saving and deleting records. All of that said, the primary job of this behemoth is to provide a secure user interface that contains a `Left` section, like the site tree, or a search form, and a `Main` section, which is often an edit form. I know you're probably wondering, based on that, how did they come up with the name *LeftAndMain*? If you think of it, please let me know as soon as you figure it out. It's had me puzzled for years.
+Every top-level "page" you use in the CMS -- that is, *Pages*, *Files*, *Security*, *Reports*, and *Settings* -- is a subclass of `SilverStripe\Admin\LeftAndMain`. LeftAndMain is kind of the matriarch of the entire CMS. It oversees and handles everything from permissions, to generating edit forms, to CSS and JavaScript bootstrapping, to request negotiation, to saving and deleting records. All of that said, the primary job of this behemoth is to provide a secure user interface that contains a `Left` section, like the site tree or a search form, and a `Main` section, which is often an edit form. I know you're probably wondering, based on that, how did they come up with the name *LeftAndMain*? If you think of it, please let me know as soon as you figure it out. It's had me puzzled for years.
 
 Any subclass of `LeftAndMain` will automatically get added to the main menu in the CMS. All you have to do is provide templates that define its *Main* section, and another that defines its *Tools* section. ModelAdmin is an example of a class that does that, and it makes a lot of assumptions about what we want in both sections, so it's supremely easy to get started.
 
@@ -93,9 +93,9 @@ class Property extends DataObject
 			'Primary photo'
 		));
 
-		$upload->getValidator()->setAllowedExtensions(array(
+		$upload->getValidator()->setAllowedExtensions([
 			'png','jpeg','jpg','gif'
-		));
+		]);
 		$upload->setFolderName('property-photos');
 
 		return $fields;
@@ -109,7 +109,7 @@ Most of this is straightforward, but let's look at a few peculiarities that migh
 * **`RegionID` as a name for the DropdownField**: Why do we have to explicitly append *ID* in this case? Other fields, like `UploadField` just accept the name of the `has_one` field, like *Photo*, without the requirement to name the exact database field. It's a bit confusing for sure, but keep in mind that a `DropdownField` doesn't always save to a `has_one`. It could just as well be saving to a text field. Other form fields that work only with data relationships know how to resolve the name of a relationship to a database column, but `DropdownField` is multi-purpose and fairly data model agnostic, so that's all that's going on here.
 * **`->setSource()` on the DropdownField**: Nothing too crazy here. This method tells the dropdown field what options are available in its list. You can provide the list as the third argument to `DropdownField`, but I find that it makes the code more readable to assign it in a chained method.
 * **`ArrayLib::valuekey()`**: Like `CheckboxSetField`, `DropdownField` takes an array where the keys are the data that will be saved when the option is selected, and the values of the array are labels that will be displayed for each option. Often times, they're the same. The `ArrayLib::valuekey()` function just mirrors the keys and values of an array.
-* **`range(1,10)`**: This is a simple PHP function that creates an array containing a range of elements. It doesn't have to be numeric. `range('A', 'C')` will give you an array containing `['A','B','C']`, for instance.
+* **`range(1,10)`**: This is a simple [PHP function](https://php.net/range) that creates an array containing a range of elements. It doesn't have to be numeric. `range('A', 'C')` will give you an array containing `['A','B','C']`, for instance.
 * **`->setEmptyString()`**: This is the default, dataless option in our list. We don't want the dropdown to default to the first region listed, because that would be arbitrary. Rather, we want the user to explicitly declare the region the property is in. For bedrooms and bathrooms, it's fine if those default to `1`.
 
 Alright, now that we have all that sorted, let's run `dev/build`.
@@ -140,7 +140,7 @@ class PropertyAdmin extends ModelAdmin
 That's it! Let's walk through it:
 * `$menu_title`: The title that will appear in the left-hand menu of the CMS.
 * `$url_segment`: The URL part that will follow `admin/` to access this section. In this case, the path to our ModelAdmin interface will be `admin/properties`.
-* `$managed_models`: An array of class names that will be managed. Each ModelAdmin can manage multiple models. Each one is placed on its own tab across the top of the screen. In this case, we just have one, but we'll be adding more down the track.
+* `$managed_models`: An array of class names that will be managed. Each ModelAdmin can manage multiple models, each model is placed on its own tab across the top of the screen. In this case, we just have one, but we'll be adding more down the track.
 
 We created a new class, so we need to run a `?flush`. Let's do that and go into the CMS to see what we got. You should see a new *Properties* tab on the left. Give it a try, and see if you can add a few new `Property` records.
 
@@ -277,7 +277,6 @@ Give the search form a try now. It feels a little better, right?
 Properties are perhaps the most important elements on this entire website, so we'll want to ensure they have a draft state. We'll also add an `$owns` property for the primary photo, so it gets published as well.
 
 ```php
-```php
 //...
 use SilverStripe\Versioned\Versioned;
 
@@ -293,7 +292,7 @@ class Property extends DataObject
   ];
 
   private static $versioned_gridfield_extensions = true;
-  
+
 	public function searchableFields()
 	{
     //...
@@ -303,7 +302,7 @@ Run a `dev/build` to get the new tables.
 
 ### Importing data
 
-If you haven't been doing so all along, it's probably a good time to import a database from the `__assets/database.sql` file in the completed version of this lesson. That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
+If you haven't been doing so all along, it's probably a good time to import a database from the `__assets/database.sql` file in the completed version of this lesson (in MySQL flavour). That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
 
 Don't forget to copy over the `assets/` folder, too. The property photos are in there.
 
