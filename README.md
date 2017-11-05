@@ -6,37 +6,37 @@
 
 ### How controller actions work
 
-Up to this point in our project, for the most part, every page has been on a single URL, which that URL points to a single controller, which renders a single `$Layout` template. However, if you think back to our lesson on forms, you may remember that we were able to extend the URL route for our controller in order to generate and render a form. We did this using a controller action. Forms are just one of many use cases for a controller action.
+Up to this point in our project, for the most part, every page has been on a single URL, which points to a single controller, which renders a single `$Layout` template. However, if you think back to our lesson on forms, you may remember that we were able to extend the URL route for our controller in order to generate and render a form. We did this using a controller action. Forms are just one of many use cases for a controller action.
 
-Using controller actions is simple. All we're talking about is appending a URL part to an existing URL that matches the name of a publicly accessible method on the controller. Let's give it a try.
+Using controller actions is simple. All we're talking about is appending a new section to the path of the URL, this new section will match the name of a publicly accessible method on the controller for that URL. Let's give it a try.
 
 For this example, we're going to look at our Regions page. You'll see that it resolves to `http://[your base url]/regions`. Try appending a new segment to the URL, like `http://[your base url]/regions/test`. Not surprisingly, we get a 404.
 
 #### Breaking down the request 
 
-The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request`.
+The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request` (The site must be in ['dev' mode](https://docs.silverstripe.org/en/getting_started/environment_management) to allow this functionality).
 
 Let's take a look at what's going on here.
 
 `Testing '$Action//$ID/$OtherID' with 'test' on SilverStripe\Lessons\RegionsPageController`
 
-Right out of the gate, we can see that SilverStripe resolved our URL to `RegionsPageController`, which may come as a surprise, since the URL for this page does not include `/test/`, but what has happened is that the request handler has found a match for the URL and will assume that from this point forward, everything in the URL is a parameter being passed to the controller. By default, a controller gives you three extra parameters to pass beyond its base url, as we can see in our debug output.
+Right out of the gate we can see that SilverStripe resolved our URL to `RegionsPageController`, which may come as a surprise since the URL for this page does not include `/test/`. What has happened is that the request handler has found a match for the URL, and will assume that from this point forward everything in the URL is a parameter being passed to the controller. By default a controller gives you three extra parameters to pass beyond its base url, as we can see in our debug output.
 
 * **`$Action`**: Immediately follows the URL. In this case our action is `test`.
 * **`$ID`**: An ID that the controller action may want to use. This value does not have to be numeric. It's arbitrary, and just named `ID` because that's a common use case.
 * **`$OtherID`**: Same as `ID`. You get two. 
 
-You're not limited to this signature of parameters. In future lessons, we'll look at creating custom URL rules, but by default, this is what you get, and it's often all you need.
+You're not limited to this signature of parameters. In future lessons we'll look at creating custom URL rules, but this is what you get by default, and it's often all you need.
 
 Let's look at the next line of debug output.
 
 ` Rule '$Action//$ID/$OtherID' matched to action 'handleAction' on SilverStripe\Lessons\RegionsPageController. Latest request params: array ( 'Action' => 'test', 'ID' => NULL, 'OtherID' => NULL, )`
 
-So here we are. The request handler actually did match the `$Action/$ID/$OtherID` pattern, and it's trying to resolve our action, `test`. In the rest of the output, you can see that it fails to do that, and it renders an ErrorPage.
+So here we are. The request handler actually did match the `$Action/$ID/$OtherID` pattern, and it's trying to resolve our action, `test`. In the rest of the output you can see that it fails to do that, so it renders an _ErrorPage_.
 
 Why did it fail? As we said before, the `$Action` parameter should represent a publicly accessible function on the controller. We have no method called `test` right now.
 
-Let's add that controller method now.
+Let's add that controller method.
 
 *mysite/code/RegionsPage.php*
 ```php
@@ -47,11 +47,11 @@ use PageController;
 class RegionsPageController extends PageController
 {
 
-  public function test()
-  {
-		die('it works');
-	}
-	
+    public function test()
+    {
+        die('it works');
+    }
+
 }
 ```
 
@@ -59,7 +59,7 @@ class RegionsPageController extends PageController
 
 Now try accessing the URL `/regions/test`. It still 404s. What's going on here?
 
-If you recall from our Lesson 11 tutorial on forms, we're not quite done yet. We have to whitelist the `test` method as one that can be invoked through the URL. You can imagine the security risk that would be imposed by allowing all public methods on a controller to be invoked arbitrarily in the URL. We don't want that. By default, no methods are allowed to be called through controller actions. You need to specify a list of those that are in a private static variable called `$allowed_actions`.
+If you recall from our Lesson 11 tutorial on forms, we're not quite done yet. We have to whitelist the `test` method as one that can be invoked through the URL. You can imagine the security risk that would be imposed by allowing all public methods on a controller to be invoked arbitrarily in the URL. We don't want that, so by default no methods are allowed to be called through controller actions. You need to specify a list of those that are in a `private static` variable called `$allowed_actions`.
 
 ```php
 namespace SilverStripe\Lessons;
@@ -82,17 +82,19 @@ class RegionsPageController extends PageController {
 
 `$allowed_actions` can actually get quite complex. You can map these methods to required permission levels, and even custom functions that evaluate whether they should be accessible at runtime, which is really useful for complex controllers. In this case, we just want to make sure anyone can invoke the `test` action. 
 
-Refresh the page with a `?flush`, as we changed a private static variable. Now it works.
+Refresh the page with a `?flush`, since we changed a private static variable, and now it works.
 
 ### Creating a controller action to render a DataObject
 
-The most common use for a controller action is to assign a URL to a DataObject that is nested in a Page, and this is, in my opinion, one of the first milestones of becoming a skilled SilverStripe developer.
+The most common use for a controller action is to assign a URL to a DataObject that is nested in a Page. This is, in my opinion, one of the first milestones of becoming a skilled SilverStripe developer.
 
 We know that DataObjects are more primitive than Page objects. They contain none of the functionality for rendering a template, they have no `Link()` method, no meta tags, no controllers, etc. In short, they're not meant to be rendered as full pages. That doesn't mean, however, that you cannot assign them some of the properties necessary to do so. In fact, it often makes a lot of sense to.
 
 Let's keep the focus on our RegionsPage. We have a list of `Region` DataObjects that are related to the page via `has_many`. We want to create a detail view for each one of the regions in our list. The user should be able to click on one of the regions and see more information.
 
-This isn't an ideal use case for a DataObject as a page. These Region objects could just as well be pages in the site tree. It often comes down to a judgment call for the developer, guided by what will work best for the content editor. In a future tutorial, we'll look at creating a detail page for our `Property` DataObject, which, due to their volume, will be much more effective than managing them as pages.
+<div class="alert alert-info">
+This isn't an ideal use case for a DataObject as a page. These Region objects could just as well be pages in the site tree. It often comes down to a judgment call for the developer, guided by what will work best for the content editor. In a future tutorial we'll look at creating a detail page for our `Property` DataObject, which due to their volume make a much more effective case for managing them as pages.
+</div>
 
 #### Adding a Link() method
 
@@ -108,12 +110,12 @@ class Region extends DataObject
   //...
 	public function Link()
 	{
-		return $this->RegionsPage()->Link('show/'.$this->ID);
+		return $this->RegionsPage()->Link('show/' . $this->ID);
 	}
 }
 ```
 
-We get the `RegionsPage` that owns this Region via the `has_many` / `has_one` parity, and call its link method. We pass in some extra URL segments we want appended to its link. We specify an `$Action` of *show* and an `$ID` that represents the Region's ID.
+We get the `RegionsPage` that owns this Region via the `has_many` / `has_one` parity, and call its link method. We pass in some extra URL segments we want appended to its link. We specify an `$Action` of **show** and an `$ID` that represents the Region's ID.
 
 Now that we have that method, we'll apply it to the template. Change all the hash (#) links to `$Link`.
 
@@ -208,7 +210,7 @@ Copy your `themes/one-ring/templates/Layout/Page.ss` to `RegionsPage_show.ss` in
 </div>
 ```
 
-Try clicking on a region now and see that you get its detail page.
+Try clicking on a region (after a `?flush`) and see that you get its detail page.
 
 One thing that's a bit odd right now is that the `$Description` field is presented exactly the same way on the list view as it is on the detail view, which makes this click effectively pointless. Let's update the `Region` DataObject to store its `Description` field as an `HTMLText` field so that it could conceivably be much longer.
 
@@ -257,7 +259,7 @@ Remember the array we passed to the template containing our custom variable `$Re
 ```php
 	public function show(HTTPRequest $request)
 	{
-    //...
+		//...
 		return [
 			'Region' => $region,
 			'Title' => $region->Title
@@ -315,6 +317,6 @@ class Region extends DataObject
 	}
 }
 ```
-Remember that we're in the context of a simple DataObject here, so we don't have any awareness of the request. `Controller::curr()` is a useful method that gets us the currently active controller. Off that object, we can get the request object that has been assigned to it, and look for `->param('ID')`, the same way we did in our `show()` action. If the ID in the URL matches this region, we return `current`, otherwise we return `link`. We don't have to worry about `section` for something this simple.
+Remember that we're in the context of a simple DataObject here, so we don't have any awareness of the request. `Controller::curr()` is a useful method that gets us the currently active controller. From that object we can get the request object that has been assigned to it, and look for `->param('ID')` the same way we did in our `show()` action. If the ID in the URL matches this region we return `current`, otherwise we return `link`. We don't have to worry about `section` for something this simple.
 
 Refresh the page and see that the current region is now indicated.
