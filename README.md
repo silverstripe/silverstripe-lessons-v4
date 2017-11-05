@@ -5,7 +5,7 @@
 
 ## What are we working towards?
 
-Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. Often times, however, the template and the database are not so tightly coupled. There's actually no rule saying that all template data has to come from the database
+Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. However, the template and the database are not so tightly coupled; There's no rule saying that all template data has to come from the database
 
 Ultimately what we're teaching in this lesson is the concept of *composable UI elements*. As you may know, composable components are a rapidly accelerating trend in application development as developers and designers seek to maintain a high level of agility and reusability.
 
@@ -57,7 +57,7 @@ This might look reasonable at first, it's going to lead to nothing but problems.
 
 ### A better approach
 
-If the sight of `li` tags nested in a `ul` is becoming almost synonymous with the `<% loop %>` control to you, that's a good sign. We're definitely going to need a loop here. This will keep the UI much cleaner, and it will give us more control over the output, as we'll have a chance to *compose* each member of the loop. Let's add that now, and make up the rest as we go.
+If the sight of `li` tags nested in a `ul` is becoming almost synonymous with the `<% loop %>` control to you, that's a good sign. We're definitely going to need a loop here. This will keep the UI template much cleaner, and it will give us more control over the output, as we'll have a chance to *compose* each member of the loop. Let's add that now, and make up the rest as we go.
 
 ```html
 <ul class="chzn-choices">
@@ -91,7 +91,7 @@ Now that our template syntax is in place, we need to configure the controller to
 
 ### Creating an arbitrary list
 
-In order to invoke the `<% loop %>` block, we of course will need some kind of iteratable list. So far, we've been using `SilverStripe\ORM\DataList`, which represents a list of records associated with a database query. Since our filter UI elements are not coming from the database, we'll need something more primitive. In this case, `SilverStripe\ORM\ArrayList` is an ideal choice.
+In order to invoke the `<% loop %>` block we of course will need some kind of iteratable list. So far we've been using `SilverStripe\ORM\DataList`, which represents a list of records associated with a database query. Since our filter UI elements are not coming from the database, we'll need something more primitive. In this case, `SilverStripe\ORM\ArrayList` is an ideal choice.
 
 At the top of our `index()` action, let's instantiate that list.
 
@@ -116,9 +116,9 @@ Now, we just need to fill our list with data.
 ### Remember ViewableData?
 To populate the list, we'll revisit our old friend `SilverStripe\View\ViewableData` from the previous tutorial. Just as a recap, `ViewableData` is a primitive object that is ready to be rendered on a template. One type of `ViewableData` is `DataObject`, which we've been using all along to render content from the database.
 
-You will rarely need to use the `ViewableData` class itself, but its immediate descendant, `SilverStripe\View\ArrayData` is very flexible and couldn't be simpler to implement. It's basically just a glorified array. All you have to do is instantiate it with an array of key/value pairs that will translate to `$Variable` template variables, and render their associated values.
+You will rarely need to use the `ViewableData` class itself, but as its immediate descendant `SilverStripe\View\ArrayData` is very flexible and couldn't be simpler to implement. It's basically just a glorified keyed array. All you have to do is instantiate it with an array of key/value pairs that will translate to `$Variable` template variables, and render their associated values.
 
-Let's add the filter for the `Keywords` filter.
+Let's add the details for the `Keywords` filter.
 
 *mysite/code/PropertySearchPageController.php*
 ```php
