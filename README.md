@@ -6,7 +6,7 @@
 
 ### Creating a DataObject for $many_many
 
-Let's turn our focus back to the `ArticlePage` now and see that each article is associated with many categories. We can imagine that in the CMS, we want a list of selectable categories, perhaps checkboxes, that are offered to each article. The first thing we'll need to do is set up a place to manage the categories. There are several different ways you can do this. It really depends on what kind of user experience you want to create, but for now, let's stick them on the ArticleHolder object, so that, conceivably, another `ArticleHolder` page could provide its own set of distinct categories.
+Let's turn our focus back to the `ArticlePage` now and see that each article is associated with many categories. We can imagine in the CMS that we'll want a list of selectable categories, perhaps checkboxes, that are offered to each article. The first thing we'll need to do is set up a place to manage the categories. There are several different ways you can do this. It really depends on what kind of user experience you want to create, but for now let's stick them on the ArticleHolder object. This way, if a content editor adds another `ArticleHolder` page, it will have the ability to provide its own distinct set of categories.
 
 #### Managing the ArticleCategory objects
 
@@ -69,7 +69,7 @@ class ArticleCategory extends DataObject {
 
 Notice once again that we have the reciprocal `$has_one` back to the `ArticleHolder`. 
 
-Also take note that we won't use versioning for this DataObject. This is a deliberate decision based on the knowledge that there are no views where all of the categories will be listed. We know that the only way a category will appear on the frontend is when it is associated with an article. So based on that, we don't need to worry about the published state of categories.
+Also take note that we won't use versioning for this DataObject. This is a deliberate decision based on the knowledge that there are no views where all of the categories will be listed. We know that the only way a category will appear on the front-end is when it is associated with an article. So based on that, we don't need to worry about the published state of categories.
 
 Run `dev/build` again and see that we get a new table. Edit the "Travel Guides" page in the CMS and add a few sample categories.
 
@@ -96,7 +96,7 @@ Run `dev/build` and see that we get a new table, `SilverStripe_Lessons_ArticlePa
 
 #### Reciprocating the $many_many
 
-Optional, but strongly recommended is a reciprocation of this relationship on the `ArticleCategory` object, using `$belongs_many_many`. This variable does not create any database mutations, but will provide an magic method to the object for getting its parent records. In this case, we know that we'll need any `ArticleCategory` object to get its articles, because our design includes a filter by category in the sidebar, so this is quite important.
+Optional, but strongly recommended is a reciprocation of this relationship on the `ArticleCategory` object, using `$belongs_many_many`. This variable does not create any database mutations, but will provide a magic method to the object for getting its parent records. In this case, we know that we'll need any `ArticleCategory` object to get its articles, because our design includes a filter by category in the sidebar, so this is quite important.
 
 _mysite/code/ArticleCategory.php_
 ```php
@@ -110,11 +110,11 @@ class ArticleCategory extends DataObject {
 }
 ```
 
-We changed a static variable, so run `?flush`.
+We changed a static variable, so run a `?flush` too.
 
 #### $many_many vs $belongs_many_many
 
-So if both sides of the relationship have many associated records, how do you know which one gets the `$many_many` and which one is `$belongs_many_many`? Typically, the object that contains the interface gets the `$many_many`. In this case, we'll add categories to the articles using checkboxes, so that's where our `$many_many` goes. Again, the `$belongs_many_many` just provides the convenience of an accessor method for getting the articles from within a category.
+So if both sides of the relationship have many associated records, how do you know which one gets the `$many_many` and which one is `$belongs_many_many`? Typically, the object that contains the interface gets the `$many_many`. In this case, we'll add categories to the _articles_ using checkboxes, so that's where our `$many_many` goes. Again, the `$belongs_many_many` just provides the convenience method for getting the articles from within a category.
 
 ### Adding interface for $many_many
 
@@ -140,16 +140,18 @@ class ArticlePage extends Page {
     }
 }
 ```
-Let's take a look at the argument signature of `CheckboxSetField`:
+Let's take a look at the constructor arguments we've passed to `CheckboxSetField`:
 
 *   **'Categories'**: The name of the `$many_many` relation we're managing.
 *   **'Selected categories'**: A label for the checkboxes
 *   **$this->Parent()->Categories()**: The categories are stored on the parent `ArticleHolder` page, so we need to invoke `Parent()` first.
-*   **->map('ID', 'Title')**: Using the resulting list of categories, create an array that maps each category's ID to its Title. This tells the checkboxes to save the ID to the relation, but present the `Title` field as a label. Note that `Title` can be any public method executable on the object, which is useful if you want a computed value or concatenation of multiple fields. 99% of the time, you will want to use `ID` as the first argument here, as relational data is all held together by unique identifiers.
+*   **->map('ID', 'Title')**: Using the resulting list of categories, create an array that maps each category's ID to its Title. This tells the checkboxes to save the ID to the relation, but present the `Title` field as a label. Note that `Title` can be any public method executable on the object, which is useful if you want a computed value or concatenation of multiple fields. 99% of the time you will want to use `ID` as the first argument here, as relational data is all held together by unique identifiers.
 
-Go into the CMS and edit an article under "Travel Guides." Check off some categories and make sure they save.
+Go into the CMS and edit an article under "Travel Guides." Check some categories and make sure they save.
 
-`CheckboxSetField` is a good go-to UI for most `$many_many` relations, but it doesn't scale very well. If we had 100 categories, this wouldn't be a pleasant experience for the user. For larger data sets there is also `ListboxField`, which provides a typeahead UI for associating records without displaying them all at once.
+<div class="alert alert-info">
+    `CheckboxSetField` is a good go-to UI for most `$many_many` relations, but it doesn't scale very well. If we had 100 categories, this wouldn't be a pleasant experience for the user. For larger data sets there is also `ListboxField`, which provides a type-ahead UI for associating records without needing to display all options at once.
+</div>
 
 ### Pulling the data into the template
 
@@ -161,7 +163,7 @@ _themes/one-ring/templates/Layout/ArticlePage.ss, line 22_
      <% loop $Categories %>$Title<% if not $Last %>, <% end_if %><% end_loop %>
 </li>
 ```
-We can use the global template variable `$Last` to tell us whether we're in the last iteration of the loop, which will determine whether or not we show the comma. Also available are `$First`, `$Even`, `$Odd`, and many others.
+We can use the template variable `$Last` to tell us whether we're in the last iteration of the loop, which will determine whether or not we show the comma. Also available _when iterating a loop_ are `$First`, `$Even`, `$Odd`, and a few others used for tracking positional information.
 
 #### Using a custom getter
 
@@ -183,7 +185,7 @@ class ArticlePage extends Page {
 }
 ```
 
-We check the existence of categories with the `exists()` method. Simply checking the result of `Categories()` will not work, because it will at worst return an empty `DataList` object. It will never return false. We use `exists()` to check truthiness.
+We check the existence of categories with the `exists()` method. Simply checking the result of `Categories()` will not work because it will always return a `DataList` object, whether empty or not; It will never return _false_. We use `exists()` to check if the list contains records or not.
 
 Invoking `column()` on the list of `ArticleCategory` objects will get an array of all the values for the given column, which saves us the trouble of looping through the list just to get one field.
 
