@@ -8,13 +8,13 @@ In this lesson we'll talk about filtering a list of items on a template. In a pr
 * Filtering through controller actions
 * Adding filter headers
 
-Having a rich supply of data to work with is paramount to getting value out of this lesson, so once you get the code changes in place, it's a good idea to import the `database.sql` file that is included in the completed version of this lesson. It will provide you with a hundred or so randomly composed `ArticlePage` records that we'll be filtering.
+Having a rich supply of data to work with is paramount to getting value out of this lesson. Once you get the code changes in place, it's a good idea to import the `database.sql` file that is included in the completed version of this lesson. It will provide you with a hundred or so randomly composed `ArticlePage` records that we'll be filtering.
 
 ## Setting up new relationships
 
-Looking at our Travel Guides page, we see that there are a number of different filters we can apply in the sidebar. We have a list of categories, an archive of previous months and years, as well as tags. We won't be using tags for these articles, so let's remove that. We'll be replacing it with a filter for regions, because, optionally, each of these travel guides can pertain to a region.
+Looking at our Travel Guides page we see that there are a number of different filters we can apply in the sidebar. We have a list of categories, an archive of previous months and years, as well as tags. We won't be using tags for these articles, so let's remove that. We'll be replacing it with a filter for regions, as each of these travel guides can pertain to a region, optionally.
 
-Before we add the filter, let's set up that relationship. We'll add a `has_one` to `Region` on `ArticlePage` and a `has_many` from `Region` back to `ArticlePage`.
+Before we add the filter, let's set up that relationship. We'll add a `has_one` `Region` to `ArticlePage` and the corresponding `has_many` `ArticlePage` to `Region`.
 
 *mysite/code/ArticlePage.php*
 ```php
@@ -49,11 +49,11 @@ Before we add the filter, let's set up that relationship. We'll add a `has_one` 
 //...
 ```
 
-Run a `dev/build?flush`. If you've already done the database import, there should be no changes to the database, but it's still critical to update the model.
+Run a `dev/build?flush`. If you've already done the database import, there should be no changes to the database, but it's still critical to update the model by flushing the cache.
 
 ## Adding lists of filter links
 
-Now we can get into the meat of the lesson and start creating some filters.Let's look at our `ArticleHolderController` and make sure it can feed regions into its sidebar. Add a method called `Regions()` to `ArticleHolder` that simply dumps out all the regions on the Regions page.
+Now we can get into the meat of the lesson and start creating some filters. Let's look at our `ArticleHolderController` and make sure it can feed regions into its sidebar. Add a method called `Regions()` to `ArticleHolder` that simply dumps out all the regions on the Regions page.
 
 *mysite/code/ArticleHolder.php*
 ```php
@@ -213,7 +213,7 @@ Refresh the page and see that the categories and regions link to the correct URL
 
 ## Filtering through controller actions
 
-Let's start by defining the base list of articles. We know at minimum that we want only articles that are children of this page, sorted in reverse chronological order. `ArticlePage::get()->sort('Date DESC')` may yield the same thing, but in the long term, that's not a great solution. We may someday have multiple `ArticleHolder` pages.
+Let's start by defining the base list of articles. We know at minimum that we want only articles that are children of this page, sorted in reverse chronological order. `ArticlePage::get()->sort('Date DESC')` may yield the same thing, but in the long term that's not a great solution. We may someday have multiple `ArticleHolder` pages.
 
 Ultimately what we want is for the controller to start with this base list, and each controller action will filter it down further. This is a great use case for the `init()` method, as it is executed before any actions.
 
@@ -237,7 +237,7 @@ class ArticleHolderController extends PageController
 	}
 ```
 
-If you're wondering why we don't just use `Children()`, which effectively does the same thing, that's because `Children()` is a special method that modifies its list post-query. It actually returns an `ArrayList`, not a `DataList`, which would preclude us from adding filters.
+If you're wondering why we don't just use `Children()`, which effectively does the same thing, that's because `Children()` is a special method that modifies its list post-query. It actually returns an `ArrayList`, not a `DataList`, which would preclude us from adding efficient filters.
 
 We're going to want the articles paginated, so let's create a method that applies a `PaginatedList` to the `$articleList` member variable. This will be our single point of access to the list of articles that we're building.
 
@@ -271,7 +271,7 @@ Back in the template, change the `<% loop %>` block to use the `$PaginatedArticl
 			<% end_loop %>
 ```
 
-For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax. We'll address this duplication in an upcoming lesson.
+For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax; We'll address this duplication in an upcoming lesson.
 
 Take a deep breath, and copy and paste away. No one will know. Just make sure you change `$Results` to `$PaginatedArticles`.
 
