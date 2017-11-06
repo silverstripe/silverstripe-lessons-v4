@@ -2,7 +2,7 @@ In this tutorial, we’ll cover how to build your first theme in SilverStripe. T
 
 ### What is a theme?
 
-In a conventional SilverStripe project, the code and business logic (backend) of a website is kept separate from the UI and design elements (frontend). More specifically, PHP classes and configuration files are kept in the **project directory**, while templates, CSS, images, and Javascript are kept in the **theme directory**.
+In a conventional SilverStripe project, the code and business logic (back-end) of a website is kept separate from the UI and design elements (front-end). More specifically, PHP classes and configuration files are kept in the **project directory**, while templates, CSS, images, and Javascript are kept in the **theme directory**.
 
 In a default installation of SilverStripe, your project directory is called **mysite/**, and lives in the web root. Your theme directory, however, will be located one level deeper, under the **themes/** folder. Because the code layer is detached from the UI, a given project can have multiple themes.
 
