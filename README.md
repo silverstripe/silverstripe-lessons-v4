@@ -22,13 +22,13 @@ All of these lists implement the `SilverStripe\ORM\SS_List` interface, which spe
 * Transforming the list into a simple array (`->toArray()`)
 * Getting the size of the list (`->count()`)
 
-As you can see, `PaginatedList` is just one implementation of this specification, and in addition to all of the above functionality, it provides us with very valuable tools for dealing with pagination, and we'll look at all of that next.
+As you can see, `PaginatedList` is just one implementation of this specification, and in addition to all of the above functionality it provides us with very valuable tools for dealing with pagination, and we'll look at all of that next.
 
 ## Creating a paginated list
 
-In the previous lesson, we created a search form that produced a list of results. Right now, the results are artificially limited to 20, for performance reasons, since there are more than 100 records in the database. Looking at the template, we already have some static HTML for the pagination, so let's work on activating that.
+In the previous lesson, we created a search form that produced a list of results. Right now the results are artificially limited to 20 for performance reasons, since there are more than 100 records in the database. Looking at the template, we already have some static HTML for the pagination, so let's work on activating that.
 
-As said before, SilverStripe's `PaginatedList` class is essentially a wrapper for a `DataList` that does a lot of the legwork for us. It will automatically look at the request and add the correct `LIMIT` clause to the DataList, and it will also provide a public API for determining what page is active and what pages, if any, are available.
+SilverStripe's `PaginatedList` class is essentially a wrapper for a `DataList` that does a lot of the legwork for us. It will automatically look at the request and add the correct `LIMIT` clause to the DataList, and it will also provide a public API for determining what page is active and what pages, if any, are available.
 
 Let's look at `PropertySearchPage.php` again and find the return value of our `index()` action. Right now, it's returning a `DataList`. Let's have it return a `PaginatedList` instead.
 
@@ -69,7 +69,7 @@ class PropertySearchPageController extends PageController
 	}
 ```
 
-It's really that simple. All we do is pass it the `SS_List` instance that we're working with (usually a `DataList`), and in the interest of keeping the list loosely coupled, we pass the request as well. It may seem odd that we have to do that, but if the list were request aware, it would introduce tight coupling, which makes unit testing more difficult and renders the class less extensible.
+It's really that simple. All we do is pass it the `SS_List` instance that we're working with (usually a `DataList`), and in the interest of keeping the list loosely coupled, we pass the request as well. It may seem odd that we have to do that, but if the list were request aware it would introduce tight coupling, which makes unit testing more difficult and renders the class less extensible.
 
 Thanks to a wealth of default values that come pre-baked into `PaginatedList`, we're actually ready to just render these results on the template.
 
@@ -77,7 +77,7 @@ Thanks to a wealth of default values that come pre-baked into `PaginatedList`, w
 
 Let's have a look at our `PropertySearchPage.ss` template, and find the HTML for the pagination.
 
-Up until now, the only syntax we've really used on a list has been `<% loop %>` blocks, but the list itself actually has properties, too, much like a `DataObject`.
+Up until now, the only syntax we've really used with a list has been `<% loop %>` blocks, but the list itself actually has properties, too, much like a `DataObject`.
 
 Let's use some of the properties we get from `PaginatedList` to render this pagination.
 
@@ -143,7 +143,7 @@ Futher, you can customise how much context you would like by passing an integer 
 
 ## Customising the paginated list
 
-This all works great, but the pagination is still configured with default values, most notably, a limit of 10 results per page. Let's update that.
+This all works great, but the pagination is still configured with default values, most notably a limit of 10 results per page. Let's update that.
 
 *mysite/code/PropertySearchPageController.php*
 ```php
