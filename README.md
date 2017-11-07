@@ -54,7 +54,7 @@ The most important section of our page is the main content area. In our mockup, 
 
 Replace the contents of `<div class="main col-sm-8" />` with $Content.
 
-Alongside the content, we have a sidebar that contains sub-navigation. Earlier in this tutorial we created a loop for primary navigation using `$Menu(1)`. Similarly, we can create sub-navigation using `$Menu(2)`; but we don't want to include this block of content unless sub-navigation exists, so we'll wrap the whole thing in an `<% if $Menu(2) %>` block.
+Alongside the content, we have a sidebar that contains sub-navigation. Earlier in this tutorial we created a loop for primary navigation using `$Menu(1)`. Similarly, we can create sub-navigation using `$Menu(2)`, but we don't want to include this block of content unless sub-navigation exists, so we'll wrap the whole thing in an `<% if $Menu(2) %>` block.
 
 Replace the contents of the sidebar as follows:
 
