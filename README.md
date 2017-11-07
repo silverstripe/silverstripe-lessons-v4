@@ -1,8 +1,8 @@
 ### Creating a new page type
 
-Let's create our second template, based on the `home.html` provided in the `__assets/` directory in for this lesson.. In order to create a new page type, we first need to add a PHP class to represent it. Having a new class will give us the option of creating this page type in the CMS. Since this is code related, we'll leave the theme folder for now, and add the file to the project directory, `mysite/`.
+Let's create our second template, based on the `home.html` provided in the `__assets/` directory in for this lesson.. In order to create a new page type, we first need to add a PHP class to represent it. Having a new class will give us the option of creating this page type in the CMS. Since this is code related, we'll leave the theme folder for now, and add the file to the _project_ directory; `mysite/`.
 
-Create two files in your `mysite/code` folder: `HomePage.php` and `HomePageController.php`. Add the following content:
+Create two files in your `mysite/code/` folder: `HomePage.php` and `HomePageController.php`. Add the following content:
 
 *mysite/code/HomePage.php*
 ```php
@@ -41,17 +41,17 @@ Leave the CMS and reload the home page in your browser. You should see the defau
 
 ### Using the $Layout variable
 
-As a matter of best practice, we never want to repetitively hardcode any values in our template that are subject to change. This principle is more commonly referred to as **DRY** (Don't Repeat Yourself). One glaring problem you may have noticed is that, as we add new page types, we'll have to copy over a lot of content (e.g. the head, navigation, and footer) to each page, but with little variation, all of our templates are going to share this content. This type of outer content is often called the "chrome" or your site. To prevent the redundancy of chrome in each template, SilverStripe offers template **layouts**.
+As a matter of best practice, we don't want to repetitively hard-code any values in our template that are subject to change. This principle is more commonly referred to as **DRY** (Don't Repeat Yourself). One glaring problem you may have noticed is that, as we add new page types, we'll have to copy over a lot of content (e.g. the head, navigation, and footer) to each page, but with little variation, all of our templates are going to share this content. This type of outer content is often called the "chrome" of your site. To prevent the redundancy of chrome in each template, SilverStripe offers template **layouts**.
 
 To illustrate how this works, let's first find all the content that will not be common between our default page and our home page. A quick glance through the mockups reveals that everything between the closing `</header>` tag and the opening `<footer>` tag is unique content.
 
-Highlight all of the content between `</header>` and `<footer>` and cut it into your clipboard. Replace all of that content with the variable **$Layout**.
+Highlight all of the content between `</header>` and `<footer>` and cut it into your system's clipboard. Replace all of that content with the variable **$Layout**.
 
-Create a new template in `templates/Layout` called `Page.ss`. Paste the content from your clipboard into that file, and save.
+Create a new template in `templates/Layout/` called `Page.ss`. Paste the content from your clipboard into that file, and save.
 
-Likewise, we'll need to create a new `Layout/` template for our `HomePage` class. Unlike `Page` however, our `HomePage` page type is namespaced. We'll need to create the appropriate pathing in our `templates/` directory for the fully-qualified name.
+Likewise, we'll need to create a new `Layout/` template for our `HomePage` class. Unlike `Page` however, our `HomePage` page type is namespaced. We'll need to create the appropriate path in our `templates/` directory for the fully-qualified name.
 
-Make a directory called `templates/SilverStripe/Lessons`. In that directory, create another directory called `Layout/`. In that directory, create `HomePage.ss`. The full path should be `templates/SilverStripe/Lessons/Layout/HomePage.ss`.
+Make a directory called `templates/SilverStripe/Lessons/` to match the namespace of our `HomePage` PHP class. In that directory, create another directory called `Layout/`, in which you will create the `HomePage.ss` file. In full that will be `templates/SilverStripe/Lessons/Layout/HomePage.ss`.
 
 Now copy the content between `</header>` and `<footer>` in the `__assets/home.html` file to your clipboard and paste it into this new file.
 
@@ -60,14 +60,14 @@ Any time we create a new template, we need to flush the cache, so append `?flush
 It may seem trivial, but you've just achieved massive gains in efficiency and code organisation. Here's how it works:
 
 *   SilverStripe sees that you are requesting a URL for a page that uses the `HomePage.ss` template
-*   It first looks in the main `templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Lessons\HomePage`, which is `Page`, and uses it.
+*   It first looks in the main `templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Lessons\HomePage`, which is `Page`, and so uses `Page.ss`.
 *   The `$Layout` variable tells SilverStripe to look in the `templates/{page namespace}/Layout` directory for a template that matches this page type. It finds `HomePage.ss` and uses it. If it had not found `HomePage.ss`, it would chase up the ancestry and find `Page.ss`, and use that as a fallback.
 
 A vast majority of SilverStripe projects have only one template, `Page.ss`, in the root `templates/`, leaving everything else to `{namespace}/Layout/`. In some circumstances, you may have a page type that has such a distinct design that it needs its own chrome. A common example of this is a login page, where the user is presented with a very streamlined, isolated form.
 
 ### Injecting assets through the controller
 
-Right now, we have all the CSS and Javascript dependencies hardcoded in the template. This works okay, but often times you will benefit from handing over management of dependencies to the controller. This gives you the ability to require specific files for only certain pages as well as conditionally include or exclude files based on arbitrary business logic.
+Right now, we have all the CSS and JavaScript dependencies hard-coded in the template. This works okay, but often times you will benefit from handing over management of dependencies to the controller. This gives you the ability to require specific files for only certain pages as well as conditionally include or exclude files based on arbitrary business logic.
 
 To include these dependencies, we'll make a call to the `Requirements` class in our controller. Since these dependencies are common to all pages, we can add this to `PageController` in `PageController.php`.
 
@@ -98,9 +98,9 @@ protected function init()
 
 We use `themedCSS` and `themedJavascript` to auto-locate the resource based on the current theme. That way, if the theme ever changes, we don't have to update the path.
 
-The only resources we haven't included are the html5 shim that is conditionally included for IE8, and the Google font that is loaded from an absolute path.
+The only resource we haven't included is the html5 shim that is conditionally included for IE8, as `Requirements` does not cater for this.
 
-Next, remove all the `<script>` and stylesheet tags from your `templates/Page.ss` file that are now loaded via `Requirements`.
+Next, remove all the `<script>` and stylesheet tags from your `templates/Page.ss` file that are now loaded via `Requirements` (not the html5shim script inside the IE conditional).
 
 ### Tidying up with includes
 
