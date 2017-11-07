@@ -1,6 +1,6 @@
 ### Taking inventory of custom fields
 
-In the previous lesson we developed a structure for our **Travel Guides** section that provides a list view of articles, each with a link to their own detail page. However most of these templates are still hard-coded with static content, and need to be integrated with the CMS. In this lesson we'll start looking at how to add some custom fields to these pages to make them really come to life.
+In the previous lesson we developed a structure for our **Travel Guides** section that provides a list view of articles, each with a link to their own detail page. However, most of these templates are still hard-coded with static content, and need to be integrated with the CMS. In this lesson we'll start looking at how to add some custom fields to these pages to make them really come to life.
 
 Let's take a look at these two page types and see if we can identify some fields that will be need to be editable in the CMS. At first glance over the list page, the following fields stand out:
 
@@ -12,7 +12,7 @@ Let's take a look at these two page types and see if we can identify some fields
 
 **The image**: Each article should have its own image that will render as a thumbnail in list view and full size on the detail page. We'll need the CMS to provide an image upload field for each article, which is a bit out of scope for this lesson, so we'll skip it for now.
 
-**The teaser**: The short snippet of text that appears in list view to give a preview of the article contents is often called a "teaser." Commonly this can just be the first sentence or paragraph of the article, but to give our content authors more control we'll provide a custom field for the teaser. If our custom field isn't filled in for an article we can fallback to using the first sentence of the article, which will cover our bases nicely.
+**The teaser**: The short snippet of text that appears in list view to give a preview of the article contents is often called a "teaser." Commonly this can just be the first sentence or paragraph of the article, but to give our content authors more control, we'll provide a custom field for the teaser. If our custom field isn't filled in for an article we can fallback to using the first sentence of the article, which will cover our bases nicely.
 
 Clicking through to the detail page, we see that one additional field has been added for the **author** of the post.
 
@@ -31,7 +31,7 @@ class ArticlePage extends Page
 }
 ```
 
-The `$db` array is the cornerstone of data modelling in SilverStripe. Its function is pretty simple -- it maps a field name to a field type. So the keys of the array are going to represent the names of the variables that you can invoke on the object, such as `Content`, and `Title`, etc. and the values of the array will be the field _type_. We'll talk more about field types in just a moment, but for now, let's populate this array with the fields we need.
+The `$db` array is the cornerstone of data modelling in SilverStripe. Its function is pretty simple -- it maps a field name to a field type. So the keys of the array are going to represent the names of the variables that you can invoke on the object, such as `Content`, `Title`, etc. and the values of the array will be the field _type_. We'll talk more about field types in just a moment, but for now, let's populate this array with the fields we need.
 
 ```php
 class ArticlePage extends Page 
@@ -197,7 +197,7 @@ Most of the hard work is done now. It's time to insert all the variables in to o
 
 One issue we can see is that the date is not formatting very nicely. Since we cast the field as Date, we have some control over that at the template level. The Long method will give us what we need. Replace $Date with `$Date.Long`.
 
-There are a number of other methods available on the Date class to help you get the format you want. You might try `$Date.Nice`, or `$Date.NiceUS` for a format that puts the month first if you're in the USA. If all else fails, you can always invoke `$Date.Format` which essentially exposes PHP's date() method, allowing you to pass a string of text to get the format you need.
+There are a number of other methods available on the Date class to help you get the format you want. You might try `$Date.Nice`, or, if you're in the USA, `$Date.NiceUS` for a format that puts the month first. If all else fails, you can always invoke `$Date.Format` which essentially exposes PHP's date() method, allowing you to pass a string of text to get the format you need.
 
 Lastly, we said earlier that we would like the teaser to be an optional field, falling back on the first sentence of the content if it isn't populated. Let's set that up.
 
