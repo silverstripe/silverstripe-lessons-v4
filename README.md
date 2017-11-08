@@ -14,7 +14,7 @@ For this example, we're going to look at our Regions page. You'll see that it re
 
 #### Breaking down the request 
 
-The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request` (The site must be in ['dev' mode](https://docs.silverstripe.org/en/getting_started/environment_management) to allow this functionality).
+The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request` (the site must be in ['dev' mode](https://docs.silverstripe.org/en/getting_started/environment_management) to allow this functionality).
 
 Let's take a look at what's going on here.
 
