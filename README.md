@@ -1,12 +1,12 @@
 ### How SilverStripe handles forms
 
-This lesson is about frontend forms, which is a very important distinction to make, because we've actually been working with forms since very early on in the CMS. Whenever we're editing data in the backend, we're using a form. The main difference is that in the CMS, only a small part of that form is exposed to the model class via `getCMSFields()`.
+This lesson is about front-end forms, which is a very important distinction to make, because we've actually been working with forms since very early on in the CMS. Whenever we're editing data in the back-end, we're using a form. The main difference is that in the CMS, only a small part of that form is exposed to the model class via `getCMSFields()`.
 
 When you think about how a framework might deal with form creation, you may imagine a simple object that takes an array of form fields and ultimately dumps some HTML via a `render()` method or something similar, but one of the most distinguishing features of forms in SilverStripe is that they are treated a _first-class citizens_, which is to say they're intelligent objects that work with all the big players in the request cycle.
 
 #### Creating a simple form
 
-Let's look at a simple form constructor to better understand how this will work. The following method would be placed in any `Controller`.
+Let's look at a simple form factory method to better understand how this will work. The following method would be placed in any `Controller`.
 
 ```php
     public function ContactForm()
@@ -64,7 +64,7 @@ Our form handler method is given two parameters:
 *   `$data` contains an array of all the form field names mapped to their values, very similar to what you would get from `$_POST`.
 *   `$form` is the form object that the `ContactForm` method gave us. Remember that we had to specify the name of the function in our form constructor? This is why. Now our form handler has full access to that form, which is immeasurably useful.
 
-So that's the really high-level view of how forms work. Now we'll look at implementing a working frontend form in our project.
+So that's the really high-level view of how forms work. Now we'll look at implementing a working front-end form in our project.
 
 ### Adding a form to a template
 
@@ -192,13 +192,15 @@ public function CommentForm()
 
 Form methods are chainable, just like form field methods, so we've chained `addExtraClass` to the constructor. We use the `Fields()` method of the form to get each field by reference and add the extra class to each one, and create a dynamic placeholder based on the field's name.
 
-This is mostly just a demonstration of form methods.. You probably wouldn't want to do something this aggressive in your project code because it doesn't scale well. Imagine if we had a new field that wasn't required, for instance, and the placeholder shouldn't have an asterisk next to it. Sometimes, it's okay to be verbose and repeat yourself a little bit. You'll be glad you did when you have to make small updates and handle edge cases.
+This is mostly just a demonstration of form methods. You probably wouldn't want to do something this aggressive in your project code because it doesn't scale well. Imagine if we had a new field that wasn't required, for instance, and the placeholder shouldn't have an asterisk next to it. Sometimes, it's okay to be verbose and repeat yourself a little bit. You'll be glad you did when you have to make small updates or handle unforeseen edge cases.
 
-If you're a bit dismayed about having to manually add all of the basic requirements for Bootstrap, rest assured there is a `bootstrap-forms` module that automatically does most of these updates. We haven't talked about modules yet, so it's a bit out of scope for now, but be aware that this is a bit more complex than it needs to be.
+<div class="alert alert-info">
+    If you're a bit dismayed about having to manually add all of the basic requirements for Bootstrap, rest assured there is a `bootstrap-forms` module that automatically does most of these updates. We haven't talked about modules yet, so it's a bit out of scope for now, but be aware that this is a bit more complex than it needs to be.
+</div>
 
 ### Creating a Comment data model
 
-When a user submits a comment, we want to save it to the database and add it to the page. Before we go any further with forms, we're going to need to do some data modeling to store all that content.
+When a user submits a comment we want to save it to the database and add it to the page, so before we go any further with forms we're going to need to do some data modeling to store all that content.
 
 Let's create a simple `ArticleComment` DataObject. We've seen all this before. _mysite/code/ArticleComment.php_
 
@@ -291,7 +293,7 @@ Notice that we create that `$has_many` relation by binding the comment back to t
 Let's try submitting the form and see what happens.
 
 ```
-    Action 'CommentForm' isn't allowed on class SilverStripe\Lessons\ArticlePageController.
+Action 'CommentForm' isn't allowed on class SilverStripe\Lessons\ArticlePageController.
 ```
 
 Yikes!
@@ -304,7 +306,7 @@ You may have noticed that I casually mentioned an an alarming detail of request 
 
 Exhale. It's not that simple.
 
-In fact, that's precisely why we're seeing this error. We can't just execute arbitrary controller methods from the URL. The method has to be whitelisted using a static variable known as `$allowed_actions`. Let's do that now.
+In fact, that's precisely why we're seeing this error. We can't just execute arbitrary controller methods from the URL. The method has to be white-listed using a static variable known as `$allowed_actions`. Let's do that now.
 
 _mysite/code/ArticlePage.php_
 ```php
@@ -354,7 +356,7 @@ Our form is accepting submissions and working as expected, so let's now add a bi
 
 #### Adding custom validation logic to the handler
 
-If the logic were really complicated, we could write our own validator, which we'll cover in the future, but for simple validation, it's fine to do all of this in your form handler method. Let's run a check to make sure the user's comment has not already been added. You might think of this as really basic spam protection.
+If the logic were really complicated we could write our own validator, which we'll cover in the future, but for simple validation it's fine to do all of this in your form handler method. Let's run a check to make sure the user's comment has not already been added. You might think of this as really basic spam protection.
 
 _mysite/code/AritclePage.php_
 ```php
@@ -373,7 +375,7 @@ _mysite/code/AritclePage.php_
     }
 ```
 
-Before creating the `Comment` object, we first inspect the `$data` array to see if everything looks right. We look for a comment on this page specifically that contains the same content, and if so, we add a message to the top of the form. The value `'bad'` as the second argument gives it an appropriate CSS class. `'good'` is the other option here.
+Before creating the `Comment` object we first inspect the `$data` array to see if everything looks right. We look for a comment on this page specifically that contains the same content, and if so, we add a message to the top of the form. The value `'bad'` as the second argument gives it an appropriate CSS class; `'good'` is the other option here.
 
 To filter out false positives, we make sure the comment is at least 20 characters long. It's plausible that multiple readers might comment "Nice article" or "Good work" and we don't want to punish them.
 
@@ -383,7 +385,7 @@ Try submitting the form again with an existing comment, and you'll see that we g
 
 #### Preserving state
 
-There's one usability problem here, and perhaps we shouldn't worry about it too much since we're not particularly motivated to be nice to spammers, but for the sake of teaching the concept, it would be nice if the form saved its invalid state, so that the user doesn't have to repopulate an empty form. For this, the convention is to use `Session` state.
+There's one usability problem here, and perhaps we shouldn't worry about it too much since we're not particularly motivated to be nice to spammers, but for the sake of teaching the concept it would be nice if the form saved its invalid state, so that the user doesn't have to repopulate an empty form. For this the convention is to use `Session` state.
 
 _mysite/code/ArticlePageController.php_
 ```php
@@ -401,7 +403,7 @@ _mysite/code/ArticlePageController.php_
     }
 ```
 
-We create a SKU using the form name to use as a session token, and store the `$data` array there. If everything checks out, we clear it, so that the form renders clean on the next page load. If not, we're going to want the form to render the session data.
+We create an identifier using the form name to use as a session token, and store the `$data` array there. If everything checks out, we clear it, so that the form renders clean on the next page load. If not, we're going to want the form to render the session data.
 
 _mysite/code/ArticlePageController.php_
 ```php
