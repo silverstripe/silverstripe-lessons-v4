@@ -271,7 +271,7 @@ Back in the template, change the `<% loop %>` block to use the `$PaginatedArticl
 			<% end_loop %>
 ```
 
-For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax; We'll address this duplication in an upcoming lesson.
+For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax. We'll address this duplication in an upcoming lesson.
 
 Take a deep breath, and copy and paste away. No one will know. Just make sure you change `$Results` to `$PaginatedArticles`.
 
