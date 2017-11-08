@@ -5,7 +5,7 @@
 
 ## What are we working towards?
 
-Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. However, the template and the database are not so tightly coupled; There's no rule saying that all template data has to come from the database
+Up until now, the data on our templates has been pretty one-sided. It's sourced from the database, and we render the fields from one or many returned records on the template. However, the template and the database are not so tightly coupled. There's no rule saying that all template data has to come from the database
 
 Ultimately what we're teaching in this lesson is the concept of *composable UI elements*. As you may know, composable components are a rapidly accelerating trend in application development as developers and designers seek to maintain a high level of agility and reusability.
 
