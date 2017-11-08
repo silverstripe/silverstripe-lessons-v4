@@ -138,7 +138,7 @@ class Address extends ViewableData
 }
 ```
 
-A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes `Image::forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
+A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes the `Image::forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
 
 ## Rendering a partial template
 
