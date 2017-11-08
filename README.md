@@ -7,7 +7,7 @@
 * Pulling the results into the template
 
 ## Setting expectations: Searching vs. filtering
-Before we begin, it's important that we set a baseline for what we're looking to accomplish in this tutorial. Because search, as you may know, is a real can of worms.
+Before we begin, it's important that we set a baseline for what we're looking to accomplish in this tutorial. Search, as you may know, is a real can of worms.
 
 Search is an inexact science. It seeks to deliver to the user the most accurate results per their input. It's highly subjective, and it is therefore always being tuned to increase the likelihood of it satisfying the largest volume of users. It is never perfect. To this end, there are many third-party search tools available that do a lot of the work for you, and you can integrate them into just about any database-driven project. Some popular options include [Solr](http://lucene.apache.org/solr/), [Sphinx](http://sphinxsearch.com/), and [Elastic Search](https://www.elastic.co/). Even MySQL itself has some [basic search functionality](https://dev.mysql.com/doc/refman/5.7/en/fulltext-search.html) that is often all you need.
 
