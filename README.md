@@ -223,7 +223,7 @@ SS_DEFAULT_ADMIN_PASSWORD='root'
 ```
 Another setting you might want to turn on is `SS_SEND_ALL_EMAILS_TO`. If you provide your email address here it will force all emails to go to you, instead of to the places that your application might be sending them, which could include a client or anyone else who you don't want getting your tests. By applying this setting, it will force email to go to you, no matter what to address you've specified, so that's very useful in development mode. 
 
-For a full list of settings you can go to the docs and just look up [environment management](https://docs.silverstripe.org/en/getting_started/environment_management) There are probably a dozen or so other settings you can throw in here. Some are more useful than others. Have a quick look through there because you might find something that's really useful to you. 
+For a full list of settings you can go to the docs and just look up [environment management](https://docs.silverstripe.org/en/4/getting_started/environment_management) There are probably a dozen or so other settings you can throw in here. Some are more useful than others. Have a quick look through there because you might find something that's really useful to you. 
 
 Let's save the changes to `.env`, and apply those new settings.
 
