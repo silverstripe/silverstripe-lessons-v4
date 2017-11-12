@@ -143,7 +143,7 @@ The key attribute of the `.env` file, however, is that it should not ship with t
 Let's take a look at an example directory structure, where we have an `htdocs` folder, and three example projects underneath it.
 
 
-* your-web-root/ [ .env ]*
+* htdocs/ [ .env ]*
     * project-a/
     * project-b/
     * project-c/
@@ -156,7 +156,7 @@ With the `.env` file in `htdocs`, the settings will cascade down to project A, B
   
 You can place an `.env` file in, say project B, and it will override the parent `.env` file.
 
-* your-web-root/ [ .env ]
+* htdocs/ [ .env ]
     * project-a/
     * project-b/ [ .env ]*
     * project-c/
