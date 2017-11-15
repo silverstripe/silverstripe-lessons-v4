@@ -154,7 +154,7 @@ Let's take a look at an example directory structure, where we have an `htdocs` f
 With the `.env` file in `htdocs`, the settings will cascade down to project A, B, and C. 
  
   
-You can place an `.env` file in, say project B, and it will override the parent `.env` file.
+You can place an `.env` file in, say project B's project root 'project-b', and it will override the parent `.env` file.
 
 * htdocs/ [ .env ]
     * project-a/
