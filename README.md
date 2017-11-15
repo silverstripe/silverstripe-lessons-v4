@@ -6,7 +6,7 @@ While the step-by-step details of creating a local web server are out of scope f
 
 ### Virtualisation
 
-Installing a virtual web server, on on your local machine is fast, fairly easy, and eliminates many of the variables and unknowns that are often hazardous to local development. There are a two main players in this space:
+Installing a virtual web server, on your local machine is fast, fairly easy, and eliminates many of the variables and unknowns that are often hazardous to local development. There are two main players in this space:
 
 * [Vagrant](https://www.vagrantup.com/), which runs on top of [VirtualBox](https://www.virtualbox.org/wiki/Downloads), providing you a simple configuration layer and tools for running your virtual machine. There are many pre-cooked environments ready for you to download and consume, such as [Scotch Box](https://box.scotch.io/)
 * [Docker](https://www.docker.com/), which creates a "container" for your virtual environment, sharing the same operating system as the the host (your computer).
@@ -227,7 +227,7 @@ For a full list of settings you can go to the docs and just look up [environment
 
 Let's save the changes to `.env`, and apply those new settings.
 
-When we go to the http://{your localhost}/example3 URL, you'll notice that we bypass the install page. That's because SilverStripe has learnt everything it needed to know about running this project from `.env`. 
+When we go to the http://localhost/example3 URL, you'll notice that we bypass the install page. That's because SilverStripe has learnt everything it needed to know about running this project from `.env`. 
 
 This is a really quick way to light up a project and do some testing. You can just throw this project away when you're done and do it again, and you don't have to go through that install process every single time. `.env` comes in really useful here, as it applies all the settings you want for every single project. 
 
