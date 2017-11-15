@@ -20,7 +20,7 @@ Your folder structure should now look like this:
 
 Now we'll simply dump the all the contents of our static site (one-ring-rentals-static.zip) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
 
-Let's test it out. Navigate your browser to `/themes/one-ring/static/`default.html` off whatever hostname you're using (e.g. http://localhost/), and you should see our home page. Try the same thing for `home.html`.
+Let's test it out. Navigate your browser to `/themes/one-ring/static/default.html` off whatever hostname you're using (e.g. http://localhost/), and you should see our home page. Try the same thing for `home.html`.
 
 ### SS-izing
 
