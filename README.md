@@ -23,7 +23,7 @@ Underneath your new theme folder, you’ll need to create some new folders, so t
 
 Most of these folders are self-descriptive, but note that the only folders with compulsory names are `templates/` and `css/`. The `images/` and `javascript/` folders can be named anything you like. In fact, they can even remain absent if you don’t have anything to put there. Further, feel free to add any other folders you like, and subfolders thereof (i.e. a `less/` or `scss/` folder).
 
-Next we’ll create the most fundamental component of a theme -- a template. In SilverStripe, templates are not HTML documents, but rather PHP code that is compiled from SilverStripe’s own template syntax behind the scenes. In alignment with that key that distinction, it is imperative that template files use the `.ss` extension.
+Next we’ll create the most fundamental component of a theme -- a template. In SilverStripe, templates are not HTML documents, but rather PHP code that is compiled from SilverStripe’s own template syntax behind the scenes. In alignment with that key distinction, it is imperative that template files use the `.ss` extension.
 
 In your `templates/` directory, create a file called `Page.ss`. Inside that file, create a basic HTML document.
 
