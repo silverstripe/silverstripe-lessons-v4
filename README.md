@@ -141,7 +141,7 @@ Now let's run a `dev/build` and see that we get a new `RegionsPageID` field.
 
 ### Introduction to GridField
 
-We've got our `$has_many` relationship defined, with a `$has_one` on the other side, and we're ready to start populating the relationship with data. For this, we'll need a need one of the workhorses of the CMS interface -- `GridField`.
+We've got our `$has_many` relationship defined, with a `$has_one` on the other side, and we're ready to start populating the relationship with data. For this, we'll need one of the workhorses of the CMS interface -- `GridField`.
 
 GridField is a highly configurable form field that allows you to manage an arbitrary table of data. In its most primitive sense, you can think of it as an abstraction of a database table, but there's much more that you can do with it. To manage our `Region` objects, we'll want a tab on the `RegionsPage` that allows us to create, read, edit, and delete associated `Region` records.
 
