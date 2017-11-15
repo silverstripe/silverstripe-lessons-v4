@@ -143,7 +143,7 @@ class ArticlePage extends Page {
 Let's take a look at the argument signature of `CheckboxSetField`:
 
 *   **'Categories'**: The name of the `$many_many` relation we're managing.
-*   **'Selected categories'**: A label for the checkboxes
+*   **'Selected categories'**: A label for the checkboxes.
 *   **$this->Parent()->Categories()**: The categories are stored on the parent `ArticleHolder` page, so we need to invoke `Parent()` first.
 *   **->map('ID', 'Title')**: Using the resulting list of categories, create an array that maps each category's ID to its Title. This tells the checkboxes to save the ID to the relation, but present the `Title` field as a label. Note that `Title` can be any public method executable on the object, which is useful if you want a computed value or concatenation of multiple fields. 99% of the time, you will want to use `ID` as the first argument here, as relational data is all held together by unique identifiers.
 
