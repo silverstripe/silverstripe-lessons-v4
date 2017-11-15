@@ -163,7 +163,7 @@ We'll start with what we've seen before. `$summary_fields` gives us control over
 	//...
 ```
 
-Notice that we can use dot-seprated syntax to invoke methods on each field. We know that `Region` is a `has_one`, so getting the `RegionID` is useless. We'll instead get the region's title, which is much more friendly. `Region.Title` translates to `$this->Region()->Title`.
+Notice that we can use dot-separated syntax to invoke methods on each field. We know that `Region` is a `has_one`, so getting the `RegionID` is useless. We'll instead get the region's title, which is much more friendly. `Region.Title` translates to `$this->Region()->Title`.
 
 We also want to take advantage of the `Currency` field type that we used. Remember that it, too, returns an object. Most of the time, it just renders itself as a string, but we can invoke methods on it. In this, case the `Nice` method offered by the `Currency` class will give us a nicely formatted price with a currency symbol, commas, and decimal values.
 
@@ -215,7 +215,7 @@ Run a `?flush` and see that we have a new search form that lets us search by the
 
 Searching by region title is nice, but it doesn't make a whole lot of sense for this to be a free text field, since our regions are a known list. It really should be a dropdown that allows us to choose from all the regions that have been added to the database. That way, the user doesn't have to worry about making a spelling error, and has a better idea of what's in the system.
 
-In order to do that, we'll have to write some executable code, which can't placed in a static variable assignment, so let's change `private static $searchable_fields` to `public function searchableFields()`, and we'll return an array.
+In order to do that, we'll have to write some executable code, which can't be placed in a static variable assignment, so let's change `private static $searchable_fields` to `public function searchableFields()`, and we'll return an array.
 
 ```php
 namespace SilverStripe\Lessons;
