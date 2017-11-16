@@ -15,7 +15,7 @@ High-powered, intelligent keyword searching is perhaps a topic for another tutor
 
 On an unrelated note, please raise your tolerance level for imperfect visual design. The forms we'll create will not render markup that is compatible with our stylesheet. We have a whole tutorial on customising forms coming up very soon, and in the interest of maintaining a single focus, that step has been omitted from this tutorial.
 
-## Making a minor update the Property object
+## Making a minor update to the Property object
 
 Let's look at the search form on the home page. We have four parameters we can use in our search:
 * Date of arrival
