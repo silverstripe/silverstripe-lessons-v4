@@ -109,7 +109,7 @@ Now let's create a template to render our `Address` object.
 
 As you can see, we're rendering data using a combination of both methods and properties. `ViewableData` has a very specific way of resolving the template variables on the object:
 
-* Check if there public method on the object called [VariableName]
+* Check if there is a public method on the object called [VariableName]
 * If not, check if a method called "get[VariableName]" exists
 * If not, check if there is a public property named [VariableName]
 * Otherwise, call "getField([VariableName])"
