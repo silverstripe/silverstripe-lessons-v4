@@ -297,7 +297,7 @@ Take a deep breath, and copy and paste away. No one will know. Just make sure yo
 			<% end_loop %>
 		</ul>
 		<% if $PaginatedArticles.NotLastPage %>
-		<ul id="next col-xs-6">
+		<ul class="next col-xs-6">
 			<li><a href="$PaginatedArticles.NextLink"><i class="fa fa-chevron-right"></i></a></li>
 		</ul>
 		<% end_if %>
