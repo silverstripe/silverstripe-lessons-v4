@@ -11,7 +11,7 @@ So far we've only been dealing with content that is directly associated with a p
 
 Included with this lesson is a new static template we'll be working with, `__assets/regions-page.html` (see the "Code repository" link in the header). Our designer has once again stripped away all the chrome and left us with just the `$Layout` section, so before we go any further, let's convert this file into a SilverStripe template and corresponding page type.
 
-Copy the contents of `regions-page.html` into a new file, `themes/one-ring/templates/Layout/RegionsPage.ss`.
+Copy the contents of `regions-page.html` into a new file, `themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage.ss`.
 
 Then, create a new page type to go with it.
 
