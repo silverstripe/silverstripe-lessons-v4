@@ -157,7 +157,7 @@ Go into the CMS and edit an article under "Travel Guides." Check some categories
 
 Now let's look at adding the comma-separated category list to the articles.
 
-_themes/one-ring/templates/Layout/ArticlePage.ss, line 22_
+_themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticlePage.ss, line 23_
 ```html
 <li><i class="fa fa-tags"></i> 
      <% loop $Categories %>$Title<% if not $Last %>, <% end_if %><% end_loop %>
@@ -191,15 +191,15 @@ Invoking `column()` on the list of `ArticleCategory` objects will get an array o
 
 Now update `HomePage.ss`, `ArticleHolder.ss`, and `ArticlePage.ss` to use the `$CategoriesList` method.
 
-_themes/one-ring/templates/Layout/ArticlePage.ss, line 22_
+_themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticlePage.ss, line 23_
 ```html
 <li><i class="fa fa-tags"></i> $CategoriesList</li>
 ```
-_themes/one-ring/templates/Layout/ArticleHolder.ss, line 25_
+_themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss, line 23_
 ```html
 <li><i class="fa fa-tags"></i> $CategoriesList</li>
 ```
-_themes/one-ring/templates/Layout/HomePage.ss, line 289_
+_themes/one-ring/templates/SilverStripe/Lessons/Layout/HomePage.ss, line 284_
 ```html
 <li><i class="fa fa-tags"></i> $CategoriesList</li>
 ```
