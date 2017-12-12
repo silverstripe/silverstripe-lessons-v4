@@ -38,7 +38,7 @@ Why did it fail? As we said before, the `$Action` parameter should represent a p
 
 Let's add that controller method now.
 
-*mysite/code/RegionsPage.php*
+*mysite/code/RegionsPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -194,7 +194,7 @@ As we saw in the debug output of the request handler, the `$Action` parameter ma
 
 A controller action will try to render a template following the naming convention ``[PageType]_[actionName].ss``. In our case, that gives us `RegionsPage_show.ss`. Let's create that template.
 
-Copy your `themes/one-ring/templates/Layout/Page.ss` to `RegionsPage_show.ss` in the same location. Remove the `<div class="main ...">` block, and in its place, render some content from the `$Region` object we passed. This is a great opportunity to use the `<% with %>` block.
+Copy your `themes/one-ring/templates/Layout/Page.ss` to `themes/one-ring/templates/Silverstripe/Lessons/Layout/RegionsPage_show.ss`. Remove the `<div class="main ...">` block, and in its place, render some content from the `$Region` object we passed. This is a great opportunity to use the `<% with %>` block.
 
 *themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 5)
 ```html
@@ -253,7 +253,7 @@ There are still a few things missing from making this DataObject really feel lik
 
 Remember the array we passed to the template containing our custom variable `$Region`? We can use that to overload properties that the template would normally infer from the model. Let's add `Title` to that list.
 
-*mysite/code/RegionsPage.php*
+*mysite/code/RegionsPageController.php*
 ```php
 	public function show(HTTPRequest $request)
 	{
