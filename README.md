@@ -107,7 +107,7 @@ class ArticlePageController extends PageController
 
 This is all very similar to what we did in the example. Notice we're leaving the labels for the fields deliberately blank. That's because in the design, they're added with `placeholder` attributes. Let's make a small update to populate the placeholders of the form fields.
 
-_mysite/code/ArticlePage.php_
+_mysite/code/ArticlePageController.php_
 ```php
     public function CommentForm()
     {
@@ -308,7 +308,7 @@ Exhale. It's not that simple.
 
 In fact, that's precisely why we're seeing this error. We can't just execute arbitrary controller methods from the URL. The method has to be white-listed using a static variable known as `$allowed_actions`. Let's do that now.
 
-_mysite/code/ArticlePage.php_
+_mysite/code/ArticlePageController.php_
 ```php
 //...
 class ArticlePageController extends PageController {
@@ -358,7 +358,7 @@ Our form is accepting submissions and working as expected, so let's now add a bi
 
 If the logic were really complicated we could write our own validator, which we'll cover in the future, but for simple validation it's fine to do all of this in your form handler method. Let's run a check to make sure the user's comment has not already been added. You might think of this as really basic spam protection.
 
-_mysite/code/AritclePage.php_
+_mysite/code/ArticlePageController.php_
 ```php
     public function handleComment($data, $form)
     {
