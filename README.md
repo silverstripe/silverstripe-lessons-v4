@@ -125,7 +125,7 @@ Let's use some more properties of the paginated list to create a summary of the 
 
 Lastly, if we have a lot of pages, it might break the UI. Instead of `$Results.Pages`, let's use `$Results.PaginationSummary`, which will just show us some of the nearby pages to the active one. In other words, we don't need to see page 17 of 30 if we're on page 2.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`
+*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
 ```html
 <ul class="hidden-xs">
 	<% loop $Results.PaginationSummary %>
