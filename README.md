@@ -38,7 +38,7 @@ Why did it fail? As we said before, the `$Action` parameter should represent a p
 
 Let's add that controller method.
 
-*mysite/code/RegionsPage.php*
+*mysite/code/RegionsPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -255,7 +255,7 @@ There are still a few things missing from making this DataObject really feel lik
 
 Remember the array we passed to the template containing our custom variable `$Region`? We can use that to overload properties that the template would normally infer from the model. Let's add `Title` to that list.
 
-*mysite/code/RegionsPage.php*
+*mysite/code/RegionsPageController.php*
 ```php
 	public function show(HTTPRequest $request)
 	{
