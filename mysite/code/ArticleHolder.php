@@ -59,7 +59,7 @@ class ArticleHolder extends Page
         $result = $query->execute();
 
         if ($result) {
-            while ($record = $result->nextRecord()) {
+            foreach ($result as $record) {
                 list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
                 $list->push(ArrayData::create([
                     'Year' => $year,
