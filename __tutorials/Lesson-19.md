@@ -16,7 +16,7 @@ Looking at our Travel Guides page, we see that there are a number of different f
 
 Before we add the filter, let's set up that relationship. We'll add a `has_one` to `Region` on `ArticlePage` and a `has_many` from `Region` back to `ArticlePage`.
 
-*mysite/code/ArticlePage.php*
+*app/src/ArticlePage.php*
 ```php
 //...
 	private static $has_one = [
@@ -40,7 +40,7 @@ Before we add the filter, let's set up that relationship. We'll add a `has_one` 
 	}
 ```
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 ```php
 //...
 	private static $has_many = [
@@ -55,7 +55,7 @@ Run a `dev/build?flush`. If you've already done the database import, there shoul
 
 Now we can get into the meat of the lesson and start creating some filters.Let's look at our `ArticleHolderController` and make sure it can feed regions into its sidebar. Add a method called `Regions()` to `ArticleHolder` that simply dumps out all the regions on the Regions page.
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 //...
 class ArticleHolder extends Page {
@@ -150,7 +150,7 @@ Optionally, it may be nice if we allowed the user to omit the month to show an e
 
 The first thing we'll need in our controller is a list of allowed actions.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 //...
 class ArticleHolderController extends PageController
@@ -169,7 +169,7 @@ Since we've updated a private static variable, be sure to run `?flush` at this p
 
 Now that we know what our routes will look like, let's get back to the `Region` and `ArticleCategory` classes to define those link methods.
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 ```php
   //...
 	public function ArticlesLink()
@@ -196,7 +196,7 @@ Interesting to note, the `LinkingMode()` method in our `Region` object is agnost
 
 Let's now add the `Link()` method to the categories.
 
-*mysite/code/ArticleCategory.php*
+*app/src/ArticleCategory.php*
 ```php
    //...
 	public function Link()
@@ -217,7 +217,7 @@ Let's start by defining the base list of articles. We know at minimum that we wa
 
 Ultimately what we want is for the controller to start with this base list, and each controller action will filter it down further. This is a great use case for the `init()` method, as it is executed before any actions.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 //...
 class ArticleHolderController extends PageController
@@ -241,7 +241,7 @@ If you're wondering why we don't just use `Children()`, which effectively does t
 
 We're going to want the articles paginated, so let's create a method that applies a `PaginatedList` to the `$articleList` member variable. This will be our single point of access to the list of articles that we're building.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 //...
 use SilverStripe\ORM\PaginatedList;
@@ -308,7 +308,7 @@ Take a deep breath, and copy and paste away. No one will know. Just make sure yo
 
 Now we're ready to add our first filter, for category. Let's define the `category()` action.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 use SilverStripe\Control\HTTPRequest;
 
@@ -346,7 +346,7 @@ Test it out and see that the new filtered category state is working as expected.
 
 Let's add our next filter for regions. It will work much the same way.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 //...
 use SilverStripe\Control\HTTPRequest;

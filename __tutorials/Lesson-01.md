@@ -132,7 +132,52 @@ SilverStripe\Core\Manifest\ModuleManifest:
 
 Again, this change is entirely optional. If you choose not to do it, just be aware that future tutorials will assume your project is named `app/`.
 
-Run `?flush` again to update the config. We're now out on our own and ready to start building stuff.
+Run `?flush` again to update the config.
+
+### Final polish
+
+As we've now renamed the project from `mysite/` to `app/` to make the project more adherent to common standards, it follows that we should also change the `code/` folder to `src/`, which is much more common, and consistent with most SilverStripe modules, both core and community-supported. In future releases of SilverStripe, expect the `code/` folder to be dropped in favour of `src/`. Right now, it's still there for legacy reasons.
+
+```
+app/
+  _config/
+  src/
+  templates/
+```
+
+Lastly, let's add an autoloading specification. SilverStripe has its own autoloader, so this step is purely optional, but it's a good idea to embrace standards whenever possible. Using a standard [PSR-4 autoloader](https://www.php-fig.org/psr/psr-4/) declaration will help make your project more interpolable and upgrade resistant. The intricacies of PSR-4 autoloading are out of scope for this tutorial, but the documentation is very accessible and easy to understand. Basically, PSR-4 establishes a contract between the namespace of a class and its location in the filesystem.
+
+To specify a PSR-4 autoloading declaration, we'll need to put a `composer.json` file in our project. This is also generally a good idea, in the spirit of making our code as modular as possible.
+
+
+_app/composer.json_
+```
+{
+    "name": "silverstripe/lessons",
+    "description": "The silverstripe.org lessons example code",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Uncle Cheese",
+            "email": "aaron@silverstripe.com"
+        }
+    ],
+    "require": {
+        "silverstripe/recipe-cms": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\Lessons\\": "src/"
+        }
+    }
+}
+```
+Most of this is populated with pretty generic information, but the important section is the `"autoload":` node. It maps the name space `SilverStripe\Lessons` to the directory `src/`. Should we ever need another level of namespacing, e.g. `SilverStripe\Lessons\Controllers`, we would put those class definitions in `src/Controllers`. PSR-4 is just a simple method to make autoloading more predictable and deterministic.
+
+
+### That's it
+
+We've now created our first project. That puts us out on our own, and ready to start building stuff.
 
 
 

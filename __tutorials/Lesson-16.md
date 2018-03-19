@@ -34,7 +34,7 @@ Let's look at `PropertySearchPage.php` again and find the return value of our `i
 
 First things first, let's remove the artificial `->limit()` we've applied.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
   public function index(HTTPRequest $request)
   {
@@ -46,7 +46,7 @@ First things first, let's remove the artificial `->limit()` we've applied.
 
 Now, let's wrap the results into a `PaginatedList`.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 //...
 use SilverStripe\ORM\PaginatedList;
@@ -145,7 +145,7 @@ Futher, you can customise how much context you would like by passing an integer 
 
 This all works great, but the pagination is still configured with default values, most notably, a limit of 10 results per page. Let's update that.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 	public function index(HTTPRequest $request)
 	{
@@ -163,7 +163,7 @@ This all works great, but the pagination is still configured with default values
 
 Another parameter we might want to customise is the request parameter that is used. In some cases, you might have a conflict with the variable `start`, or you may simply prefer something shorter. In that case, use `setPaginationGetVar()`.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 	public function index(HTTPRequest $request)
 	{

@@ -95,7 +95,7 @@ In order to invoke the `<% loop %>` block we of course will need some kind of it
 
 At the top of our `index()` action, let's instantiate that list.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 //...
 use SilverStripe\ORM\ArrayList;
@@ -120,7 +120,7 @@ You will rarely need to use the `ViewableData` class itself, but as its immediat
 
 Let's add the details for the `Keywords` filter.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 //...
 use SilverStripe\View\ArrayData;
@@ -155,7 +155,7 @@ The next filter is for the availability date range. It actually doesn't offer a 
 
 The next several, which are all part of our tidy loop, are pretty straightforward. We'll add another member to the `$filterKeys` list, which will be a `sprintf()` compatible template to generate the label for each filter.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 	public function index(HTTPRequest $request)
 	{
@@ -192,7 +192,7 @@ The next several, which are all part of our tidy loop, are pretty straightforwar
 
 Just like our custom variable `Results`, we'll pass the `ActiveFilters` list to the template through an array.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 	public function index(HTTPRequest $request)
 	{

@@ -1,10 +1,10 @@
 ### Creating a new page type
 
-Let's create our second template, based on the `home.html` provided in the `__assets/` directory in for this lesson. In order to create a new page type, we first need to add a PHP class to represent it. Having a new class will give us the option of creating this page type in the CMS. Since this is code related, we'll leave the theme folder for now, and add the file to the project directory, `mysite/`.
+Let's create our second template, based on the `home.html` provided in the `__assets/` directory in for this lesson. In order to create a new page type, we first need to add a PHP class to represent it. Having a new class will give us the option of creating this page type in the CMS. Since this is code related, we'll leave the theme folder for now, and add the file to the project directory, `app/`.
 
-Create two files in your `mysite/code` folder: `HomePage.php` and `HomePageController.php`. Add the following content:
+Create two files in your `app/src` folder: `HomePage.php` and `HomePageController.php`. Add the following content:
 
-*mysite/code/HomePage.php*
+*app/src/HomePage.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -16,7 +16,7 @@ class HomePage extends Page
 }
 ```
 
-*mysite/code/HomePageController.php*
+*app/src/HomePageController.php*
 ```php
 namespace SilverStripe\Lessons;
 

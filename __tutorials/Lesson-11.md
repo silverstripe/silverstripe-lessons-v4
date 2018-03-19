@@ -70,7 +70,7 @@ So that's the really high-level view of how forms work. Now we'll look at implem
 
 Let's look at our `ArticlePage.ss` template again and find the comment form near the bottom of the page. Let's try our best to replicate that form in our controller.
 
-_mysite/code/ArticlePageController.php_
+_app/src/ArticlePageController.php_
 ```php
 //...
 use SilverStripe\Forms\Form;
@@ -107,7 +107,7 @@ class ArticlePageController extends PageController
 
 This is all very similar to what we did in the example. Notice we're leaving the labels for the fields deliberately blank. That's because in the design, they're added with `placeholder` attributes. Let's make a small update to populate the placeholders of the form fields.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 ```php
     public function CommentForm()
     {
@@ -200,7 +200,7 @@ If you're a bit dismayed about having to manually add all of the basic requireme
 
 When a user submits a comment, we want to save it to the database and add it to the page. Before we go any further with forms, we're going to need to do some data modeling to store all that content.
 
-Let's create a simple `ArticleComment` DataObject. We've seen all this before. _mysite/code/ArticleComment.php_
+Let's create a simple `ArticleComment` DataObject. We've seen all this before. _app/src/ArticleComment.php_
 
 ```php
 namespace SilverStripe\Lessons;
@@ -224,7 +224,7 @@ class ArticleComment extends DataObject
 
 Notice we have a `$has_one` back to `ArticlePage` to set up a `$has_many` relationship. Let's now follow through with that.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 ```php
 class ArticlePage extends Page
 {
@@ -262,7 +262,7 @@ Refresh, and the expected result is that no comments appear above the form.
 
 Now that we have our data models set up, we can start using them in our form handler. Looking at our form method, the name of the handler we've specified is `handleComment()`. Let's create that method, right below the form creation method.
 
-_mysite/code/AriticlePageController.php_
+_app/src/AriticlePageController.php_
 ```php
 public function CommentForm()
 {
@@ -306,7 +306,7 @@ Exhale. It's not that simple.
 
 In fact, that's precisely why we're seeing this error. We can't just execute arbitrary controller methods from the URL. The method has to be whitelisted using a static variable known as `$allowed_actions`. Let's do that now.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 ```php
 //...
 class ArticlePageController extends PageController {
@@ -329,7 +329,7 @@ Let's take this a step further. We've talked about how forms are first-class cit
 
 Let's modify our function to call `saveInto()` instead of manually assigning all the form values.
 
-_myite/code/ArticlePageController.php_
+_app/src/ArticlePageController.php_
 ```php
     public function handleComment($data, $form)
     {
@@ -356,7 +356,7 @@ Our form is accepting submissions and working as expected, so let's now add a bi
 
 If the logic were really complicated, we could write our own validator, which we'll cover in the future, but for simple validation, it's fine to do all of this in your form handler method. Let's run a check to make sure the user's comment has not already been added. You might think of this as really basic spam protection.
 
-_mysite/code/AritclePage.php_
+_app/src/AritclePage.php_
 ```php
     public function handleComment($data, $form)
     {
@@ -385,7 +385,7 @@ Try submitting the form again with an existing comment, and you'll see that we g
 
 There's one usability problem here, and perhaps we shouldn't worry about it too much since we're not particularly motivated to be nice to spammers, but for the sake of teaching the concept, it would be nice if the form saved its invalid state, so that the user doesn't have to repopulate an empty form. For this, the convention is to use `Session` state.
 
-_mysite/code/ArticlePageController.php_
+_app/src/ArticlePageController.php_
 ```php
     public function handleComment($data, $form)
     {
@@ -403,7 +403,7 @@ _mysite/code/ArticlePageController.php_
 
 We create a SKU using the form name to use as a session token, and store the `$data` array there. If everything checks out, we clear it, so that the form renders clean on the next page load. If not, we're going to want the form to render the session data.
 
-_mysite/code/ArticlePageController.php_
+_app/src/ArticlePageController.php_
 ```php
     public function CommentForm()
     {

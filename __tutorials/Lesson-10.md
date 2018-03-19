@@ -10,7 +10,7 @@ Let's turn our focus back to the `ArticlePage` now and see that each article is 
 
 #### Managing the ArticleCategory objects
 
-_mysite/code/ArticleHolder.php_
+_app/src/ArticleHolder.php_
 
 ```php
 //...
@@ -40,7 +40,7 @@ class ArticleHolder extends Page {
 ```
 Next, let's create that `ArticleCategory` object. It's going to be really simple.
 
-_mysite/code/ArticleCategory.php_
+_app/src/ArticleCategory.php_
 ```php
 namespace SilverStripe\Lessons;
 
@@ -79,7 +79,7 @@ Now that we have some categories to work with, let's relate them to the articles
 
 In this case, a `$has_many` is not what we want. Remember that reciprocal `$has_one` we used with `$has_many`? That declares that each related object can only belong to one parent. Once that relation is created, it can't be used anywhere else. We don't want that behaviour with categories. Once a category is claimed by an article, it should still be available to other articles. Therefore, articles have many categories, and categories have many articles. This is a `$many_many` relationship.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 
 ```php
 //...
@@ -98,7 +98,7 @@ Run `dev/build` and see that we get a new table, `SilverStripe_Lessons_ArticlePa
 
 Optional, but strongly recommended is a reciprocation of this relationship on the `ArticleCategory` object, using `$belongs_many_many`. This variable does not create any database mutations, but will provide an magic method to the object for getting its parent records. In this case, we know that we'll need any `ArticleCategory` object to get its articles, because our design includes a filter by category in the sidebar, so this is quite important.
 
-_mysite/code/ArticleCategory.php_
+_app/src/ArticleCategory.php_
 ```php
 //...
 class ArticleCategory extends DataObject {
@@ -120,7 +120,7 @@ So if both sides of the relationship have many associated records, how do you kn
 
 Speaking of interface, we need to add some to the `ArticlePage` object. Let's introduce `CheckboxSetField`.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 ```php
 //...
 use SilverStripe\Forms\CheckboxSetField;
@@ -167,7 +167,7 @@ We can use the global template variable `$Last` to tell us whether we're in the 
 
 If we reload the page, this all looks great, but we're not done yet. The categories are also displayed on `ArticleHolder.ss` and `HomePage.ss`. This is a lot of template syntax to keep replicating. We could put this into an include, but it would be better if the `ArticlePage` objects could render a comma-separated list of categories themselves. Let's create a new method that does this.
 
-_mysite/code/ArticlePage.php_
+_app/src/ArticlePage.php_
 ```php
 //...
 class ArticlePage extends Page {

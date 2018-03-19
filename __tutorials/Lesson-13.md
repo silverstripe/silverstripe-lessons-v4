@@ -41,7 +41,7 @@ Looking at the home page, we can see that we need the following fields:
 
 Further, we know that these properties displaying on the home page must have some special attribute assigned to them, so let's add a `FeaturedOnHomepage` field as well.
 
-*mysite/code/Property.php*
+*app/src/Property.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -118,7 +118,7 @@ Alright, now that we have all that sorted, let's run `dev/build`.
 
 We'll now create the `ModelAdmin` interface that will give us a place to hang all these `Property` records. A basic ModelAdmin interface is exceedingly simple to create.
 
-*mysite/code/PropertyAdmin.php*
+*app/src/PropertyAdmin.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -151,7 +151,7 @@ Now that we've got our simple editing UI, we can start to customise it a bit to 
 ### Adding $summary_fields
 We'll start with what we've seen before. `$summary_fields` gives us control over what fields display in list view.
 
-*mysite/code/Property.php*
+*app/src/Property.php*
 ```php
   //...
 	private static $summary_fields = [
@@ -173,7 +173,7 @@ We also want to take advantage of the `Currency` field type that we used. Rememb
 
 Right now, the tab for our *Properties* section of the CMS is using a pretty generic icon, and if we have several of these custom admins, they won't be easily distinguished. Let's give it our own icon.
 
-Find the `property.png` file that is included in the `__assets/` directory of this lesson and move it into  `mysite/icons`. Why not our theme? The CMS not theme-aware, so we should avoid mixing the two. If you ever change your theme, that should have no effect on the icons that appear in the CMS. Anything that relates to your code should be kept in your project directory.
+Find the `property.png` file that is included in the `__assets/` directory of this lesson and move it into  `public/icons`.
 
 ```php
 namespace SilverStripe\Lessons;
@@ -191,7 +191,7 @@ class PropertyAdmin extends ModelAdmin
 		'Property'
 	];
 
-	private static $menu_icon = 'mysite/icons/property.png';	
+	private static $menu_icon = 'icons/property.png';	
 }
 ```
 We changed a static property, so we'll run `?flush` and see that we have a new icon.
@@ -200,7 +200,7 @@ We changed a static property, so we'll run `?flush` and see that we have a new i
 
 Just like the fields displayed in list view, the fields that appear in the search form are also customisable in the class definition of the DataObject. All we have to do is define a new private static variable called `$searchable_fields`. By default, the DataObject will provide the same fields that are specified in `$summary_fields`, but that may not be what you're looking for. In this case, we have `PricePerNight` in our `$summary_fields`, but that's not necessarily a field we want to search on in the admin, so let's explicitly declare a `$searchable_fields` array to list what we want.
 
-_mysite/code/Property.php_
+_app/src/Property.php_
 ```php
   //...
 	private static $searchable_fields = [
@@ -311,7 +311,7 @@ Don't forget to copy over the `assets/` folder, too. The property photos are in 
 
 The last step is simple. Let's just write a method in our `HomePage` controller that gets the featured properties.
 
-*mysite/code/HomePageController.php*
+*app/src/HomePageController.php*
 ```php
 namespace SilverStripe\Lessons;
 

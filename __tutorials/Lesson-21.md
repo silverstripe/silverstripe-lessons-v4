@@ -69,7 +69,7 @@ The `Monolog\Logger` class supports *handlers*, which must implement their own `
 
 Here's an example of adding an email handler. Any error that happens at or above the given logging level will send an email to an administrator. Let's make anything `error()` and above send an email.
 
-*mysite/_config/logging.yml*
+*app/_config/logging.yml*
 ```yml
 SilverStripe\Core\Injector\Injector:
   Psr\Log\LoggerInterface: 
@@ -89,7 +89,7 @@ SilverStripe\Core\Injector\Injector:
 
 Since email is a pretty aggressive form of error notification, we probably don't want to sent it from anywhere other than the live environment. Let's put this in a conditional block.
 
-*mysite/_config/logging.yml*
+*app/_config/logging.yml*
 ```yml
     --- 
     Name: lessons-live-logging
@@ -106,7 +106,7 @@ Since email is a pretty aggressive form of error notification, we probably don't
 
 A better option for low-level errors is writing to a log file. Let's set that up for anything over `notice()` level.
 
-*mysite/_config/logging.yml*
+*app/_config/logging.yml*
 ```yml
     ---
     Name: lessons-all-logging
@@ -137,7 +137,7 @@ While we're on the topic of email, let's take some control over transactional em
 
 A simple solution to this problem is to simply force the "to" address to go to you in the dev environment. You can configure this in the config yaml.
 
-*mysite/_config/config.yml*
+*app/_config/config.yml*
 ```yaml
 Email:
   send_all_emails_to: 'me@example.com'
@@ -145,7 +145,7 @@ Email:
 
 Pretty straightforward, but we're forgetting something. We don't want this setting to apply to all environments. We need to ensure that this yaml is only loaded in the dev environment. We're not writing PHP, so we don't have the convenience of if/else blocks, but fortunately, the SilverStripe YAML parser affords us a basic API for conditional logic.
 
-*mysite/_config/email.yml*
+*app/_config/email.yml*
 ```yaml
     ---
     Name: dev-email
@@ -158,7 +158,7 @@ Pretty straightforward, but we're forgetting something. We don't want this setti
 
 Perhaps in the test and production environments, we want to monitor transactional email from a bit of a distance. We could force a BCC to our email address in that case.
 
-*mysite/_config/email.yml*
+*app/_config/email.yml*
 ```yaml
     ---
     Name: dev-email

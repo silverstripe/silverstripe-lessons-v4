@@ -41,7 +41,7 @@ In the previous tutorial, we discussed dealing with arbitrary template data, and
 
 Let's build that list in the model of our `ArticleHolder` page type.
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 //...
 use SilverStripe\ORM\ArrayList;
@@ -60,7 +60,7 @@ class ArticleHolder extends Page
 
 We're going to need to run a pretty specific query against the database to get all of the distinct month/year pairs, and this actually pushes the boundaries and practicality of the ORM. In rare cases such as this one, we can execute arbitrary SQL using `DB::query()`.
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 //...
 use SilverStripe\ORM\ArrayList;
@@ -105,7 +105,7 @@ If you're wondering why we need the month name *and* the month number. The year 
 
 Now all we have to do is loop through that database result to create our final list of date objects.
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 		if ($result) {
 			while($record = $result->nextRecord()) {
@@ -131,7 +131,7 @@ Notice that the `where()` method affords us parameterised queries. The shorthand
 
 Here's the complete `ArchiveDates()` function:
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 	public function ArchiveDates()
 	{
@@ -175,7 +175,7 @@ Alright, get up, walk around. Have a (non-alcoholic) drink. Then refresh the pag
 
 The last thing we need to do to make the date archive work is set up that controller action to deal with the incoming `date/$year/$month` routes.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 class ArticleHolderController extends PageController
 {
@@ -201,7 +201,7 @@ We'll start by running a sanity check to ensure that we at least have a year in 
 
 Now, we'll create the boundary for the end date, and run the query.
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 		$adder = $month ? '+1 month' : '+1 year';
 		$endDate = date('Y-m-d', strtotime(
@@ -226,7 +226,7 @@ You can achieve the same result more declaratively using the `$casting` setting 
 
 For now, here is the complete `date()` controller action:
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 //...
 use SilverStripe\ORM\FieldType\DBField;

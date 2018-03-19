@@ -1,0 +1,19 @@
+{
+    "name": "silverstripe/lessons",
+    "description": "The silverstripe.org lessons example code",
+    "license": "BSD-3-Clause",
+    "authors": [
+        {
+            "name": "Uncle Cheese",
+            "email": "aaron@silverstripe.com"
+        }
+    ],
+    "require": {
+        "silverstripe/recipe-cms": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\Lessons\\": "src/"
+        }
+    }
+}

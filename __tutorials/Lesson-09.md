@@ -15,7 +15,7 @@ Copy the contents of `regions-page.html` into a new file, `app/templates/SilverS
 
 Then, create a new page type to go with it.
 
-*mysite/code/RegionsPage.php*
+*app/src/RegionsPage.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -27,7 +27,7 @@ class RegionsPage extends Page
 }
 ```
 
-*mysite/code/RegionsPageController.php*
+*app/src/RegionsPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -47,7 +47,7 @@ We could hand this off to the rich text editor and create all this content in th
 
 Let's first create the `Region` data type. Just like we discussed in the previous lesson, generic, non-page content types should subclass `SilverStripe\ORM\DataObject`.
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 
 ```php
 namespace SilverStripe\Lessons;
@@ -98,7 +98,7 @@ You might have noticed that our `getCMSFields()` function looks a bit different.
 
 Now that we have our standalone `Region` object, we need to relate it to our `RegionsPage`. We know from our design that the page can contain any number of Regions, so for this, we'll use the `$has_many` relationship.
 
-*mysite/code/RegionsPage.php*
+*app/src/RegionsPage.php*
 ```php
 // ...
 class RegionsPage extends Page
@@ -119,7 +119,7 @@ Run a `dev/build` and see if you get any database changes. If you don't see any,
 
 This is important, because the database mutation happens at the `$has_one` level, not the `$has_many`. What will really bind these two objects together is a `Region` object providing one, and only one, `RegionsPageID`. Let's make that update now.
 
-_mysite/code/Region.php_
+_app/src/Region.php_
 
 ```php
 //...
@@ -186,7 +186,7 @@ Let's take a look at the argument signature for `GridField`:
 
 Right now, any changes we make to regions will go to the live site immediately, since they have no published/draft state. Let's start by adding versioning to those records.
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 ```php
 //...
 use SilverStripe\Versioned\Versioned;
@@ -206,7 +206,7 @@ Run a `dev/build?flush` and we should see some new tables created.
 
 Lastly, we need to declare ownership between `RegionsPage` and `Region` so that changes to publication cascades from parent to child, and vice-versa.
 
-*mysite/code/RegionsPage.php*
+*app/src/RegionsPage.php*
 ```php
 //...
 class RegionsPage extends Page

@@ -38,7 +38,7 @@ Why did it fail? As we said before, the `$Action` parameter should represent a p
 
 Let's add that controller method now.
 
-*mysite/code/RegionsPageController.php*
+*app/src/RegionsPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -212,7 +212,7 @@ Try clicking on a region now and see that you get its detail page.
 
 One thing that's a bit odd right now is that the `$Description` field is presented exactly the same way on the list view as it is on the detail view, which makes this click effectively pointless. Let's update the `Region` DataObject to store its `Description` field as an `HTMLText` field so that it could conceivably be much longer.
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -253,7 +253,7 @@ There are still a few things missing from making this DataObject really feel lik
 
 Remember the array we passed to the template containing our custom variable `$Region`? We can use that to overload properties that the template would normally infer from the model. Let's add `Title` to that list.
 
-*mysite/code/RegionsPageController.php*
+*app/src/RegionsPageController.php*
 ```php
 	public function show(HTTPRequest $request)
 	{
@@ -300,7 +300,7 @@ Refresh the page and see that the regions are now all displaying.
 
 We're still missing the "current" state for the region. That's because the method `$LinkingMode` doesn't exist on a DataObject by default, so we need to write our own.
 
-*mysite/code/Region.php*
+*app/src/Region.php*
 ```php
 //..
 use SilverStripe\Control\Controller;

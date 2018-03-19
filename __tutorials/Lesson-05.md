@@ -6,9 +6,9 @@ The idea is simple. One page type manages the list view, and usually contains ve
 
 By convention, not enforcement, the list view and the detail view are named with the suffixes **Holder** and **Page**, respectively, and the name of our content type takes the prefix. In this case, our Travel Guides section features a type of content that we'll call "Article," so our page types will be named ArticleHolder and ArticlePage.
 
-In the last episode, we created our first custom page type, HomePage. Let's repeat that process, and create a page type called `ArticleHolder`. To recap, we need a PHP file called `ArticleHolder.php` in our `mysite/code` directory that contains a pair of empty classes, like so:
+In the last episode, we created our first custom page type, HomePage. Let's repeat that process, and create a page type called `ArticleHolder`. To recap, we need a PHP file called `ArticleHolder.php` in our `app/src` directory that contains a pair of empty classes, like so:
 
-*mysite/code/ArticleHolder.php*
+*app/src/ArticleHolder.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -20,7 +20,7 @@ class ArticleHolder extends Page
 }
 ```
 
-*mysite/code/ArticleHolderController.php*
+*app/src/ArticleHolderController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -34,7 +34,7 @@ class ArticleHolderController extends PageController
 
 Likewise, we'll do the same thing for ArticlePage.
 
-*mysite/code/ArticlePage.php*
+*app/src/ArticlePage.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -46,7 +46,7 @@ class ArticlePage extends Page
 }
 ```
 
-*mysite/code/ArticlePageController.php*
+*app/src/ArticlePageController.php*
 ```php
 namespace SilverStripe\Lessons;
 

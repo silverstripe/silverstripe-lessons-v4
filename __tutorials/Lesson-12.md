@@ -196,7 +196,7 @@ We're primarily looking for data that appears on every page, so the header and f
 
 If your extension is going to be used to augment a core class, like SiteConfig, the convention is to use the name of the class you're extending, followed by "Extension."
 
-_mysite/code/SiteConfigExtension.php_
+_app/src/SiteConfigExtension.php_
 ```php
 namespace SilverStripe\Lessons;
 
@@ -234,7 +234,7 @@ We define a method for one of the most used extension points in the framework, `
 
 To activate our extension, we need to apply it to the `SilverStripe\SiteConfig\SiteConfig` class. This is done through the Config layer.
 
-_mysite/_config/mysite.yml_
+_app/_config/app.yml_
 ```yaml
     SilverStripe\SiteConfig\SiteConfig:
       extensions:

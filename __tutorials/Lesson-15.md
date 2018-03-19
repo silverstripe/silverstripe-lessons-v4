@@ -27,7 +27,7 @@ The last two are pretty straightforward, but as for the first two, we have not m
 
 In the interest of teaching the concept over meeting the requirements of an imaginary website, we're going to create some temporary fields on the `Property` objects that store this data natively on the record. Once users can book rentals, we'll remove these fields, but for now, we just want to get our search form working, so let's add the following:
 
-*mysite/code/Property.php*
+*app/src/Property.php*
 ```php
 //...
 class Property extends DataObject
@@ -81,7 +81,7 @@ UPDATE SilverStripe_Lessons_Property_Live SET AvailableEnd = (
 
 Our keyword search will need to search a property description. We'll add that field, as well.
 
-*mysite/code/Property.php*
+*app/src/Property.php*
 ```php
 //...
 class Property extends DataObject
@@ -114,7 +114,7 @@ Copy the contents of the file into *app/templates/SilverStripe/Lessons/Layout/Pr
 
 Then, create new classes for the Page.
 
-*mysite/code/PropertySearchPage.php*
+*app/src/PropertySearchPage.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -126,7 +126,7 @@ class PropertySearchPage extends Page
 }
 ```
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -148,7 +148,7 @@ There are two search forms currently in our project -- one on the home page, and
 
 We'll create a new method called `PropertySearchForm`, and we'll do our best to recreate the fields that are in the template.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 namespace SilverStripe\Lessons;
 
@@ -226,7 +226,7 @@ Think about what we want from our search form. The user should be able to create
 
 By default, forms submit through the `POST` method, which works great for handling user input that mutates data on the backend, but all we really want from our form here is a glorified URL builder. All the form really has to do is redirect us off to a URL that passes all of its parameters into a query string (GET request), and allow the controller to take it from there. Therefore, for this form, we'll use the `GET` method. Let's update the form object to do that.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function PropertySearchForm()
 {
@@ -239,7 +239,7 @@ public function PropertySearchForm()
 
 Next, we need to make sure the form doesn't submit to its handler, `doPropertySearch`, and rather, just redirects to the default view in the controller.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function PropertySearchForm()
 {
@@ -253,7 +253,7 @@ public function PropertySearchForm()
 
 Now let's test it out. Put some data into the form, and hit *Search*. Needless to say, it shouldn't update the results, which are still static, but take note of the URL. It looks pretty good, but there's one problem. The `SecurityID` parameter doesn't belong in our URL. Normally, this is used to thwart CSRF (Cross-Site Request Forgery) attacks, but since this is a simple `GET` form, we don't need, nor do we want that security measure (it would deny another user access to the URL). Let's remove the security token.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function PropertySearchForm()
 {
@@ -278,7 +278,7 @@ By default, if no search is applied, we want to return all the Property records,
 
 We don't have pagination set up yet, so let's limit the result set to 20, so we don't have to pull down all 100 properties by default.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 //...
 use SilverStripe\Control\HTTPRequest;
@@ -369,7 +369,7 @@ if ($bedrooms = $request->getVar('Bedrooms')) {
 
 A few more of those, and here we have all of our filters:
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function index(HTTPRequest $request)
 {
@@ -426,7 +426,7 @@ public function index(HTTPRequest $request)
 
 Looking at this code, there's a lot of repetition, and we're teetering on the edge of breaking our DRY princples. Let's tidy it up a bit by creating a map of the filters and looping through them.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function index(HTTPRequest $request)
 {
@@ -461,7 +461,7 @@ public function index(HTTPRequest $request)
 
 Try searching using our new applied filters. We should still see static results, but notice that the form loses its state on page refresh. That's not good enough. We'll need to render the form populated with any filter parameters in the request. Since all of our form field names match request parameters, this is exceedingly simple.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function PropertySearchForm()
 {

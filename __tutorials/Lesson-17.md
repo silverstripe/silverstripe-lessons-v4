@@ -42,7 +42,7 @@ So what do we do? Change the URL in our Javascript to use something other than `
 
 Let's update `PropertySearchPageController.php` to detect Ajax.
 
-*mysite/code/PropertySearchPageController.php*
+*app/src/PropertySearchPageController.php*
 ```php
 public function index(HTTPRequest $request)
 {
