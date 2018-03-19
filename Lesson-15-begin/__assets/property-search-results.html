@@ -1,0 +1,299 @@
+
+<!-- BEGIN CONTENT WRAPPER -->
+<div class="content">
+	<div class="container">
+		<div class="row">
+		
+			<!-- BEGIN MAIN CONTENT -->
+			<div class="main col-sm-8">
+			
+				<div id="listing-header" class="clearfix">
+					<div class="form-control-small">
+						<select id="sort_by" name="sort_by" data-placeholder="Sort by">
+							<option value=""> </option>
+							<option value="data">Sort by Date</option>
+							<option value="area">Sort by Area</option>
+						</select>
+					</div>
+					
+					<div class="sort">
+						<ul>
+							<li class="active"><i data-toggle="tooltip" data-placement="top" title="Sort Descending" class="fa fa-chevron-down"></i></li>
+							<li><i data-toggle="tooltip" data-placement="top" title="Sort Ascending" class="fa fa-chevron-up"></i></li>
+						</ul>
+					</div>
+					
+					<div class="view-mode">
+						<span>View Mode:</span>
+						<ul>
+							<li data-view="grid-style1" data-target="property-listing"><i class="fa fa-th"></i></li>
+							<li data-view="list-style" data-target="property-listing" class="active"><i class="fa fa-th-list"></i></li>
+						</ul>
+					</div>
+				</div>
+				
+				<!-- BEGIN PROPERTY LISTING -->
+				<div id="property-listing" class="list-style clearfix"> <!-- Inject "grid-style1" for grid view-->
+					<div class="row">
+						<div class="item col-md-4"><!-- Set width to 4 columns for grid view mode only -->
+							<div class="image">
+								<a href="properties-detail.html">
+									<span class="btn btn-default"><i class="fa fa-file-o"></i> Details</span>
+								</a>
+								<img src="http://placehold.it/760x670" alt="" />
+							</div>
+							<div class="price">
+								<span>$250</span><p>per night<p>
+							</div>
+							<div class="info">
+								<h3>
+									<a href="#">Luxury Apartment with great views</a>
+									<small>Upper East Side, New York</small>
+								</h3>
+								<p>Sed rutrum urna id tellus euismod gravida. Praesent placerat, mauris ac pellentesque fringilla, tortor libero condimen.</p>
+							
+								<ul class="amenities">
+									<li><i class="icon-bedrooms"></i> 4</li>
+									<li><i class="icon-bathrooms"></i> 3</li>
+								</ul>
+							</div>
+						</div>
+						<div class="item col-md-4"><!-- Set width to 4 columns for grid view mode only -->
+							<div class="image">
+								<a href="properties-detail.html">
+									<span class="btn btn-default"><i class="fa fa-file-o"></i> Details</span>
+								</a>
+								<img src="http://placehold.it/760x670" alt="" />
+							</div>
+							<div class="price">
+								<span>$250</span><p>per night<p>
+							</div>
+							<div class="info">
+								<h3>
+									<a href="#">Luxury Apartment with great views</a>
+									<small>Upper East Side, New York</small>
+								</h3>
+								<p>Sed rutrum urna id tellus euismod gravida. Praesent placerat, mauris ac pellentesque fringilla, tortor libero condimen.</p>
+							
+								<ul class="amenities">
+									<li><i class="icon-bedrooms"></i> 4</li>
+									<li><i class="icon-bathrooms"></i> 3</li>
+								</ul>
+							</div>
+						</div>
+						<div class="item col-md-4"><!-- Set width to 4 columns for grid view mode only -->
+							<div class="image">
+								<a href="properties-detail.html">
+									<span class="btn btn-default"><i class="fa fa-file-o"></i> Details</span>
+								</a>
+								<img src="http://placehold.it/760x670" alt="" />
+							</div>
+							<div class="price">
+								<span>$250</span><p>per night<p>
+							</div>
+							<div class="info">
+								<h3>
+									<a href="#">Luxury Apartment with great views</a>
+									<small>Upper East Side, New York</small>
+								</h3>
+								<p>Sed rutrum urna id tellus euismod gravida. Praesent placerat, mauris ac pellentesque fringilla, tortor libero condimen.</p>
+							
+								<ul class="amenities">
+									<li><i class="icon-bedrooms"></i> 4</li>
+									<li><i class="icon-bathrooms"></i> 3</li>
+								</ul>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<!-- END PROPERTY LISTING -->
+				
+				
+				<!-- BEGIN PAGINATION -->
+				<div class="pagination">
+					<ul id="previous col-xs-6">
+						<li><a href="#"><i class="fa fa-chevron-left"></i></a></li>
+					</ul>
+					<ul class="hidden-xs">
+						<li class="active"><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+					</ul>
+					<ul id="next col-xs-6">
+						<li><a href="#"><i class="fa fa-chevron-right"></i></a></li>
+					</ul>
+				</div>
+				<!-- END PAGINATION -->
+				
+			</div>	
+			<!-- END MAIN CONTENT -->
+			
+			
+			<!-- BEGIN SIDEBAR -->
+			<div class="sidebar gray col-sm-4">
+				
+				<!-- BEGIN ADVANCED SEARCH -->
+				<h2 class="section-title">Search Property</h2>
+				<div class="chzn-container-multi">
+					<ul class="chzn-choices">
+					   <li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
+					   <li class="search-choice"><span>Residential</span><a href="#" class="search-choice-close"></a></li>
+					   <li class="search-choice"><span>3 bedrooms</span><a href="#" class="search-choice-close"></a></li>
+					   <li class="search-choice"><span>2 bathrooms</span><a href="#" class="search-choice-close"></a></li>
+					   <li class="search-choice"><span>Min. $150</span><a href="#" class="search-choice-close"></a></li>
+					   <li class="search-choice"><span>Min. $400</span><a href="#" class="search-choice-close"></a></li>
+					</ul>
+				</div>
+				<form>
+					<div class="form-group">
+						<div class="col-sm-12">
+							<input type="text" class="form-control" name="keywords" placeholder="City, State, Country, etc...">
+						</div>
+						
+						<div class="col-md-6">
+							<div class="input-group date chzn-container" data-datepicker>
+								<input placeholder="Arrive on..." type="text" class="form-control" data-date-format="DD/MM/YYYY"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+						
+						<div class="col-md-6">
+							<select id="search_nights" name="search_nights" data-placeholder="Stay...">
+								<option value=""> </option>
+								<option value="1">1 Night</option>
+								<option value="2">2 Nights</option>
+								<option value="3">3 Nights</option>
+								<option value="4">4 Nights</option>
+								<option value="5">5 Nights</option>
+								<option value="6">6 Nights</option>
+								<option value="7">7 Nights</option>
+								<option value="8">8 Nights</option>
+								<option value="9">9 Nights</option>
+								<option value="10">10 Nights</option>
+								<option value="11">11 Nights</option>
+								<option value="12">12 Nights</option>
+								<option value="13">13 Nights</option>
+								<option value="14">14 Nights</option>
+							</select>
+
+						</div>
+						
+						<div class="col-md-6">
+							<select id="search_bedrooms" name="search_bedrooms" data-placeholder="Min. Bedrooms">
+								<option value=""> </option>
+								<option value="0">0</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="5plus">5+</option>
+							</select>
+						</div>
+						<div class="col-md-6">
+							<select id="search_bathrooms" name="search_bathrooms" data-placeholder="Min. Bathrooms">
+								<option value=""> </option>
+								<option value="0">0</option>
+								<option value="1">1</option>
+								<option value="2">2</option>
+								<option value="3">3</option>
+								<option value="4">4</option>
+								<option value="5">5</option>
+								<option value="5plus">5+</option>
+							</select>
+						</div>
+						<div class="col-md-6">
+							<select id="search_minprice" name="search_minprice" data-placeholder="Min. Price">
+								<option value=""> </option>
+								<option value="0">$0</option>
+								<option value="100">$100</option>
+								<option value="150">$150</option>
+								<option value="300">$300</option>
+							</select>
+						</div>
+											
+						<div class="col-md-6">
+							<select id="search_maxprice" name="search_maxprice" data-placeholder="Max. Price">
+								<option value=""> </option>
+								<option value="0">$0</option>
+								<option value="100">$100</option>
+								<option value="150">$150</option>
+								<option value="300">$300</option>
+							</select>
+						</div>
+						
+						<p>&nbsp;</p>
+						<p class="col-sm-12 center">
+							<button type="submit" class="btn-lg btn-fullcolor">Search</button>
+						</p>
+					</div>
+				</form>
+				<!-- END ADVANCED SEARCH -->
+				
+				<!-- BEGIN LATEST NEWS -->
+				<h2 class="section-title">Latest News</h2>
+				<ul class="latest-news">
+					<li class="col-md-12">
+						<div class="image">
+							<a href="blog-detail.html"></a>
+							<img src="http://placehold.it/100x100" alt="" />
+						</div>
+						
+						<ul class="top-info">
+							<li><i class="fa fa-calendar"></i> July 30, 2014</li>
+						</ul>
+							
+						<h4><a href="blog-detail.html">How to get your dream property for the best price?</a></h4>
+					</li>
+					<li class="col-md-12">
+						<div class="image">
+							<a href="blog-detail.html"></a>
+							<img src="http://placehold.it/100x100" alt="" />
+						</div>
+						
+						<ul class="top-info">
+							<li><i class="fa fa-calendar"></i> July 24, 2014</li>
+						</ul>
+							
+						<h4><a href="blog-detail.html">7 tips to get the best mortgage.</a></h4>
+					</li>
+					<li class="col-md-12">
+						<div class="image">
+							<a href="blog-detail.html"></a>
+							<img src="http://placehold.it/100x100" alt="" />
+						</div>
+						
+						<ul class="top-info">
+							<li><i class="fa fa-calendar"></i> July 05, 2014</li>
+						</ul>
+						
+						<h4><a href="blog-detail.html">House, location or price: What's the most important factor?</a></h4>
+					</li>
+				</ul>
+				<!-- END LATEST NEWS -->
+					
+				<!-- BEGIN NEWSLETTER -->
+				<div id="newsletter" class="col-sm-12">
+					<h2 class="section-title">Subscribe our weekly<br><span>Newsletter</span></h2>
+					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet consectetur adipiscing elit.</p>
+					
+					<div class="input-group">
+						<input type="text" placeholder="Enter your E-mail" name="newsletter_email" id="newsletter_email" class="form-control" />
+						<span class="input-group-btn">
+							<button class="btn btn-default-color" type="button">Subscribe</button>
+						</span>
+					</div>
+				</div>
+				<!-- END NEWSLETTER -->
+				
+			</div>
+			<!-- END SIDEBAR -->
+
+		</div>
+	</div>
+</div>
+<!-- END CONTENT WRAPPER -->

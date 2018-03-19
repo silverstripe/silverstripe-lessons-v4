@@ -1,0 +1,8 @@
+---
+Name: mytheme
+---
+SilverStripe\View\SSViewer:
+  themes:
+    - 'one-ring'
+    - '$public'
+    - '$default'

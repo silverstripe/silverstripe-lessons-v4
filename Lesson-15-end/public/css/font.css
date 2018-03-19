@@ -1,0 +1,217 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: "cozy-real-estate";
+  src:url("../fonts/cozy-real-estate.eot");
+  src:url("../fonts/cozy-real-estate.eot?#iefix") format("embedded-opentype"),
+    url("../fonts/cozy-real-estate.woff") format("woff"),
+    url("../fonts/cozy-real-estate.ttf") format("truetype"),
+    url("../fonts/cozy-real-estate.svg#cozy-real-estate") format("svg");
+  font-weight: normal;
+  font-style: normal;
+
+}
+
+[data-icon]:before {
+  font-family: "cozy-real-estate" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  font-family: "cozy-real-estate" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-house2:before {
+  content: "b";
+}
+.icon-apartment-gbp:before {
+  content: "M";
+}
+.icon-factory-gbp:before {
+  content: "P";
+}
+.icon-house-search:before {
+  content: "Q";
+}
+.icon-01:before {
+  content: "a";
+}
+.icon-02:before {
+  content: "b";
+}
+.icon-apartment:before {
+  content: "c";
+}
+.icon-store:before {
+  content: "d";
+}
+.icon-factory:before {
+  content: "f";
+}
+.icon-bedrooms:before {
+  content: "g";
+}
+.icon-bathrooms:before {
+  content: "h";
+}
+.icon-garage:before {
+  content: "i";
+}
+.icon-pool:before {
+  content: "j";
+}
+.icon-garden:before {
+  content: "k";
+}
+.icon-area:before {
+  content: "l";
+}
+.icon-pets:before {
+  content: "m";
+}
+.icon-no-pets:before {
+  content: "n";
+}
+.icon-security:before {
+  content: "o";
+}
+.icon-key:before {
+  content: "p";
+}
+.icon-lock:before {
+  content: "q";
+}
+.icon-sale-sign:before {
+  content: "r";
+}
+.icon-rent-sign:before {
+  content: "s";
+}
+.icon-sold-sign:before {
+  content: "t";
+}
+.icon-rented-sign:before {
+  content: "u";
+}
+.icon-find-property:before {
+  content: "v";
+}
+.icon-find-agent:before {
+  content: "w";
+}
+.icon-rooms:before {
+  content: "x";
+}
+.icon-house-usd:before {
+  content: "y";
+}
+.icon-house2-usd:before {
+  content: "z";
+}
+.icon-apartment-usd:before {
+  content: "A";
+}
+.icon-store-usd:before {
+  content: "B";
+}
+.icon-land-usd:before {
+  content: "C";
+}
+.icon-factory-usd:before {
+  content: "D";
+}
+.icon-house-euro:before {
+  content: "E";
+}
+.icon-house2-euro:before {
+  content: "F";
+}
+.icon-apartment-euro:before {
+  content: "G";
+}
+.icon-store-euro:before {
+  content: "H";
+}
+.icon-land-euro:before {
+  content: "I";
+}
+.icon-factory-euro:before {
+  content: "J";
+}
+.icon-house-gbp:before {
+  content: "K";
+}
+.icon-house2-gbp:before {
+  content: "L";
+}
+.icon-39:before {
+  content: "M";
+}
+.icon-store-gbp:before {
+  content: "N";
+}
+.icon-land-gbp:before {
+  content: "O";
+}
+.icon-42:before {
+  content: "P";
+}
+.icon-43:before {
+  content: "Q";
+}
+.icon-house2-search:before {
+  content: "R";
+}
+.icon-apartment-search:before {
+  content: "S";
+}
+.icon-store-search:before {
+  content: "T";
+}
+.icon-land-search:before {
+  content: "U";
+}
+.icon-factory-search:before {
+  content: "V";
+}
+.icon-house-percent:before {
+  content: "W";
+}
+.icon-house2-percent:before {
+  content: "X";
+}
+.icon-apartment-percent:before {
+  content: "Y";
+}
+.icon-store-percent:before {
+  content: "Z";
+}
+.icon-land-percent:before {
+  content: "0";
+}
+.icon-factory-percent:before {
+  content: "1";
+}
+.icon-house:before {
+  content: "a";
+}
+.icon-land:before {
+  content: "e";
+}
