@@ -2,7 +2,7 @@
 				<div class="container">
 					<div class="row">
 						<div class="col-sm-12">
-							<a href="$AbsoluteBaseURL" class="nav-logo"><img src="themes/one-ring/images/logo.png" alt="One Ring Rentals" /></a>
+							<a href="$AbsoluteBaseURL" class="nav-logo"><img src="images/logo.png" alt="One Ring Rentals" /></a>
 														
 							<!-- BEGIN MAIN MENU -->
 							<nav class="navbar">

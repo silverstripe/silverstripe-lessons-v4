@@ -3,7 +3,7 @@
 			<div id="footer-top" class="container">
 				<div class="row">
 					<div class="block col-sm-3">
-						<a href="$AbsoluteBaseURL"><img src="themes/one-ring/images/logo.png" alt="One Ring Rentals" /></a>
+						<a href="$AbsoluteBaseURL"><img src="images/logo.png" alt="One Ring Rentals" /></a>
 						<br><br>
 						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam commodo eros nibh, et dictum elit tincidunt eget. Pellentesque volutpat quam dignissim, convallis elit id, efficitur sem. Vivamus ac scelerisque sem. Aliquam sed enim rutrum nibh gravida pellentesque nec at metus. In hac habitasse platea dictumst. Etiam in rhoncus mi. In hac habitasse platea dictumst. Mauris congue blandit venenatis.</p>
 					</div>

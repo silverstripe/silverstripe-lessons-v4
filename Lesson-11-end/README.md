@@ -247,7 +247,7 @@ _themes/one-ring/templates/Layout/ArticlePage.ss_ (line 72)
     <ul>
         <% loop $Comments %>                        
         <li>
-            <img src="themes/one-ring/images/comment-man.jpg" alt="" />
+            <img src="images/comment-man.jpg" alt="" />
             <div class="comment">                                
                 <h3>$Name<small>$Created.Format('j F, Y')</small></h3>
                 <p>$Comment</p>
