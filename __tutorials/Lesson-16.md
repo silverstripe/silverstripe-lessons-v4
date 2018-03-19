@@ -81,7 +81,7 @@ Up until now, the only syntax we've really used on a list has been `<% loop %>` 
 
 Let's use some of the properties we get from `PaginatedList` to render this pagination.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`*
+*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`*
 ```html
 <!-- BEGIN PAGINATION -->
 <% if $Results.MoreThanOnePage %>
@@ -116,7 +116,7 @@ Try out the pagination and see how it works. Notice that it's injecting a reques
 
 Let's use some more properties of the paginated list to create a summary of the results.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
+*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
 ```html
 <% if $Results %>
 	<h3>Showing $Results.PageLength results ($Results.getTotalItems total)</h3>					
@@ -125,7 +125,7 @@ Let's use some more properties of the paginated list to create a summary of the 
 
 Lastly, if we have a lot of pages, it might break the UI. Instead of `$Results.Pages`, let's use `$Results.PaginationSummary`, which will just show us some of the nearby pages to the active one. In other words, we don't need to see page 17 of 30 if we're on page 2.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`
+*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`
 ```html
 <ul class="hidden-xs">
 	<% loop $Results.PaginationSummary %>

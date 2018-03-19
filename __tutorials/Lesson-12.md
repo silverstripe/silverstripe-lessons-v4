@@ -246,7 +246,7 @@ Now access the Settings tab in the CMS and populate the fields with some values.
 
 Lastly, we'll update our template to use the new fields. All `Page` templates are given a variable called `$SiteConfig` that accesses the single SiteConfig record. Since we'll be getting multiple properties off that object, this is a great opportunity to use the `<% with %>` block.
 
-_themes/one-ring/templates/Includes/Footer.ss_ (line 78)
+_app/templates/Includes/Footer.ss_ (line 78)
 ```html
 <ul class="social-networks">
   <% with $SiteConfig %>

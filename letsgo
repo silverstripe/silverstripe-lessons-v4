@@ -16,6 +16,6 @@ foreach(range(2, 21) as $num) {
 		$dirName = ucfirst($branchName);
 		$lessonDir = $ROOT_DIR . '/' .$dirName;
 
-		exec("cd $lessonDir && rm install.php");
+		exec("cd $lessonDir && mv code src");
 	}
 }

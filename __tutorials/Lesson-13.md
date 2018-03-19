@@ -334,7 +334,7 @@ class HomePageController extends PageController
 
 Now let's render the output to the template.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/HomePage.ss* (line 118)
+*app/templates/SilverStripe/Lessons/Layout/HomePage.ss* (line 118)
 ```html
 <% loop $FeaturedProperties %>
 <div class="item col-md-4">

@@ -11,7 +11,7 @@ In the last tutorial, we added pagination to our list of search results. Let's n
 
 Before we do anything, we'll need to add some JavaScript that will add this functionality. We'll do this in our catch-all JavaScript file, `scripts.js`.
 
-*themes/one-ring/javascript/scripts.js*
+*public/javascript/scripts.js*
 ```js
 // Pagination
 if ($('.pagination').length) {
@@ -146,7 +146,7 @@ So now that we have a good understanding of `ViewableData`, let's play around wi
 
 At the centre of dealing with Ajax responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
+*app/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
 ```html
 <!-- BEGIN MAIN CONTENT -->
 <div class="main col-sm-8">
@@ -247,7 +247,7 @@ There are two major shortcomings of this user experience:
 
 Let's clean up both of these things now, with some updates to our Javascript.
 
-*themes/one-ring/javascript/scripts.js*
+*public/javascript/scripts.js*
 ```js
 // Pagination
 if ($('.pagination').length) {
@@ -296,7 +296,7 @@ A lot of the UI plugins we're using are applied on document load, which means th
 
 We'll export the `chosen()` plugin to a reusable function and call it when needed.
 
-*themes/one-ring/javascript/scripts.js*
+*public/javascript/scripts.js*
 ```js
 (function($) {
   var applyChosen = function (selector) {
@@ -316,7 +316,7 @@ We'll export the `chosen()` plugin to a reusable function and call it when neede
 
 Now, on the successful ajax response, we'll reapply it.
 
-*themes/one-ring/javascript/scripts.js*
+*public/javascript/scripts.js*
 ```js
   $.ajax(ajaxUrl)
     .done(function (response) {

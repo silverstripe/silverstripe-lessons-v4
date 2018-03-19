@@ -117,7 +117,7 @@ We get the `RegionsPage` that owns this Region via the `has_many` / `has_one` pa
 
 Now that we have that method, we'll apply it to the template. Change all the hash (#) links to `$Link`.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage.ss*
+*app/templates/SilverStripe/Lessons/Layout/RegionsPage.ss*
 ```html
 <% loop $Regions %>
 <div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
@@ -194,9 +194,9 @@ As we saw in the debug output of the request handler, the `$Action` parameter ma
 
 A controller action will try to render a template following the naming convention ``[PageType]_[actionName].ss``. In our case, that gives us `RegionsPage_show.ss`. Let's create that template.
 
-Copy your `themes/one-ring/templates/Layout/Page.ss` to `themes/one-ring/templates/Silverstripe/Lessons/Layout/RegionsPage_show.ss`. Remove the `<div class="main ...">` block, and in its place, render some content from the `$Region` object we passed. This is a great opportunity to use the `<% with %>` block.
+Copy your `app/templates/Layout/Page.ss` to `app/templates/Silverstripe/Lessons/Layout/RegionsPage_show.ss`. Remove the `<div class="main ...">` block, and in its place, render some content from the `$Region` object we passed. This is a great opportunity to use the `<% with %>` block.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 5)
+*app/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 5)
 ```html
 <div class="main col-sm-8">
 	<% with $Region %>
@@ -269,7 +269,7 @@ Refresh the page and see that we get a new title.
 
 While the new title is showing on the page itself, it is not affecting the `<title>` tag. That's because, back in Lesson 3, we handed over control over the title tag to `$MetaTags`. Back in that lesson, we discussed the option to pass a parameter of `false` to the `$MetaTags` function to suppress the title tag, and customise it as we see fit. Let's do that now.
 
-*themes/one-ring/templates/Page.ss* (line 8)
+*app/templates/Page.ss* (line 8)
 ```html
 	$MetaTags(false)
 	<title>One Ring Rentals: $Title</title>
@@ -280,7 +280,7 @@ Refresh the page, and see that the title tag is now working.
 
 Another enhancement we can make is the perception of hierarchy. We can use our subnavigation section to display all the peer regions, with some state applied to the current one.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 15)
+*app/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 15)
 ```html
 <div class="sidebar gray col-sm-4">
 	<h2 class="section-title">Regions</h2>

@@ -241,7 +241,7 @@ Run `dev/build` and see that you get a new table.
 
 While we're in here, let's carve up the template and add a loop for all the comments. There are no comments right now, but there will be shortly.
 
-_themes/one-ring/templates/Layout/ArticlePage.ss_ (line 72)
+_app/templates/Layout/ArticlePage.ss_ (line 72)
 ```html
 <div class="comments">
     <ul>

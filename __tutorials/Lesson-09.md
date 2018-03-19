@@ -11,7 +11,7 @@ So far, we've only been dealing with content that is directly associated with a 
 
 Attached to this lesson is a download link to a new static template we'll be working with, `regions-page.html`. Our designer has once again stripped away all the chrome and left us with just the `$Layout` section, so before we go any further, let's download that file and migrate the page into a SilverStripe template.
 
-Copy the contents of `regions-page.html` into a new file, `themes/one-ring/templates/SilverStripe/Lessons/Layout/RegionsPage.ss`.
+Copy the contents of `regions-page.html` into a new file, `app/templates/SilverStripe/Lessons/Layout/RegionsPage.ss`.
 
 Then, create a new page type to go with it.
 
@@ -315,7 +315,7 @@ class Region extends DataObject
 
 Now that our relational data is all in place, it's time to display it on the template. This should be pretty straight forward. Let's start with `RegionsPage.ss`
 
-_themes/one-ring/templates/Layout/RegionsPage.ss, line 9_
+_app/templates/Layout/RegionsPage.ss, line 9_
 
 ```html
 <div class="grid-style1 clearfix">

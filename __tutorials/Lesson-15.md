@@ -110,7 +110,7 @@ Run `dev/build`, and we're ready to roll!
 
 The page that renders the search results for property is pretty distinct. In the assets for this lesson, you'll find the HTML for a new template in `__assets/property-search-results.html`. Let's import that into our project.
 
-Copy the contents of the file into *themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*.
+Copy the contents of the file into *app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*.
 
 Then, create new classes for the Page.
 
@@ -482,7 +482,7 @@ Refresh the page and see that the form now saves its state.
 
 Now that we have our `$Results` list being passed to the template, we'll loop through the results.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss* (line 38)
+*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss* (line 38)
 ```html
 <% loop $Results %>
 <div class="item col-md-4">

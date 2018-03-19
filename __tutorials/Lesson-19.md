@@ -77,7 +77,7 @@ Note that we don't just want to dump out `Region::get()`. This is a common mista
 
 We'll need to add these to the template. Replace the "tags" section with the list of regions.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	</div>
 	<!-- END  ARCHIVES ACCORDION -->
@@ -99,7 +99,7 @@ Notice that we're calling a non-existent method on `Region` called `$ArticlesLin
 
 While we're in this section, we should light up the list of categories in the sidebar. This is actually a bit easier than the list of regions, because `ArticleHolder` already has a `has_many` for `Categories`.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	<!-- BEGIN SIDEBAR -->
 	<div class="sidebar gray col-sm-4">
@@ -260,7 +260,7 @@ class ArticleHolderController extends PageController
 
 Back in the template, change the `<% loop %>` block to use the `$PaginatedArticles` method.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	<div id="blog-listing" class="list-style clearfix">
 		<div class="row">
@@ -275,7 +275,7 @@ For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` fi
 
 Take a deep breath, and copy and paste away. No one will know. Just make sure you change `$Results` to `$PaginatedArticles`.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	<!-- BEGIN PAGINATION -->
 	<% if $PaginatedArticles.MoreThanOnePage %>
@@ -381,7 +381,7 @@ Test the regions filter in your browser and see that it's working.
 
 The last thing we need to do is pull our filter headers into the listings to show the user the state of the list. Each controller action returns its own custom template variables that we can check.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	<div id="blog-listing" class="list-style clearfix">
 		<div class="row">

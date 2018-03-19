@@ -97,14 +97,38 @@ $ composer create-project silverstripe/installer example
 ``` 
 
 Composer will now go out and read the SilverStripe installer package. Then, it's going to pull down all the dependencies, including SilverStripe Framework, and several other core modules, along with various supporting PHP libraries. Lastly, it's going to install the default theme that comes with the SilverStripe installer.
+
+### The public/ folder
+
+SilverStripe only exposes a very small slice of your entire project to the web. All of the PHP code, configuration files, templates, and other core files are stored in the project root, which is not web accessible. The actual `index.php` file that renders your website lives in the `public/` folder, along with any and all other frontend depedencies such as CSS, JavaScript, webfonts, and images.
+
+This means that if your localhost resolves to a generic, catch-all directory, you'll have to supply `public/` at the end of the URL in order to load the correct context.
+
+In our case, our site lives at `http://{your localhost}/example/public`.
   
-
-Now, if we go to the URL `http://{your localhost}/example`, we see an install page. It's full of red errors that are telling us that the install isn't going to work, so let's go through this and see if we can sort it out. 
-
 
 <img width="600" src="https://silverstripe.org/assets/lessons/4.0/lesson0-10.png">
+
  
-  
+#### Will public/ always be in my URL?
+
+No! It just takes a bit of setup.
+
+It's a good idea to set up a virtual host for your project, so that your local project emulates how it will actually be accessed on the web. For instance, for our project, a virtual host like `http:://example.local` could point to the `example/public` folder. In an Apache installation, that is configured like this:
+
+```
+<VirtualHost 127.0.0.1>
+DocumentRoot /path/to/my/websites/example/public
+ServerName example.local
+</VirtualHost>
+```
+
+Setting up virtual hosts will look different for every web server, but it is almost always a simple and painless process backed by good documentation.
+
+### Viewing your website
+
+Assuming you're not using a virtual host, go to the URL `http://{your localhost}/example/public`. You should see an install page. It's full of red errors that are telling us that the install isn't going to work, so let's go through this and see if we can sort it out. 
+
   
 ### Configuring the installer
 
@@ -194,7 +218,7 @@ Let's create a second SilverStripe project. We'll call it *example2*.
 $ composer create-project silverstripe/installer example2
 ```
 
-So let's go to that *example2* URL (http://{your localhost}/example2). The install page comes up again, but it looks slightly different. 
+So let's go to that *example2* URL (http://{your localhost}/example2/public). The install page comes up again, but it looks slightly different. 
 
 
 <img width="600" src="https://silverstripe.org/assets/lessons/lessson-0/lesson0-14.png">
@@ -227,7 +251,7 @@ For a full list of settings you can go to the docs and just look up [environment
 
 Let's save the changes to `.env`, and apply those new settings.
 
-When we go to the http://localhost/example3 URL, you'll notice that we bypass the install page. That's because SilverStripe has learnt everything it needed to know about running this project from `.env`. 
+When we go to the `http://{your localhost}/example3/public` URL, you'll notice that we bypass the install page. That's because SilverStripe has learnt everything it needed to know about running this project from `.env`. 
 
 This is a really quick way to light up a project and do some testing. You can just throw this project away when you're done and do it again, and you don't have to go through that install process every single time. `.env` comes in really useful here, as it applies all the settings you want for every single project. 
 

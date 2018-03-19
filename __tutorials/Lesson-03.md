@@ -28,9 +28,9 @@ Refresh the page. You should now see the three default pages SilverStripe create
 
 ### Adding a base URL
 
-Let's try navigating to one of the pages, say, "About Us." The site breaks! What's going on here?
+Let's try navigating to one of the pages, say, "About Us." Do you notice that the images are broken? What's going on here?
 
-Taking a look at the web inspector again, you'll see that the browser is looking for our assets in the wrong place (`about-us/themes/one-ring/`). We've used relative paths for everything, so we need to insure that all the assets load relative to our project root. We could use a leading slash ("/") for this, but if you're working in a subdirectory of localhost (e.g. http://localhost) that will look too far up the tree.
+Taking a look at the web inspector again, you'll see that the browser is looking for our assets relative to the current URL. In this case, that's something like `about-us/images/logo.png`. We need to insure that all the assets load relative to our project root. We could use a leading slash ("/") for this, but if you're working in a subdirectory of localhost (e.g. http://localhost/my-website/public) that will look too far up the tree.
 
 For this reason, it's strongly recommended that you add a `<base />` tag to the head of your document in all templates. Fortunately, there's an easy helper tag provided by SilverStripe to give you exactly what you need. Simply add the syntax `<% base_tag %>` to the top of your `<head>` section.
 

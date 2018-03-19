@@ -4,7 +4,7 @@ In the previous tutorial, we activated most of the sidebar filters for our Trave
 
 Looking at the template, we first have to generate a list of all the distinct month/year combinations for all the articles. Let's start by working backwards, and we want the end result to be on the template.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
   <!-- BEGIN ARCHIVES ACCORDION -->
 	<h2 class="section-title">Archives</h2>
@@ -274,7 +274,7 @@ Refresh the browser and try clicking on some of the date archive links, and see 
 
 The last thing we need to do is pull our filter headers into the listings to show the user the state of the list. Each controller action returns its own custom template variables that we can check.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
 	<div id="blog-listing" class="list-style clearfix">
 		<div class="row">
@@ -290,7 +290,7 @@ The last thing we need to do is pull our filter headers into the listings to sho
 
 We'll also add the dates to the articles themselves, removing the static dates that are there now.
 
-*themes/one-ring/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
+*app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
   <div class="info-blog">
     <ul class="top-info">
