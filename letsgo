@@ -7,53 +7,15 @@ chdir($ROOT_DIR);
 
 foreach(range(2, 21) as $num) {
 	foreach(['begin', 'end'] as $marker) {
-
+		$lessonNum = str_pad($num, 2, '0', STR_PAD_LEFT);
 		$branchName = sprintf(
 			'lesson-%s-%s',
-			str_pad($num, 2, '0', STR_PAD_LEFT),
+			$lessonNum,
 			$marker
 		);
 		$dirName = ucfirst($branchName);
 		$lessonDir = $ROOT_DIR . '/' .$dirName;
 
-$match = <<<PHP
-    protected function init()
-    {
-        parent::init();
-		Requirements::themedCSS("bootstrap.min");
-		Requirements::themedCSS("style");
-		Requirements::themedJavascript("common/modernizr");
-		Requirements::themedJavascript("common/jquery-1.11.1.min");
-		Requirements::themedJavascript("common/bootstrap.min");
-		Requirements::themedJavascript("common/bootstrap-datepicker");
-		Requirements::themedJavascript("common/chosen.min");
-		Requirements::themedJavascript("common/bootstrap-checkbox");
-		Requirements::themedJavascript("common/nice-scroll");
-		Requirements::themedJavascript("common/jquery-browser");
-		Requirements::themedJavascript("scripts");
-    }
-PHP;
-
-$replace = <<<PHP
-    protected function init()
-    {
-        parent::init();
-		Requirements::css('css/bootstrap.min.css');
-		Requirements::css('css/style.css');
-		Requirements::javascript('javascript/common/modernizr.js');
-		Requirements::javascript('javascript/common/jquery-1.11.1.min.js');
-		Requirements::javascript('javascript/common/bootstrap.min.js');
-		Requirements::javascript('javascript/common/bootstrap-datepicker.js');
-		Requirements::javascript('javascript/common/chosen.min.js');
-		Requirements::javascript('javascript/common/bootstrap-checkbox.js');
-		Requirements::javascript('javascript/common/nice-scroll.js');
-		Requirements::javascript('javascript/common/jquery-browser.js');
-		Requirements::javascript('javascript/scripts.js');
-    }
-PHP;
-
-	$contents = file_get_contents($lessonDir . '/app/code/PageController.php');
-	$newContents = str_replace($match, $replace, $contents);
-	file_put_contents($lessonDir . '/app/code/PageController.php', $newContents);
+		exec("cd $lessonDir && rm install.php");
 	}
 }
