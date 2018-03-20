@@ -10,7 +10,7 @@ In a default installation of SilverStripe, your project directory is called **my
 
 ### Building the theme structure
 
-We can create a theme by adding a new folder under **themes/**. The folder name is arbitrary, but must be comprised of only alphanumeric characters, dashes, or underscores. 
+We can create a theme by adding a new folder under **themes/**. The folder name is arbitrary, but must be comprised of only alphanumeric characters, dashes, or underscores.
 
 Underneath the theme folder, we can create some new folders for our templates and assets.
 
@@ -68,6 +68,25 @@ You can now delete the `themes/` directory.
 
 This is entirely a preferential change. You might want to keep the templates in `themes/`, and that's fine. Just be aware that subsequent tutorials will assume you have your templates in your project directory.
 
+### Keeping `themes/` directory
+
+If you want to continue using the themes directory, you might need to make a few changes to your project to expose
+those files to the web. For instance, you will need to add this to your root composer.json for each folder
+with public files.
+
+```json
+{
+    "extra": {
+        "expose": [
+            "themes/my-theme/css"
+        ]
+    }
+}
+```
+
+Then if you do a composer update, or run `composer vendor-expose`, you'll see a folder created at
+`public/resources/themes/my-theme/css` which will allow your css files (and only those css files) from
+your theme to be available to the web.
 
 ### Creating your first template
 
