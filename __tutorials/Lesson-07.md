@@ -41,17 +41,17 @@ namespace SilverStripe\Lessons;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\File;
 
-class ArticlePage extends Page 
+class ArticlePage extends Page
 {
 
     // ...
 
     private static $has_one = [
-  		'Photo' => Image::class,
-  		'Brochure' => File::class
-  	];
+        'Photo' => Image::class,
+        'Brochure' => File::class
+    ];
 
-  	// …
+    // …
 }
 ```
 
@@ -70,17 +70,17 @@ use SilverStripe\Assets\Image;
 use SilverStripe\Assets\File;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 
-class ArticlePage extends Page 
+class ArticlePage extends Page
 {
-  	// ...
-  	public function getCMSFields() {
+    // ...
+    public function getCMSFields() {
          $fields = parent::getCMSFields();
          // ...
 
          $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
          $fields->addFieldToTab('Root.Attachments', UploadField::create('Brochure','Travel brochure, optional (PDF only)'));
 
-    	   return $fields;
+           return $fields;
     }
 }
 ```
@@ -119,7 +119,7 @@ It would also be nice if the uploader put all the files in a folder of our choos
 We can use `setFolderName()` on the `UploadField` to assign a folder, relative to `assets/*. If the folder doesn't exist, it will be created, along with any non-existent ancestors your specify, i.e. "does/not/exist" would create three new folders.
 
 ```php
-	public function getCMSFields() {
+    public function getCMSFields() {
           $fields = parent::getCMSFields();
 
           //...
@@ -133,7 +133,7 @@ We can use `setFolderName()` on the `UploadField` to assign a folder, relative t
             ->getValidator()->setAllowedExtensions(array('pdf'));
 
           return $fields;
-	}
+    }
 ```
 Try uploading a new file, and see that it goes to the appropriate place.
 
@@ -163,11 +163,11 @@ This file download works great, but we can clean up the template syntax a bit. T
 ```html
     <% if $Brochure %>
     <div class="row">
-    	<% with $Brochure %>
-    	<div class="col-sm-12">
-    		<a href="$URL" class="btn btn-warning btn-block"><i class="fa fa-download"></i> Download brochure [$Extension] ($Size)</a>					
-    	</div>
-    	<% end_with %>
+        <% with $Brochure %>
+        <div class="col-sm-12">
+            <a href="$URL" class="btn btn-warning btn-block"><i class="fa fa-download"></i> Download brochure [$Extension] ($Size)</a>
+        </div>
+        <% end_with %>
     </div>
     <% end_if %>
 ```
@@ -321,11 +321,11 @@ So how do you publish files? The most obvious way is in the **Files** section of
 ```
 class ArticlePage extends Page
 {
-	//...
-	private static $owns = [
-		'Photo',
-		'Brochure',
-	];
+    //...
+    private static $owns = [
+        'Photo',
+        'Brochure',
+    ];
 }
 ```
 

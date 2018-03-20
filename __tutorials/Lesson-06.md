@@ -23,18 +23,18 @@ Since all these fields appear on the `ArticlePage` records, we'll only need to b
 Let's define a new private static variable in `ArticlePage.php` called `$db`. Set it to an empty array.
 
 ```php
-class ArticlePage extends Page 
+class ArticlePage extends Page
 {
- 
+
   private static $db = [];
-  
+
 }
 ```
 
 The `$db` array is the cornerstone of data modelling in SilverStripe. Its function is pretty simple -- it maps a field name to a field type. So the keys of the array are going to represent the variables that you can invoke on the object, such as `$Content`, `$Title`, etc, and the values of the array will be the field type. We'll talk more about field types in just a moment, but for now, let's populate this array with the fields we need.
 
 ```php
-class ArticlePage extends Page 
+class ArticlePage extends Page
 {
 
   private static $db = [
@@ -105,7 +105,7 @@ Our database is ready to store these new fields on our page type, so now it's ti
 Let's define a new method that exposes the API for updating the CMS interface for this page.
 
 ```php
-class ArticlePage extends Page 
+class ArticlePage extends Page
 {
   private static $db = [
     'Date' => 'Date',
@@ -113,7 +113,7 @@ class ArticlePage extends Page
     'Author' => 'Varchar',
   ];
 
-  public function getCMSFields() 
+  public function getCMSFields()
   {
     $fields = parent::getCMSFields();
 
@@ -132,10 +132,10 @@ use SilverStripe\Forms\TextField;
 
 // ...
 
-  public function getCMSFields() 
+  public function getCMSFields()
   {
     $fields = parent::getCMSFields();
-    $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'));   
+    $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'));
     $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser'));
     $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'));
 
@@ -156,7 +156,7 @@ Let's go into the CMS and edit any ArticlePage. Notice our new fields at the bot
 There are a couple usability issues we can address here. One is that the fields are all pinned to the bottom of the page, below the content editor, making it difficult for the user to find. Fortunately, the `addFieldToTab()` method accepts an optional argument to specify an existing field that the new field should come before. In this case, we want these fields before the `Content` field.
 
 ```php
-  public function getCMSFields() 
+  public function getCMSFields()
   {
     $fields = parent::getCMSFields();
     $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'),'Content');
@@ -175,8 +175,8 @@ Second, it might not be too clear to the user what "teaser" means. Let's add som
     $fields = parent::getCMSFields();
     $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'), 'Content');
     $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser')
-    	->setDescription('This is the summary that appears on the article list page.'),
-    	'Content'
+        ->setDescription('This is the summary that appears on the article list page.'),
+        'Content'
     );
     $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
 

@@ -87,7 +87,7 @@ To accomplish this, we'll use a template method that is afforded to all pages in
     <% loop $Children %>
     <div class="item col-md-6">
       <div class="image">
-        <a href="blog-detail.html"> 
+        <a href="blog-detail.html">
           <span class="btn btn-default">Read More</span>
         </a>
         <img src="http://placehold.it/766x515" alt="" />
@@ -133,7 +133,7 @@ SilverStripe offers an API for hierarchical constraints that will enforce that p
 
 ```php
     private static $allowed_children = [
-    	ArticlePage::class
+        ArticlePage::class
     ];
 ```
 

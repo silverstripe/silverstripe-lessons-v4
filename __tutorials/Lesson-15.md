@@ -34,10 +34,10 @@ class Property extends DataObject
 {
 
   private static $db = [
-	    //...
+        //...
       'AvailableStart' => 'Date',
       'AvailableEnd'=> 'Date'
-	];
+    ];
 ```
 
 We should also add some fields to the CMS so these can be edited.
@@ -48,7 +48,7 @@ public function getCMSFields()
   //...
   DateField::create('AvailableStart', 'Date available (start)'),
   DateField::create('AvailableEnd', 'Date available (end)'),
-  //...    
+  //...
 ```
 
 Run `dev/build` and see that we get some new fields.
@@ -87,20 +87,20 @@ Our keyword search will need to search a property description. We'll add that fi
 class Property extends DataObject
 {
 
-	private static $db = [
+    private static $db = [
      //...
-		'Description' => 'Text',
-		'AvailableStart' => 'Date',
-		'AvailableEnd'=> 'Date'
-	];
+        'Description' => 'Text',
+        'AvailableStart' => 'Date',
+        'AvailableEnd'=> 'Date'
+    ];
 
   //...
-	public function getCMSFields()
-	{
-		$fields = FieldList::create(TabSet::create('Root'));
-		$fields->addFieldsToTab('Root.Main', array(
-			TextField::create('Title'),
-			TextareaField::create('Description'),
+    public function getCMSFields()
+    {
+        $fields = FieldList::create(TabSet::create('Root'));
+        $fields->addFieldsToTab('Root.Main', array(
+            TextField::create('Title'),
+            TextareaField::create('Description'),
       //...
 ```
 
@@ -163,54 +163,54 @@ use SilverStripe\ORM\ArrayLib;
 class PropertySearchPageController extends PageController
 {
 
-	public function PropertySearchForm()
-	{
-		$nights = [];
-		foreach(range(1,14) as $i) {
-			$nights[$i] = "$i night" . (($i > 1) ? 's' : '');
-		}
-		$prices = [];
-		foreach(range(100, 1000, 50) as $i) {
-			$prices[$i] = '$'.$i;
-		}
+    public function PropertySearchForm()
+    {
+        $nights = [];
+        foreach(range(1,14) as $i) {
+            $nights[$i] = "$i night" . (($i > 1) ? 's' : '');
+        }
+        $prices = [];
+        foreach(range(100, 1000, 50) as $i) {
+            $prices[$i] = '$'.$i;
+        }
 
-		$form = Form::create(
-			$this,
-			'PropertySearchForm',
-			FieldList::create(
-				TextField::create('Keywords')
-					->setAttribute('placeholder', 'City, State, Country, etc...')
-					->addExtraClass('form-control'),
-				TextField::create('ArrivalDate','Arrive on...')				
-					->setAttribute('data-datepicker', true)
-					->setAttribute('data-date-format', 'DD-MM-YYYY')
-					->addExtraClass('form-control'),
-				DropdownField::create('Nights','Stay for...')					
-					->setSource($nights)
-					->addExtraClass('form-control'),
-				DropdownField::create('Bedrooms')					
-					->setSource(ArrayLib::valuekey(range(1,5)))
-					->addExtraClass('form-control'),
-				DropdownField::create('Bathrooms')					
-					->setSource(ArrayLib::valuekey(range(1,5)))
-					->addExtraClass('form-control'),
-				DropdownField::create('MinPrice','Min. price')
-					->setEmptyString('-- any --')
-					->setSource($prices)
-					->addExtraClass('form-control'),
-				DropdownField::create('MaxPrice','Max. price')
-					->setEmptyString('-- any --')
-					->setSource($prices)
-					->addExtraClass('form-control')				
-			),
-			FieldList::create(
-				FormAction::create('doPropertySearch','Search')
-					->addExtraClass('btn-lg btn-fullcolor')
-			)
-		);
+        $form = Form::create(
+            $this,
+            'PropertySearchForm',
+            FieldList::create(
+                TextField::create('Keywords')
+                    ->setAttribute('placeholder', 'City, State, Country, etc...')
+                    ->addExtraClass('form-control'),
+                TextField::create('ArrivalDate','Arrive on...')
+                    ->setAttribute('data-datepicker', true)
+                    ->setAttribute('data-date-format', 'DD-MM-YYYY')
+                    ->addExtraClass('form-control'),
+                DropdownField::create('Nights','Stay for...')
+                    ->setSource($nights)
+                    ->addExtraClass('form-control'),
+                DropdownField::create('Bedrooms')
+                    ->setSource(ArrayLib::valuekey(range(1,5)))
+                    ->addExtraClass('form-control'),
+                DropdownField::create('Bathrooms')
+                    ->setSource(ArrayLib::valuekey(range(1,5)))
+                    ->addExtraClass('form-control'),
+                DropdownField::create('MinPrice','Min. price')
+                    ->setEmptyString('-- any --')
+                    ->setSource($prices)
+                    ->addExtraClass('form-control'),
+                DropdownField::create('MaxPrice','Max. price')
+                    ->setEmptyString('-- any --')
+                    ->setSource($prices)
+                    ->addExtraClass('form-control')
+            ),
+            FieldList::create(
+                FormAction::create('doPropertySearch','Search')
+                    ->addExtraClass('btn-lg btn-fullcolor')
+            )
+        );
 
-		return $form;
-	}
+        return $form;
+    }
 }
 ```
 
@@ -244,8 +244,8 @@ Next, we need to make sure the form doesn't submit to its handler, `doPropertySe
 public function PropertySearchForm()
 {
     //...
-	$form->setFormMethod('GET')
-	     ->setFormAction($this->Link());
+    $form->setFormMethod('GET')
+         ->setFormAction($this->Link());
 
     return $form;
 }
@@ -258,9 +258,9 @@ Now let's test it out. Put some data into the form, and hit *Search*. Needless t
 public function PropertySearchForm()
 {
     //...
-	$form->setFormMethod('GET')
-	     ->setFormAction($this->Link())
-	     ->disableSecurityToken();
+    $form->setFormMethod('GET')
+         ->setFormAction($this->Link())
+         ->disableSecurityToken();
 
     return $form;
 }
@@ -286,15 +286,15 @@ use SilverStripe\Control\HTTPRequest;
 class PropertySearchPageController extends PageController
 {
 
-	public function index(HTTPRequest $request)
-	{
-		$properties = Property::get()->limit(20);
+    public function index(HTTPRequest $request)
+    {
+        $properties = Property::get()->limit(20);
 
-		return [
-			'Results' => $properties
-		];
-	}
-     
+        return [
+            'Results' => $properties
+        ];
+    }
+
   //...
 }
 ```
@@ -306,9 +306,9 @@ Now let's start inspecting the `GET` request. We'll check each parameter, and ap
 First, let's use the `PartialMatchFilter` to match a keyword in the title.
 ```php
 if ($search = $request->getVar('Keywords')) {
-	$properties = $properties->filter([
-		'Title:PartialMatch' => $search				
-	]);
+    $properties = $properties->filter([
+        'Title:PartialMatch' => $search
+    ]);
 }
 ```
 Keep in mind, `PartialMatch` only checks for a sequence of characters in the field (case insensitive). It won't perform any language transformations or parse phrases. A search for *sea views* will not match against a title containing *sea view*.
@@ -317,15 +317,15 @@ Next, we'll parse the date and create our filter for `AvailableStart` and `Avail
 
 ```php
 if ($arrival = $request->getVar('ArrivalDate')) {
-	$arrivalStamp = strtotime($arrival);						
-	$nightAdder = '+'.$request->getVar('Nights').' days';
-	$startDate = date('Y-m-d', $arrivalStamp);
-	$endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
+    $arrivalStamp = strtotime($arrival);
+    $nightAdder = '+'.$request->getVar('Nights').' days';
+    $startDate = date('Y-m-d', $arrivalStamp);
+    $endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
 
-	$properties = $properties->filter([
-		'AvailableStart:GreaterThanOrEqual' => $startDate,
-		'AvailableEnd:LessThanOrEqual' => $endDate
-	]);
+    $properties = $properties->filter([
+        'AvailableStart:GreaterThanOrEqual' => $startDate,
+        'AvailableEnd:LessThanOrEqual' => $endDate
+    ]);
 
 }
 ```
@@ -333,15 +333,15 @@ if ($arrival = $request->getVar('ArrivalDate')) {
 This gets a bit tricky. In an ideal world, the date would come through the GET request in proper Y-m-d format, the way a database prefers to deal with them, but our calendar widget doesn't submit its value that way. A more configurable widget might let us provide two formats -- one for the display to the user, and one for the form data, but unfortunately, that option isn't available, so we need to take the date in DD-MM-YYYY format and parse it out.
 ```php
 if ($arrival = $request->getVar('ArrivalDate')) {
-	$arrivalStamp = strtotime($arrival);						
-	$nightAdder = '+'.$request->getVar('Nights').' days';
-	$startDate = date('Y-m-d', $arrivalStamp);
-	$endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
+    $arrivalStamp = strtotime($arrival);
+    $nightAdder = '+'.$request->getVar('Nights').' days';
+    $startDate = date('Y-m-d', $arrivalStamp);
+    $endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
 
-	$properties = $properties->filter([
-		'AvailableStart:LessThanOrEqual' => $startDate,
-		'AvailableEnd:GreaterThanOrEqual' => $endDate
-	]);
+    $properties = $properties->filter([
+        'AvailableStart:LessThanOrEqual' => $startDate,
+        'AvailableEnd:GreaterThanOrEqual' => $endDate
+    ]);
 
 }
 ```
@@ -361,9 +361,9 @@ The next four filters are pretty straightforward. We'll use `GreaterThanOrEqualF
 
 ```php
 if ($bedrooms = $request->getVar('Bedrooms')) {
-	$properties = $properties->filter([
-		'Bedrooms:GreaterThanOrEqual' => $bedrooms
-	]);
+    $properties = $properties->filter([
+        'Bedrooms:GreaterThanOrEqual' => $bedrooms
+    ]);
 }
 ```
 
@@ -373,54 +373,54 @@ A few more of those, and here we have all of our filters:
 ```php
 public function index(HTTPRequest $request)
 {
-	$properties = Property::get();
-	
-	if ($search = $request->getVar('Keywords')) {
-		$properties = $properties->filter(array(
-			'Title:PartialMatch' => $search				
-		));
-	}
+    $properties = Property::get();
 
-	if ($arrival = $request->getVar('ArrivalDate')) {
-		$arrivalStamp = strtotime($arrival);						
-		$nightAdder = '+'.$request->getVar('Nights').' days';
-		$startDate = date('Y-m-d', $arrivalStamp);
-		$endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
+    if ($search = $request->getVar('Keywords')) {
+        $properties = $properties->filter(array(
+            'Title:PartialMatch' => $search
+        ));
+    }
 
-		$properties = $properties->filter([
-			'AvailableStart:GreaterThanOrEqual' => $startDate,
-			'AvailableEnd:LessThanOrEqual' => $endDate
-		]);
+    if ($arrival = $request->getVar('ArrivalDate')) {
+        $arrivalStamp = strtotime($arrival);
+        $nightAdder = '+'.$request->getVar('Nights').' days';
+        $startDate = date('Y-m-d', $arrivalStamp);
+        $endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
 
-	}
+        $properties = $properties->filter([
+            'AvailableStart:GreaterThanOrEqual' => $startDate,
+            'AvailableEnd:LessThanOrEqual' => $endDate
+        ]);
 
-	if ($bedrooms = $request->getVar('Bedrooms')) {
-		$properties = $properties->filter([
-			'Bedrooms:GreaterThanOrEqual' => $bedrooms
-		]);
-	}
+    }
 
-	if ($bathrooms = $request->getVar('Bathrooms')) {
-		$properties = $properties->filter([
-			'Bathrooms:GreaterThanOrEqual' => $bathrooms
-		]);
-	}
+    if ($bedrooms = $request->getVar('Bedrooms')) {
+        $properties = $properties->filter([
+            'Bedrooms:GreaterThanOrEqual' => $bedrooms
+        ]);
+    }
 
-	if ($minPrice = $request->getVar('MinPrice')) {
-		$properties = $properties->filter([
-			'PricePerNight:GreaterThanOrEqual' => $minPrice
-		]);
-	}
+    if ($bathrooms = $request->getVar('Bathrooms')) {
+        $properties = $properties->filter([
+            'Bathrooms:GreaterThanOrEqual' => $bathrooms
+        ]);
+    }
 
-	if ($maxPrice = $request->getVar('MaxPrice')) {
-		$properties = $properties->filter([
-			'PricePerNight:LessThanOrEqual' => $maxPrice
-		]);
-	}
+    if ($minPrice = $request->getVar('MinPrice')) {
+        $properties = $properties->filter([
+            'PricePerNight:GreaterThanOrEqual' => $minPrice
+        ]);
+    }
 
-	return [
-		'Results' => $properties
-	];
+    if ($maxPrice = $request->getVar('MaxPrice')) {
+        $properties = $properties->filter([
+            'PricePerNight:LessThanOrEqual' => $maxPrice
+        ]);
+    }
+
+    return [
+        'Results' => $properties
+    ];
 }
 ```
 
@@ -431,17 +431,17 @@ Looking at this code, there's a lot of repetition, and we're teetering on the ed
 public function index(HTTPRequest $request)
 {
   //...
-	if ($arrival = $request->getVar('ArrivalDate')) {
+    if ($arrival = $request->getVar('ArrivalDate')) {
     //...
-	}
-  
+    }
+
   $filters = [
     ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual'],
     ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual'],
     ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual'],
     ['MaxPrice', 'PricePerNight', 'LessThanOrEqual'],
   ];
-  
+
   foreach($filters as $filterKeys) {
     list($getVar, $field, $filter) = $filterKeys;
     if ($value = $request->getVar($getVar)) {
@@ -451,9 +451,9 @@ public function index(HTTPRequest $request)
     }
   }
 
-	return [
-		'Results' => $properties
-	];
+    return [
+        'Results' => $properties
+    ];
 }
 ```
 
@@ -466,10 +466,10 @@ Try searching using our new applied filters. We should still see static results,
 public function PropertySearchForm()
 {
   //...
-	$form->setFormMethod('GET')
-	     ->setFormAction($this->Link())
-	     ->disableSecurityToken()
-	     ->loadDataFrom($this->request->getVars());
+    $form->setFormMethod('GET')
+         ->setFormAction($this->Link())
+         ->disableSecurityToken()
+         ->loadDataFrom($this->request->getVars());
 
     return $form;
 }
@@ -486,32 +486,32 @@ Now that we have our `$Results` list being passed to the template, we'll loop th
 ```html
 <% loop $Results %>
 <div class="item col-md-4">
-	<div class="image">
-		<a href="$Link">
-			<span class="btn btn-default"><i class="fa fa-file-o"></i> Details</span>
-		</a>
-		$PrimaryPhoto.Fill(760,670)
-	</div>
-	<div class="price">
-		<span>$PricePerNight.Nice</span><p>per night<p>
-	</div>
-	<div class="info">
-		<h3>
-			<a href="$Link">$Title</a>
-			<small>$Region.Title</small>
-			<small>Available $AvailableStart.Nice - $AvailableEnd.Nice</small>
-		</h3>
-		<p>$Description.LimitSentences(3)</p>
-	
-		<ul class="amenities">
-			<li><i class="icon-bedrooms"></i> $Bedrooms</li>
-			<li><i class="icon-bathrooms"></i> $Bathrooms</li>
-		</ul>
-	</div>
+    <div class="image">
+        <a href="$Link">
+            <span class="btn btn-default"><i class="fa fa-file-o"></i> Details</span>
+        </a>
+        $PrimaryPhoto.Fill(760,670)
+    </div>
+    <div class="price">
+        <span>$PricePerNight.Nice</span><p>per night<p>
+    </div>
+    <div class="info">
+        <h3>
+            <a href="$Link">$Title</a>
+            <small>$Region.Title</small>
+            <small>Available $AvailableStart.Nice - $AvailableEnd.Nice</small>
+        </h3>
+        <p>$Description.LimitSentences(3)</p>
+
+        <ul class="amenities">
+            <li><i class="icon-bedrooms"></i> $Bedrooms</li>
+            <li><i class="icon-bathrooms"></i> $Bathrooms</li>
+        </ul>
+    </div>
 </div>
 <% end_loop %>
 ```
 
 To help with debugging, we've added the `$AvailableStart` and `$AvailableEnd` values to confirm that our date search is working.
 
-Give the search a try and see how the filters work. 
+Give the search a try and see how the filters work.

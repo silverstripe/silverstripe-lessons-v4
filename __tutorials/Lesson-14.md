@@ -12,7 +12,7 @@ Using controller actions is simple. All we're talking about is appending a URL p
 
 For this example, we're going to look at our Regions page. You'll see that it resolves to `http://[your base url]/regions`. Try appending a new segment to the URL, like `http://[your base url]/regions/test`. Not surprisingly, we get a 404.
 
-#### Breaking down the request 
+#### Breaking down the request
 
 The reason why we get a 404 might surprise you. Let's take a look behind the scenes and see how SilverStripe is resolving this. Using the same URL, append `?debug_request`.
 
@@ -24,7 +24,7 @@ Right out of the gate, we can see that SilverStripe resolved our URL to `Regions
 
 * **`$Action`**: Immediately follows the URL. In this case our action is `test`.
 * **`$ID`**: An ID that the controller action may want to use. This value does not have to be numeric. It's arbitrary, and just named `ID` because that's a common use case.
-* **`$OtherID`**: Same as `ID`. You get two. 
+* **`$OtherID`**: Same as `ID`. You get two.
 
 You're not limited to this signature of parameters. In future lessons, we'll look at creating custom URL rules, but by default, this is what you get, and it's often all you need.
 
@@ -49,9 +49,9 @@ class RegionsPageController extends PageController
 
   public function test()
   {
-		die('it works');
-	}
-	
+        die('it works');
+    }
+
 }
 ```
 
@@ -68,19 +68,19 @@ use PageController;
 
 class RegionsPageController extends PageController {
 
-	private static $allowed_actions = [
-		'test'
-	];
-	
-	public function test()
-	{
-		die('it works');
-	}
+    private static $allowed_actions = [
+        'test'
+    ];
+
+    public function test()
+    {
+        die('it works');
+    }
 
 }
 ```
 
-`$allowed_actions` can actually get quite complex. You can map these methods to required permission levels, and even custom functions that evaluate whether they should be accessible at runtime, which is really useful for complex controllers. In this case, we just want to make sure anyone can invoke the `test` action. 
+`$allowed_actions` can actually get quite complex. You can map these methods to required permission levels, and even custom functions that evaluate whether they should be accessible at runtime, which is really useful for complex controllers. In this case, we just want to make sure anyone can invoke the `test` action.
 
 Refresh the page with a `?flush`, as we changed a private static variable. Now it works.
 
@@ -106,10 +106,10 @@ use SilverStripe\ORM\DataObject;
 class Region extends DataObject
 {
   //...
-	public function Link()
-	{
-		return $this->RegionsPage()->Link('show/'.$this->ID);
-	}
+    public function Link()
+    {
+        return $this->RegionsPage()->Link('show/'.$this->ID);
+    }
 }
 ```
 
@@ -121,18 +121,18 @@ Now that we have that method, we'll apply it to the template. Change all the has
 ```html
 <% loop $Regions %>
 <div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
-	<div class="image image-large">
-		<a href="$Link">
-			<span class="btn btn-default"><i class="fa fa-file-o"></i> Read More</span>
-		</a>
-		$Photo.CroppedImage(720,255)
-	</div>
-	<div class="info-blog">
-		<h3>
-			<a href="$Link">$Title</a>
-		</h3>
-		<p>$Description</p>
-	</div>
+    <div class="image image-large">
+        <a href="$Link">
+            <span class="btn btn-default"><i class="fa fa-file-o"></i> Read More</span>
+        </a>
+        $Photo.CroppedImage(720,255)
+    </div>
+    <div class="info-blog">
+        <h3>
+            <a href="$Link">$Title</a>
+        </h3>
+        <p>$Description</p>
+    </div>
 </div>
 <% end_loop %>
 ```
@@ -149,14 +149,14 @@ use SilverStripe\Control\HTTPRequest;
 class RegionsPageController extends PageController
 {
 
-	private static $allowed_actions = [
-		'show'
-	];
+    private static $allowed_actions = [
+        'show'
+    ];
 
-	public function show(HTTPRequest $request)
-	{
-		
-	}
+    public function show(HTTPRequest $request)
+    {
+
+    }
 
 }
 ```
@@ -167,18 +167,18 @@ Now that we have the skeleton of how this is going to work, we'll build out the 
 
 ```php
 
-	public function show(HTTPRequest $request)
-	{
-		$region = Region::get()->byID($request->param('ID'));
+    public function show(HTTPRequest $request)
+    {
+        $region = Region::get()->byID($request->param('ID'));
 
-		if(!$region) {
-			return $this->httpError(404,'That region could not be found');
-		}
+        if(!$region) {
+            return $this->httpError(404,'That region could not be found');
+        }
 
-		return [
-			'Region' => $region
-		];
-	}
+        return [
+            'Region' => $region
+        ];
+    }
 
 }
 ```
@@ -199,12 +199,12 @@ Copy your `app/templates/Layout/Page.ss` to `app/templates/Silverstripe/Lessons/
 *app/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 5)
 ```html
 <div class="main col-sm-8">
-	<% with $Region %>
-		<div class="blog-main-image">
-			$Photo.SetWidth(750)
-		</div>
-		$Description
-	<% end_with %>
+    <% with $Region %>
+        <div class="blog-main-image">
+            $Photo.SetWidth(750)
+        </div>
+        $Description
+    <% end_with %>
 </div>
 ```
 
@@ -221,10 +221,10 @@ use SilverStripe\ORM\DataObject;
 class Region extends DataObject
 {
 
-	private static $db = [
-		'Title' => 'Varchar',
-		'Description' => 'HTMLText',
-	];
+    private static $db = [
+        'Title' => 'Varchar',
+        'Description' => 'HTMLText',
+    ];
 ```
 
 Run `dev/build`.
@@ -232,13 +232,13 @@ Run `dev/build`.
 We'll also need to update the CMS field for `Description`.
 
 ```php
-	public function getCMSFields()
-	{
-		$fields = FieldList::create(
-			TextField::create('Title'),
-			HtmlEditorField::create('Description'),
-			$uploader = UploadField::create('Photo')
-		);
+    public function getCMSFields()
+    {
+        $fields = FieldList::create(
+            TextField::create('Title'),
+            HtmlEditorField::create('Description'),
+            $uploader = UploadField::create('Photo')
+        );
     //...
   }
 ```
@@ -255,14 +255,14 @@ Remember the array we passed to the template containing our custom variable `$Re
 
 *app/src/RegionsPageController.php*
 ```php
-	public function show(HTTPRequest $request)
-	{
+    public function show(HTTPRequest $request)
+    {
     //...
-		return [
-			'Region' => $region,
-			'Title' => $region->Title
-		];
-	}
+        return [
+            'Region' => $region,
+            'Title' => $region->Title
+        ];
+    }
 ```
 
 Refresh the page and see that we get a new title.
@@ -271,8 +271,8 @@ While the new title is showing on the page itself, it is not affecting the `<tit
 
 *app/templates/Page.ss* (line 8)
 ```html
-	$MetaTags(false)
-	<title>One Ring Rentals: $Title</title>
+    $MetaTags(false)
+    <title>One Ring Rentals: $Title</title>
 ```
 Refresh the page, and see that the title tag is now working.
 
@@ -283,12 +283,12 @@ Another enhancement we can make is the perception of hierarchy. We can use our s
 *app/templates/SilverStripe/Lessons/Layout/RegionsPage_show.ss* (line 15)
 ```html
 <div class="sidebar gray col-sm-4">
-	<h2 class="section-title">Regions</h2>
-	<ul class="categories subnav">
-		<% loop $Regions %>
-			<li class="$LinkingMode"><a class="$LinkingMode" href="$Link">$Title</a></li>
-		<% end_loop %>
-	</ul>
+    <h2 class="section-title">Regions</h2>
+    <ul class="categories subnav">
+        <% loop $Regions %>
+            <li class="$LinkingMode"><a class="$LinkingMode" href="$Link">$Title</a></li>
+        <% end_loop %>
+    </ul>
 </div>
 ```
 
@@ -308,11 +308,11 @@ use SilverStripe\Control\Controller;
 class Region extends DataObject
 {
   //...
-  
-	public function LinkingMode()
-	{
-		return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
-	}
+
+    public function LinkingMode()
+    {
+        return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
+    }
 }
 ```
 Remember that we're in the context of a simple DataObject here, so we don't have any awareness of the request. `Controller::curr()` is a useful method that gets us the currently active controller. Off that object, we can get the request object that has been assigned to it, and look for `->param('ID')`, the same way we did in our `show()` action. If the ID in the URL matches this region, we return `current`, otherwise we return `link`. We don't have to worry about `section` for something this simple.

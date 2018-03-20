@@ -17,7 +17,7 @@ Let's imagine we have the following simple DataObject class:
 ```php
 use SilverStripe\ORM\DataObject;
 
-class Product extends DataObject 
+class Product extends DataObject
 {
     private static $db = [
       'Title' => 'Varchar(100)',
@@ -209,15 +209,15 @@ namespace SilverStripe\Lessons;
 
 use PageController;
 
-class HomePageController extends PageController 
+class HomePageController extends PageController
 {
 
-  public function LatestArticles() 
-  { 
+  public function LatestArticles()
+  {
     return ArticlePage::get()
                ->sort('Created', 'DESC')
                ->limit(3);
-  } 
+  }
 }
 ```
 There is no need to pass this method into the template. Because it's in the controller and defined as public, we can access it using `$LatestArticles`. Let's update `HomePage.ss` to loop through the articles.
@@ -226,27 +226,27 @@ There is no need to pass this method into the template. Because it's in the cont
 <h1 class="section-title">Recent Articles</h1>
 <div class="grid-style1">
   <% loop $LatestArticles %>
-	<div class="item col-md-4">
-		<div class="image">
-			<a href="$Link">
-				<span class="btn btn-default"> Read More</span>
-			</a>
-			$Photo.Fit(220,148)
-		</div>
-		<div class="tag"><i class="fa fa-file-text"></i></div>
-		<div class="info-blog">
-			<ul class="top-info">
-				<li><i class="fa fa-calendar"></i> $Date.Format('j F, Y')</li>
-				<li><i class="fa fa-comments-o"></i> 2</li>
-				<li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
-			</ul>
-			<h3>
-				<a href="$Link">$Title</a>
-			</h3>
-			<p><% if $Teaser %>$Teaser<% else %>$Content.FirstSentence<% end_if %></p>
-		</div>
-	</div>
-	<% end_loop %>
+    <div class="item col-md-4">
+        <div class="image">
+            <a href="$Link">
+                <span class="btn btn-default"> Read More</span>
+            </a>
+            $Photo.Fit(220,148)
+        </div>
+        <div class="tag"><i class="fa fa-file-text"></i></div>
+        <div class="info-blog">
+            <ul class="top-info">
+                <li><i class="fa fa-calendar"></i> $Date.Format('j F, Y')</li>
+                <li><i class="fa fa-comments-o"></i> 2</li>
+                <li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
+            </ul>
+            <h3>
+                <a href="$Link">$Title</a>
+            </h3>
+            <p><% if $Teaser %>$Teaser<% else %>$Content.FirstSentence<% end_if %></p>
+        </div>
+    </div>
+    <% end_loop %>
 </div>
 ```
 There's one minor improvement we can make to this function. Right now, the limit of three records is hardcoded in the controller, which isn't very configurable. The reason we're limiting the result set is due to the constraints imposed by the layout, so it makes more sense to assign this value on the template.
@@ -257,7 +257,7 @@ Update the `LatestArticles` function to accept a `$count` parameter, and set its
 //...
 class HomePageController extends PageController {
 
-  public function LatestArticles($count = 3) 
+  public function LatestArticles($count = 3)
   {
     return ArticlePage::get()
                  ->sort('Created', 'DESC')

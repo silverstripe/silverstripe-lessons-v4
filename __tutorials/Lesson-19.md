@@ -19,33 +19,33 @@ Before we add the filter, let's set up that relationship. We'll add a `has_one` 
 *app/src/ArticlePage.php*
 ```php
 //...
-	private static $has_one = [
-		'Photo' => Image::class,
-		'Brochure' => File::class,
-		'Region' => Region::class,
-	];
+    private static $has_one = [
+        'Photo' => Image::class,
+        'Brochure' => File::class,
+        'Region' => Region::class,
+    ];
 //...
 
-	public function getCMSFields()
-	{
-		//...
-		$fields->addFieldToTab('Root.Main', DropdownField::create(
-			'RegionID',
-			'Region',
-			Region::get()->map('ID','Title')
-		)->setEmptyString('-- None --'), 'Content');
+    public function getCMSFields()
+    {
+        //...
+        $fields->addFieldToTab('Root.Main', DropdownField::create(
+            'RegionID',
+            'Region',
+            Region::get()->map('ID','Title')
+        )->setEmptyString('-- None --'), 'Content');
 
-		return $fields;
+        return $fields;
 
-	}
+    }
 ```
 
 *app/src/Region.php*
 ```php
 //...
-	private static $has_many = [
-		'Articles' => ArticlePage::class,
-	];
+    private static $has_many = [
+        'Articles' => ArticlePage::class,
+    ];
 //...
 ```
 
@@ -61,14 +61,14 @@ Now we can get into the meat of the lesson and start creating some filters.Let's
 class ArticleHolder extends Page {
 
   //...
-	public function Regions ()
-	{
-		$page = RegionsPage::get()->first();
+    public function Regions ()
+    {
+        $page = RegionsPage::get()->first();
 
-		if($page) {
-			return $page->Regions();
-		}
-	}
+        if($page) {
+            return $page->Regions();
+        }
+    }
   //...
 ```
 In practice, you'd probably want to add a `sort()` and/or `limit()` to that list, but for demonstration purposes, a generic query will do fine.
@@ -79,18 +79,18 @@ We'll need to add these to the template. Replace the "tags" section with the lis
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	</div>
-	<!-- END  ARCHIVES ACCORDION -->
-					
-	<h2 class="section-title">Regions</h2>
-	<ul class="categories">
-	<% loop $Regions %>
-		<li><a href="$ArticlesLink">$Title <span>($Articles.count)</span></a></li>
-	<% end_loop %>
-	</ul>
-	
-	<!-- BEGIN LATEST NEWS -->
-	<h2 class="section-title">Latest News</h2>
+    </div>
+    <!-- END  ARCHIVES ACCORDION -->
+
+    <h2 class="section-title">Regions</h2>
+    <ul class="categories">
+    <% loop $Regions %>
+        <li><a href="$ArticlesLink">$Title <span>($Articles.count)</span></a></li>
+    <% end_loop %>
+    </ul>
+
+    <!-- BEGIN LATEST NEWS -->
+    <h2 class="section-title">Latest News</h2>
 ```
 
 Getting the number of articles associated with the region is a simple call to the `Articles` relation. Every list in SilverStripe (the `SS_List` interface) exposes a `count()` method.
@@ -101,29 +101,29 @@ While we're in this section, we should light up the list of categories in the si
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	<!-- BEGIN SIDEBAR -->
-	<div class="sidebar gray col-sm-4">
-		
-		<h2 class="section-title">Categories</h2>
-		<ul class="categories">
-		<% loop $Categories %>
-			<li><a href="$Link">$Title <span>($Articles.count)</span></a></li>
-		<% end_loop %>
-		</ul>
+    <!-- BEGIN SIDEBAR -->
+    <div class="sidebar gray col-sm-4">
+
+        <h2 class="section-title">Categories</h2>
+        <ul class="categories">
+        <% loop $Categories %>
+            <li><a href="$Link">$Title <span>($Articles.count)</span></a></li>
+        <% end_loop %>
+        </ul>
 ```
 
 Again, we invoke the aggregate method `count()` against the `ArticleCategory` object to get the number of articles it relates to. We can do this thanks to the `belongs_many_many` we defined on `ArticleCategory`.
 
 Take a look in *ArticleCategory.php*. Remember this?
 ```php
-	private static $belongs_many_many = [
-		'Articles' => ArticlePage::class,
-	];
+    private static $belongs_many_many = [
+        'Articles' => ArticlePage::class,
+    ];
 ```
 
 It's now coming in really useful!
 
-Like we did before, we've called a non-existent `Link()` method on the category object that we'll define later. 
+Like we did before, we've called a non-existent `Link()` method on the category object that we'll define later.
 
 Refresh the page and see that our categories are appearing correctly.
 
@@ -156,11 +156,11 @@ The first thing we'll need in our controller is a list of allowed actions.
 class ArticleHolderController extends PageController
 {
 
-	private static $allowed_actions = [
-		'category',
-		'region',
-		'date'
-	];
+    private static $allowed_actions = [
+        'category',
+        'region',
+        'date'
+    ];
 ```
 
 Since we've updated a private static variable, be sure to run `?flush` at this point.
@@ -172,14 +172,14 @@ Now that we know what our routes will look like, let's get back to the `Region` 
 *app/src/Region.php*
 ```php
   //...
-	public function ArticlesLink()
-	{
-		$page = ArticleHolder::get()->first();
+    public function ArticlesLink()
+    {
+        $page = ArticleHolder::get()->first();
 
-		if($page) {
-			return $page->Link('region/'.$this->ID);
-		}
-	}
+        if($page) {
+            return $page->Link('region/'.$this->ID);
+        }
+    }
   //...
 ```
 
@@ -188,10 +188,10 @@ It's always a good idea to put a guard around the page actually existing. Never 
 Interesting to note, the `LinkingMode()` method in our `Region` object is agnostic enough to still work on our `ArticleHolder` page:
 
 ```php
-	public function LinkingMode()
-	{
-		return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
-	}
+    public function LinkingMode()
+    {
+        return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
+    }
 ```
 
 Let's now add the `Link()` method to the categories.
@@ -199,12 +199,12 @@ Let's now add the `Link()` method to the categories.
 *app/src/ArticleCategory.php*
 ```php
    //...
-	public function Link()
-	{
-		return $this->ArticleHolder()->Link(
-			'category/'.$this->ID
-		);
-	}
+    public function Link()
+    {
+        return $this->ArticleHolder()->Link(
+            'category/'.$this->ID
+        );
+    }
   //...
 ```
 
@@ -223,18 +223,18 @@ Ultimately what we want is for the controller to start with this base list, and 
 class ArticleHolderController extends PageController
 {
 
-	//...
+    //...
 
-	protected $articleList;
+    protected $articleList;
 
-	protected function init ()
-	{
-		parent::init();
+    protected function init ()
+    {
+        parent::init();
 
-		$this->articleList = ArticlePage::get()->filter([
-			'ParentID' => $this->ID
-		])->sort('Date DESC');
-	}
+        $this->articleList = ArticlePage::get()->filter([
+            'ParentID' => $this->ID
+        ])->sort('Date DESC');
+    }
 ```
 
 If you're wondering why we don't just use `Children()`, which effectively does the same thing, that's because `Children()` is a special method that modifies its list post-query. It actually returns an `ArrayList`, not a `DataList`, which would preclude us from adding filters.
@@ -249,26 +249,26 @@ use SilverStripe\ORM\PaginatedList;
 class ArticleHolderController extends PageController
 {
   //...
-	public function PaginatedArticles ($num = 10)
-	{		
-		return PaginatedList::create(
-			$this->articleList,
-			$this->getRequest()
-		)->setPageLength($num);
-	}
+    public function PaginatedArticles ($num = 10)
+    {
+        return PaginatedList::create(
+            $this->articleList,
+            $this->getRequest()
+        )->setPageLength($num);
+    }
 ```
 
 Back in the template, change the `<% loop %>` block to use the `$PaginatedArticles` method.
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	<div id="blog-listing" class="list-style clearfix">
-		<div class="row">
-			<% loop $PaginatedArticles %>
-			<div class="item col-md-6">
-			<!-- .... -->
-			</div>
-			<% end_loop %>
+    <div id="blog-listing" class="list-style clearfix">
+        <div class="row">
+            <% loop $PaginatedArticles %>
+            <div class="item col-md-6">
+            <!-- .... -->
+            </div>
+            <% end_loop %>
 ```
 
 For now, let's borrow the pagination HTML from the `PropertySearchResults.ss` file. If you're boiling inside about DRY violations, relax. We'll address this duplication in an upcoming lesson.
@@ -277,33 +277,33 @@ Take a deep breath, and copy and paste away. No one will know. Just make sure yo
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	<!-- BEGIN PAGINATION -->
-	<% if $PaginatedArticles.MoreThanOnePage %>
-	<div class="pagination">
-		<% if $PaginatedArticles.NotFirstPage %>
-		<ul id="previous col-xs-6">
-			<li><a href="$PaginatedArticles.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
-		</ul>
-		<% end_if %>
-		<ul class="hidden-xs">
-			<% loop $PaginatedArticles.PaginationSummary %>
-				<% if $Link %>
-					<li <% if $CurrentBool %>class="active"<% end_if %>>
-						<a href="$Link">$PageNum</a>
-					</li>
-				<% else %>
-					<li>...</li>
-				<% end_if %>
-			<% end_loop %>
-		</ul>
-		<% if $PaginatedArticles.NotLastPage %>
-		<ul id="next col-xs-6">
-			<li><a href="$PaginatedArticles.NextLink"><i class="fa fa-chevron-right"></i></a></li>
-		</ul>
-		<% end_if %>
-	</div>
-	<% end_if %>
-	<!-- END PAGINATION -->
+    <!-- BEGIN PAGINATION -->
+    <% if $PaginatedArticles.MoreThanOnePage %>
+    <div class="pagination">
+        <% if $PaginatedArticles.NotFirstPage %>
+        <ul id="previous col-xs-6">
+            <li><a href="$PaginatedArticles.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
+        </ul>
+        <% end_if %>
+        <ul class="hidden-xs">
+            <% loop $PaginatedArticles.PaginationSummary %>
+                <% if $Link %>
+                    <li <% if $CurrentBool %>class="active"<% end_if %>>
+                        <a href="$Link">$PageNum</a>
+                    </li>
+                <% else %>
+                    <li>...</li>
+                <% end_if %>
+            <% end_loop %>
+        </ul>
+        <% if $PaginatedArticles.NotLastPage %>
+        <ul id="next col-xs-6">
+            <li><a href="$PaginatedArticles.NextLink"><i class="fa fa-chevron-right"></i></a></li>
+        </ul>
+        <% end_if %>
+    </div>
+    <% end_if %>
+    <!-- END PAGINATION -->
 ```
 
 Now we're ready to add our first filter, for category. Let's define the `category()` action.
@@ -314,26 +314,26 @@ use SilverStripe\Control\HTTPRequest;
 
 class ArticleHolderController extends PageController
 {
-	
-	//...
-	public function category (HTTPRequest $r)
-	{
-		$category = ArticleCategory::get()->byID(
-			$r->param('ID')
-		);
 
-		if(!$category) {
-			return $this->httpError(404,'That category was not found');
-		}
+    //...
+    public function category (HTTPRequest $r)
+    {
+        $category = ArticleCategory::get()->byID(
+            $r->param('ID')
+        );
 
-		$this->articleList = $this->articleList->filter([
-			'Categories.ID' => $category->ID
-		]);
+        if(!$category) {
+            return $this->httpError(404,'That category was not found');
+        }
 
-		return [
-			'SelectedCategory' => $category
-		];
-	}
+        $this->articleList = $this->articleList->filter([
+            'Categories.ID' => $category->ID
+        ]);
+
+        return [
+            'SelectedCategory' => $category
+        ];
+    }
 ```
 
 We start first by checking if the category exists. If not, we throw a 404. Then, we update the article list by filtering the current one against the `many_many` relation, `Categories`. This is a wonderful example of the power of the ORM. Its abstraction layer allows us to filter by a parameter that is not necessarily a field in the database, but rather, a named relationship in our code. The filter `Categories.ID => $category->ID` simply asks for all the articles that contain the given category ID in their list of their related category IDs.
@@ -353,26 +353,26 @@ use SilverStripe\Control\HTTPRequest;
 
 class ArticleHolderController extends PageController
 {
-	//...
+    //...
 
-	public function region (HTTPRequest $r)
-	{
-		$region = Region::get()->byID(
-			$r->param('ID')
-		);
+    public function region (HTTPRequest $r)
+    {
+        $region = Region::get()->byID(
+            $r->param('ID')
+        );
 
-		if(!$region) {
-			return $this->httpError(404,'That region was not found');
-		}
+        if(!$region) {
+            return $this->httpError(404,'That region was not found');
+        }
 
-		$this->articleList = $this->articleList->filter([
-			'RegionID' => $region->ID
-		]);
+        $this->articleList = $this->articleList->filter([
+            'RegionID' => $region->ID
+        ]);
 
-		return [
-			'SelectedRegion' => $region
-		];
-	}
+        return [
+            'SelectedRegion' => $region
+        ];
+    }
 ```
 
 Test the regions filter in your browser and see that it's working.
@@ -383,13 +383,13 @@ The last thing we need to do is pull our filter headers into the listings to sho
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	<div id="blog-listing" class="list-style clearfix">
-		<div class="row">
-			<% if $SelectedRegion %>
-				<h3>Region: $SelectedRegion.Title</h3>
-			<% else_if $SelectedCategory %>
-				<h3>Category: $SelectedCategory.Title</h3>
-			<% end_if %>
+    <div id="blog-listing" class="list-style clearfix">
+        <div class="row">
+            <% if $SelectedRegion %>
+                <h3>Region: $SelectedRegion.Title</h3>
+            <% else_if $SelectedCategory %>
+                <h3>Category: $SelectedCategory.Title</h3>
+            <% end_if %>
 
 ```
 Give that a try and see that you now get some nice headings showing the state of the list.

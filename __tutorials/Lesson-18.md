@@ -62,12 +62,12 @@ If the sight of `li` tags nested in a `ul` is becoming almost synonymous with th
 ```html
 <ul class="chzn-choices">
    <% loop $ActiveFilters %>
-     	<li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
+         <li class="search-choice"><span>New York</span><a href="#" class="search-choice-close"></a></li>
    <% end_loop %>
 </ul>
 ```
 
-Make sense so far? Again, we're working backwards, so the `$ActiveFilters` piece is merely semantic right now. 
+Make sense so far? Again, we're working backwards, so the `$ActiveFilters` piece is merely semantic right now.
 
 Let's now just go through brainstorm some property names for all the dynamic content.
 
@@ -102,14 +102,14 @@ use SilverStripe\ORM\ArrayList;
 
 class PropertySearchPageController extends PageController
 {
-	public function index(HTTPRequest $request)
-	{
-		$properties = Property::get();
-		$activeFilters = ArrayList::create();
-	
-		//...
-	}
-	//...
+    public function index(HTTPRequest $request)
+    {
+        $properties = Property::get();
+        $activeFilters = ArrayList::create();
+
+        //...
+    }
+    //...
 ```
 Now, we just need to fill our list with data.
 
@@ -129,23 +129,23 @@ use SilverStripe\Control\HTTP;
 class PropertySearchPageController extends PageController
 {
 
-	public function index(HTTPRequest $request)
-	{
-		
-		//...
-		
-		if ($search = $request->getVar('Keywords')) {
-			$activeFilters->push(ArrayData::create([
-				'Label' => "Keywords: '$search'",
-				'RemoveLink' => HTTP::setGetVar('Keywords', null, null, '&'),
-			]));
+    public function index(HTTPRequest $request)
+    {
 
-			$properties = $properties->filter([
-				'Title:PartialMatch' => $search
-			]);
-		}
-		
-		//..
+        //...
+
+        if ($search = $request->getVar('Keywords')) {
+            $activeFilters->push(ArrayData::create([
+                'Label' => "Keywords: '$search'",
+                'RemoveLink' => HTTP::setGetVar('Keywords', null, null, '&'),
+            ]));
+
+            $properties = $properties->filter([
+                'Title:PartialMatch' => $search
+            ]);
+        }
+
+        //..
 
 ```
 
@@ -157,10 +157,10 @@ The next several, which are all part of our tidy loop, are pretty straightforwar
 
 *app/src/PropertySearchPageController.php*
 ```php
-	public function index(HTTPRequest $request)
-	{
-		
-		//...
+    public function index(HTTPRequest $request)
+    {
+
+        //...
 
     $filters = [
         ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual', '%s bedrooms'],
@@ -183,8 +183,8 @@ The next several, which are all part of our tidy loop, are pretty straightforwar
         }
     }
 
-		//...
-	}
+        //...
+    }
 
 ```
 
@@ -194,24 +194,24 @@ Just like our custom variable `Results`, we'll pass the `ActiveFilters` list to 
 
 *app/src/PropertySearchPageController.php*
 ```php
-	public function index(HTTPRequest $request)
-	{
-		
-		//...
+    public function index(HTTPRequest $request)
+    {
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)->setPageLength(15)
-		 ->setPaginationGetVar('s');
+        //...
 
-		$data = array (
-			'Results' => $paginatedProperties,
-			'ActiveFilters' => $activeFilters			
-		);
+        $paginatedProperties = PaginatedList::create(
+            $properties,
+            $request
+        )->setPageLength(15)
+         ->setPaginationGetVar('s');
 
-		//...
-	}
+        $data = array (
+            'Results' => $paginatedProperties,
+            'ActiveFilters' => $activeFilters
+        );
+
+        //...
+    }
 ```
 
 Reload the page, and you should have working filter buttons now!

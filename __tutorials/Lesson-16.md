@@ -38,10 +38,10 @@ First things first, let's remove the artificial `->limit()` we've applied.
 ```php
   public function index(HTTPRequest $request)
   {
-		$properties = Property::get();
+        $properties = Property::get();
 
-		//...
-	}
+        //...
+    }
 ```
 
 Now, let's wrap the results into a `PaginatedList`.
@@ -53,20 +53,20 @@ use SilverStripe\ORM\PaginatedList;
 
 class PropertySearchPageController extends PageController
 {
-	public function index(HTTPRequest $request)
-	{
-		
-		//...
-		
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		);
+    public function index(HTTPRequest $request)
+    {
 
-		return [
-			'Results' => $paginatedProperties
-		];
-	}
+        //...
+
+        $paginatedProperties = PaginatedList::create(
+            $properties,
+            $request
+        );
+
+        return [
+            'Results' => $paginatedProperties
+        ];
+    }
 ```
 
 It's really that simple. All we do is pass it the `SS_List` instance that we're working with (usually a `DataList`), and in the interest of keeping the list loosely coupled, we pass the request as well. It may seem odd that we have to do that, but if the list were request aware, it would introduce tight coupling, which makes unit testing more difficult and renders the class less extensible.
@@ -86,21 +86,21 @@ Let's use some of the properties we get from `PaginatedList` to render this pagi
 <!-- BEGIN PAGINATION -->
 <% if $Results.MoreThanOnePage %>
 <div class="pagination">
-	<% if $Results.NotFirstPage %>
-	<ul id="previous col-xs-6">
-		<li><a href="$Results.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
-	</ul>
-	<% end_if %>
-	<ul class="hidden-xs">
-		<% loop $Results.Pages %>
-		<li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
-		<% end_loop %>
-	</ul>
-	<% if $Results.NotLastPage %>
-	<ul id="next col-xs-6">
-		<li><a href="$Results.NextLink"><i class="fa fa-chevron-right"></i></a></li>
-	</ul>
-	<% end_if %>
+    <% if $Results.NotFirstPage %>
+    <ul id="previous col-xs-6">
+        <li><a href="$Results.PrevLink"><i class="fa fa-chevron-left"></i></a></li>
+    </ul>
+    <% end_if %>
+    <ul class="hidden-xs">
+        <% loop $Results.Pages %>
+        <li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
+        <% end_loop %>
+    </ul>
+    <% if $Results.NotLastPage %>
+    <ul id="next col-xs-6">
+        <li><a href="$Results.NextLink"><i class="fa fa-chevron-right"></i></a></li>
+    </ul>
+    <% end_if %>
 </div>
 <% end_if %>
 <!-- END PAGINATION -->
@@ -119,8 +119,8 @@ Let's use some more properties of the paginated list to create a summary of the 
 *app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
 ```html
 <% if $Results %>
-	<h3>Showing $Results.PageLength results ($Results.getTotalItems total)</h3>					
-	<% loop $Results %>
+    <h3>Showing $Results.PageLength results ($Results.getTotalItems total)</h3>
+    <% loop $Results %>
 ```
 
 Lastly, if we have a lot of pages, it might break the UI. Instead of `$Results.Pages`, let's use `$Results.PaginationSummary`, which will just show us some of the nearby pages to the active one. In other words, we don't need to see page 17 of 30 if we're on page 2.
@@ -128,13 +128,13 @@ Lastly, if we have a lot of pages, it might break the UI. Instead of `$Results.P
 *app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`
 ```html
 <ul class="hidden-xs">
-	<% loop $Results.PaginationSummary %>
-		<% if $Link %>
-			<li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
-		<% else %>
-			<li>...</li>
-		<% end_if %>
-	<% end_loop %>
+    <% loop $Results.PaginationSummary %>
+        <% if $Link %>
+            <li <% if $CurrentBool %>class="active"<% end_if %>><a href="$Link">$PageNum</a></li>
+        <% else %>
+            <li>...</li>
+        <% end_if %>
+    <% end_loop %>
 </ul>
 ```
 Notice that we have to check if `$Link` returns anything. If it doesn't, we know this item is the empty result that is intended to show the existence of suppressed pages.
@@ -147,36 +147,36 @@ This all works great, but the pagination is still configured with default values
 
 *app/src/PropertySearchPageController.php*
 ```php
-	public function index(HTTPRequest $request)
-	{
+    public function index(HTTPRequest $request)
+    {
 
-		//...
+        //...
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)->setPageLength(15);
+        $paginatedProperties = PaginatedList::create(
+            $properties,
+            $request
+        )->setPageLength(15);
 
-		//...
-	}
+        //...
+    }
 ```
 
 Another parameter we might want to customise is the request parameter that is used. In some cases, you might have a conflict with the variable `start`, or you may simply prefer something shorter. In that case, use `setPaginationGetVar()`.
 
 *app/src/PropertySearchPageController.php*
 ```php
-	public function index(HTTPRequest $request)
-	{
+    public function index(HTTPRequest $request)
+    {
 
-		//...
+        //...
 
-		$paginatedProperties = PaginatedList::create(
-			$properties,
-			$request
-		)
-		    ->setPageLength(15)
-		    ->setPaginationGetVar('s');
+        $paginatedProperties = PaginatedList::create(
+            $properties,
+            $request
+        )
+            ->setPageLength(15)
+            ->setPaginationGetVar('s');
 
-		//...
-	}
+        //...
+    }
 ```

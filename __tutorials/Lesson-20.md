@@ -7,30 +7,30 @@ Looking at the template, we first have to generate a list of all the distinct mo
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
   <!-- BEGIN ARCHIVES ACCORDION -->
-	<h2 class="section-title">Archives</h2>
-	<div id="accordion" class="panel-group blog-accordion">
-		<div class="panel">
-		<!--
-			<div class="panel-heading">
-				<div class="panel-title">
-					<a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" class="">
-						<i class="fa fa-chevron-right"></i> 2014 (15)
-					</a>
-				</div>
-			</div>
-		-->
-			<div id="collapseOne" class="panel-collapse collapse in">
-				<div class="panel-body">
-					<ul>
-					<% loop $ArchiveDates %>
-						<li><a href="$Link">$MonthName $Year ($ArticleCount)</a></li>
-					<% end_loop %>
-					</ul>
-				</div>
-			</div>
-		</div>	
-	</div>
-	<!-- END  ARCHIVES ACCORDION -->
+    <h2 class="section-title">Archives</h2>
+    <div id="accordion" class="panel-group blog-accordion">
+        <div class="panel">
+        <!--
+            <div class="panel-heading">
+                <div class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" class="">
+                        <i class="fa fa-chevron-right"></i> 2014 (15)
+                    </a>
+                </div>
+            </div>
+        -->
+            <div id="collapseOne" class="panel-collapse collapse in">
+                <div class="panel-body">
+                    <ul>
+                    <% loop $ArchiveDates %>
+                        <li><a href="$Link">$MonthName $Year ($ArticleCount)</a></li>
+                    <% end_loop %>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- END  ARCHIVES ACCORDION -->
 
 ```
 First off, these dates were grouped by year. We've commented that out for now. We can address that in a future tutorial on grouped lists. In the loop, each date entry has a `$Link` method that will go to the filtered article list, `$MonthName` and `$Year` properties, and an `$ArticleCount` property.
@@ -47,14 +47,14 @@ Let's build that list in the model of our `ArticleHolder` page type.
 use SilverStripe\ORM\ArrayList;
 class ArticleHolder extends Page
 {
-	//...
+    //...
 
-	public function ArchiveDates()
-	{
-		$list = ArrayList::create();
+    public function ArchiveDates()
+    {
+        $list = ArrayList::create();
 
-		return $list;
-	}
+        return $list;
+    }
 ```
 ### Running a custom SQL query
 
@@ -69,10 +69,10 @@ use SilverStripe\ORM\Queries\SQLSelect;
 
 class ArticleHolder extends Page
 {
-	public function ArchiveDates()
-	{
-		$list = ArrayList::create();
-		$stage = Versioned::get_stage();		
+    public function ArchiveDates()
+    {
+        $list = ArrayList::create();
+        $stage = Versioned::get_stage();
     $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
     $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
 
@@ -107,22 +107,22 @@ Now all we have to do is loop through that database result to create our final l
 
 *app/src/ArticleHolder.php*
 ```php
-		if ($result) {
-			while($record = $result->nextRecord()) {
-				list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
+        if ($result) {
+            while($record = $result->nextRecord()) {
+                list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
 
-				$list->push(ArrayData::create([
-					'Year' => $year,
-					'MonthName' => $monthName,
-					'MonthNumber' => $monthNumber,
-					'Link' => $this->Link("date/$year/$monthNumber"),
-					'ArticleCount' => ArticlePage::get()->where([
-							"DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
-							"\"ParentID\"" => $this->ID
-						])->count()
-				]));
-			}
-		}
+                $list->push(ArrayData::create([
+                    'Year' => $year,
+                    'MonthName' => $monthName,
+                    'MonthNumber' => $monthNumber,
+                    'Link' => $this->Link("date/$year/$monthNumber"),
+                    'ArticleCount' => ArticlePage::get()->where([
+                            "DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
+                            "\"ParentID\"" => $this->ID
+                        ])->count()
+                ]));
+            }
+        }
 ```
 
 We loop through each record using the `nextRecord()` method. For each record, we explode the SKU into its component variables -- the year, the month number, and the month name -- and assign them to properties of an `ArrayData` object. We also create a link to the `date/$year/$monthNumber` route that we created in `ArticleHolder`. Lastly, we run a query against `ArticlePage` to get the number of articles that match this date SKU. Notice that in this case, we can safely just match the year and month number.
@@ -133,10 +133,10 @@ Here's the complete `ArchiveDates()` function:
 
 *app/src/ArticleHolder.php*
 ```php
-	public function ArchiveDates()
-	{
-		$list = ArrayList::create();
-		$stage = Versioned::get_stage();		
+    public function ArchiveDates()
+    {
+        $list = ArrayList::create();
+        $stage = Versioned::get_stage();
     $baseTable = ArticlePage::getSchema()->tableName(ArticlePage::class);
     $tableName = $stage === Versioned::LIVE ? "{$baseTable}_Live" : $baseTable;
 
@@ -148,25 +148,25 @@ Here's the complete `ArchiveDates()` function:
         ->setDistinct(true);
 
     $result = $query->execute();
-		
-		if ($result) {
-			while($record = $result->nextRecord()) {
-				list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
 
-				$list->push(ArrayData::create([
-					'Year' => $year,
-					'MonthName' => $monthName,
-					'MonthNumber' => $monthNumber,
-					'Link' => $this->Link("date/$year/$monthNumber"),
-					'ArticleCount' => ArticlePage::get()->where([
-							"DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
-							"\"ParentID\"" => $this->ID
-						])->count()
-				]));
-			}
-		}
-		
-		return $list;
+        if ($result) {
+            while($record = $result->nextRecord()) {
+                list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
+
+                $list->push(ArrayData::create([
+                    'Year' => $year,
+                    'MonthName' => $monthName,
+                    'MonthNumber' => $monthNumber,
+                    'Link' => $this->Link("date/$year/$monthNumber"),
+                    'ArticleCount' => ArticlePage::get()->where([
+                            "DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
+                            "\"ParentID\"" => $this->ID
+                        ])->count()
+                ]));
+            }
+        }
+
+        return $list;
 ```
 
 Alright, get up, walk around. Have a (non-alcoholic) drink. Then refresh the page to see the fruits of your labour.
@@ -179,22 +179,22 @@ The last thing we need to do to make the date archive work is set up that contro
 ```php
 class ArticleHolderController extends PageController
 {
-	
-	//...
 
-	public function date(HTTPRequest $r)
-	{
-		$year = $r->param('ID');
-		$month = $r->param('OtherID');
+    //...
 
-		if (!$year) return $this->httpError(404);
+    public function date(HTTPRequest $r)
+    {
+        $year = $r->param('ID');
+        $month = $r->param('OtherID');
 
-		$startDate = $month ? "{$year}-{$month}-01" : "{$year}-01-01";
-		
-		if (strtotime($startDate) === false) {
-			return $this->httpError(404, 'Invalid date');
-		} 
-	}
+        if (!$year) return $this->httpError(404);
+
+        $startDate = $month ? "{$year}-{$month}-01" : "{$year}-01-01";
+
+        if (strtotime($startDate) === false) {
+            return $this->httpError(404, 'Invalid date');
+        }
+    }
 ```
 
 We'll start by running a sanity check to ensure that we at least have a year in the URL. Then, we'll create a start date of either the first of the month or the first of the year. If for some reason the year or month values are invalid, and don't pass the `strtotime()` test, we throw an HTTP error.
@@ -203,21 +203,21 @@ Now, we'll create the boundary for the end date, and run the query.
 
 *app/src/ArticleHolderController.php*
 ```php
-		$adder = $month ? '+1 month' : '+1 year';
-		$endDate = date('Y-m-d', strtotime(
-		    $adder, 
-				strtotime($startDate)
-		));
+        $adder = $month ? '+1 month' : '+1 year';
+        $endDate = date('Y-m-d', strtotime(
+            $adder,
+                strtotime($startDate)
+        ));
 
-		$this->articleList = $this->articleList->filter([
-			'Date:GreaterThanOrEqual' => $startDate,
-			'Date:LessThan' => $endDate 
-		]);
+        $this->articleList = $this->articleList->filter([
+            'Date:GreaterThanOrEqual' => $startDate,
+            'Date:LessThan' => $endDate
+        ]);
 
-		return [
-			'StartDate' => DBField::create_field('Datetime', $startDate),
-			'EndDate' => DBField::create_field('Datetime', $endDate)
-		];
+        return [
+            'StartDate' => DBField::create_field('Datetime', $startDate),
+            'EndDate' => DBField::create_field('Datetime', $endDate)
+        ];
 ```
 
 A really key detail of this function is that we return proper `SilverStripe\ORM\FieldType\DBField` objects to the template. If you'll remember from the early tutorials, controllers don't just return scalar values to the template. They're actually first-class, intelligent objects. By default, they're cast as `Text` objects, so we'll be more explicit and ensure that `StartDate` and `EndDate` are cast as dates. This will afford us the option to format them on the template.
@@ -233,41 +233,41 @@ use SilverStripe\ORM\FieldType\DBField;
 
 class ArticleHolderController extends PageController
 {
-	
-	//...
 
-	public function date(HTTPRequest $r)
-	{
-		$year = $r->param('ID');
-		$month = $r->param('OtherID');
+    //...
 
-		if (!$year) return $this->httpError(404);
+    public function date(HTTPRequest $r)
+    {
+        $year = $r->param('ID');
+        $month = $r->param('OtherID');
 
-		$startDate = $month ? "{$year}-{$month}-01" : "{$year}-01-01";
-		
-		if (strtotime($startDate) === false) {
-			return $this->httpError(404, 'Invalid date');
-		}
+        if (!$year) return $this->httpError(404);
 
-		$adder = $month ? '+1 month' : '+1 year';
-		$endDate = date('Y-m-d', strtotime(
-		    $adder, 
-				strtotime($startDate)
-		));
+        $startDate = $month ? "{$year}-{$month}-01" : "{$year}-01-01";
 
-		$this->articleList = $this->articleList->filter([
-			'Date:GreaterThanOrEqual' => $startDate,
-			'Date:LessThan' => $endDate 
-		]);
+        if (strtotime($startDate) === false) {
+            return $this->httpError(404, 'Invalid date');
+        }
 
-		return [
-			'StartDate' => DBField::create_field('Datetime', $startDate),
-			'EndDate' => DBField::create_field('Datetime', $endDate)
-		];
+        $adder = $month ? '+1 month' : '+1 year';
+        $endDate = date('Y-m-d', strtotime(
+            $adder,
+                strtotime($startDate)
+        ));
 
-	}
+        $this->articleList = $this->articleList->filter([
+            'Date:GreaterThanOrEqual' => $startDate,
+            'Date:LessThan' => $endDate
+        ]);
 
-	//...
+        return [
+            'StartDate' => DBField::create_field('Datetime', $startDate),
+            'EndDate' => DBField::create_field('Datetime', $endDate)
+        ];
+
+    }
+
+    //...
 ```
 
 Refresh the browser and try clicking on some of the date archive links, and see that you're getting the expected results.
@@ -276,15 +276,15 @@ The last thing we need to do is pull our filter headers into the listings to sho
 
 *app/templates/SilverStripe/Lessons/Layout/ArticleHolder.ss*
 ```html
-	<div id="blog-listing" class="list-style clearfix">
-		<div class="row">
-			<% if $SelectedRegion %>
-				<h3>Region: $SelectedRegion.Title</h3>
-			<% else_if $SelectedCategory %>
-				<h3>Category: $SelectedCategory.Title</h3>
-			<% else_if $StartDate %>
-				<h3>Showing $StartDate.Date to $EndDate.Date</h3>
-			<% end_if %>
+    <div id="blog-listing" class="list-style clearfix">
+        <div class="row">
+            <% if $SelectedRegion %>
+                <h3>Region: $SelectedRegion.Title</h3>
+            <% else_if $SelectedCategory %>
+                <h3>Category: $SelectedCategory.Title</h3>
+            <% else_if $StartDate %>
+                <h3>Showing $StartDate.Date to $EndDate.Date</h3>
+            <% end_if %>
 
 ```
 

@@ -58,48 +58,48 @@ use SilverStripe\Forms\TabSet;
 
 class Property extends DataObject
 {
-  
-	private static $db = [
-		'Title' => 'Varchar',
-		'PricePerNight' => 'Currency',
-		'Bedrooms' => 'Int',
-		'Bathrooms' => 'Int',
-		'FeaturedOnHomepage' => 'Boolean'
-	];
+
+    private static $db = [
+        'Title' => 'Varchar',
+        'PricePerNight' => 'Currency',
+        'Bedrooms' => 'Int',
+        'Bathrooms' => 'Int',
+        'FeaturedOnHomepage' => 'Boolean'
+    ];
 
 
-	private static $has_one = [
-		'Region' => Region::class,
-		'PrimaryPhoto' => Image::class,
-	];
+    private static $has_one = [
+        'Region' => Region::class,
+        'PrimaryPhoto' => Image::class,
+    ];
 
 
-	public function getCMSfields()
-	{
-		$fields = FieldList::create(TabSet::create('Root'));
-		$fields->addFieldsToTab('Root.Main', [
-			TextField::create('Title'),
-			CurrencyField::create('PricePerNight','Price (per night)'),
-			DropdownField::create('Bedrooms')
-				->setSource(ArrayLib::valuekey(range(1,10))),
-			DropdownField::create('Bathrooms')
-				->setSource(ArrayLib::valuekey(range(1,10))),
-			DropdownField::create('RegionID','Region')
-				->setSource(Region::get()->map('ID','Title')),
-			CheckboxField::create('FeaturedOnHomepage','Feature on homepage')
-		]);
-		$fields->addFieldToTab('Root.Photos', $upload = UploadField::create(
-			'PrimaryPhoto',
-			'Primary photo'
-		));
+    public function getCMSfields()
+    {
+        $fields = FieldList::create(TabSet::create('Root'));
+        $fields->addFieldsToTab('Root.Main', [
+            TextField::create('Title'),
+            CurrencyField::create('PricePerNight','Price (per night)'),
+            DropdownField::create('Bedrooms')
+                ->setSource(ArrayLib::valuekey(range(1,10))),
+            DropdownField::create('Bathrooms')
+                ->setSource(ArrayLib::valuekey(range(1,10))),
+            DropdownField::create('RegionID','Region')
+                ->setSource(Region::get()->map('ID','Title')),
+            CheckboxField::create('FeaturedOnHomepage','Feature on homepage')
+        ]);
+        $fields->addFieldToTab('Root.Photos', $upload = UploadField::create(
+            'PrimaryPhoto',
+            'Primary photo'
+        ));
 
-		$upload->getValidator()->setAllowedExtensions(array(
-			'png','jpeg','jpg','gif'
-		));
-		$upload->setFolderName('property-photos');
+        $upload->getValidator()->setAllowedExtensions(array(
+            'png','jpeg','jpg','gif'
+        ));
+        $upload->setFolderName('property-photos');
 
-		return $fields;
-	}
+        return $fields;
+    }
 }
 ```
 
@@ -127,13 +127,13 @@ use SilverStripe\Admin\ModelAdmin;
 class PropertyAdmin extends ModelAdmin
 {
 
-	private static $menu_title = 'Properties';
+    private static $menu_title = 'Properties';
 
-	private static $url_segment = 'properties';
+    private static $url_segment = 'properties';
 
-	private static $managed_models = [
-		Property::class,
-	];
+    private static $managed_models = [
+        Property::class,
+    ];
 }
 ```
 
@@ -154,13 +154,13 @@ We'll start with what we've seen before. `$summary_fields` gives us control over
 *app/src/Property.php*
 ```php
   //...
-	private static $summary_fields = [
-		'Title' => 'Title',
-		'Region.Title' => 'Region',
-		'PricePerNight.Nice' => 'Price',
-		'FeaturedOnHomepage.Nice' => 'Featured?'
-	];
-	//...
+    private static $summary_fields = [
+        'Title' => 'Title',
+        'Region.Title' => 'Region',
+        'PricePerNight.Nice' => 'Price',
+        'FeaturedOnHomepage.Nice' => 'Featured?'
+    ];
+    //...
 ```
 
 Notice that we can use dot-separated syntax to invoke methods on each field. We know that `Region` is a `has_one`, so getting the `RegionID` is useless. We'll instead get the region's title, which is much more friendly. `Region.Title` translates to `$this->Region()->Title`.
@@ -183,15 +183,15 @@ use SilverStripe\Admin\ModelAdmin;
 class PropertyAdmin extends ModelAdmin
 {
 
-	private static $menu_title = 'Properties';
+    private static $menu_title = 'Properties';
 
-	private static $url_segment = 'properties';
+    private static $url_segment = 'properties';
 
-	private static $managed_models = [
-		'Property'
-	];
+    private static $managed_models = [
+        'Property'
+    ];
 
-	private static $menu_icon = 'icons/property.png';	
+    private static $menu_icon = 'icons/property.png';
 }
 ```
 We changed a static property, so we'll run `?flush` and see that we have a new icon.
@@ -203,11 +203,11 @@ Just like the fields displayed in list view, the fields that appear in the searc
 _app/src/Property.php_
 ```php
   //...
-	private static $searchable_fields = [
-		'Title',
-		'Region.Title',
-		'FeaturedOnHomepage'
-	];	
+    private static $searchable_fields = [
+        'Title',
+        'Region.Title',
+        'FeaturedOnHomepage'
+    ];
   //...
 ```
 
@@ -234,40 +234,40 @@ use SilverStripe\Forms\TabSet;
 class Property extends DataObject
 {
   //...
-  
-	public function searchableFields()
-	{
-		return [
-			'Title' => [
-				'filter' => 'PartialMatchFilter',
-				'title' => 'Title',
-				'field' => TextField::class,
-			],
-			'RegionID' => [
-				'filter' => 'ExactMatchFilter',
-				'title' => 'Region',
-				'field' => DropdownField::create('RegionID')
-					->setSource(
-						Region::get()->map('ID','Title')
-					)
-					->setEmptyString('-- Any region --')				
-			],
-			'FeaturedOnHomepage' => [
-				'filter' => 'ExactMatchFilter',
-				'title' => 'Only featured'				
-			]
-		];
-	}
 
-  //...     
+    public function searchableFields()
+    {
+        return [
+            'Title' => [
+                'filter' => 'PartialMatchFilter',
+                'title' => 'Title',
+                'field' => TextField::class,
+            ],
+            'RegionID' => [
+                'filter' => 'ExactMatchFilter',
+                'title' => 'Region',
+                'field' => DropdownField::create('RegionID')
+                    ->setSource(
+                        Region::get()->map('ID','Title')
+                    )
+                    ->setEmptyString('-- Any region --')
+            ],
+            'FeaturedOnHomepage' => [
+                'filter' => 'ExactMatchFilter',
+                'title' => 'Only featured'
+            ]
+        ];
+    }
+
+  //...
 }
 ```
 When we define `searchableFields()`, we need to be much more explicit about how we want our search form configured. Each field we include has to be mapped to an array containing three keys:
 * **`filter`**: The type of filter that should be used in the search. For a full list of available filters, see `framework/src/ORM/Filters`. For title, we want a fuzzy match, so we use `PartialMatchFilter`, and since regions are filtered by ID, we want that to be an `ExactMatchFilter`.
 * **`title`**: The label that will identify the search field
-* **`field`**: You have three options here. 
-    * You can provide a string, representing the `FormField` class you want, as we  did with `Title`. 
-    * If you want something more complex, however, you can use a `FormField` object. In this case, I've instantiated a `DropdownField` much like the one we used in our `getCMSFields` function. 
+* **`field`**: You have three options here.
+    * You can provide a string, representing the `FormField` class you want, as we  did with `Title`.
+    * If you want something more complex, however, you can use a `FormField` object. In this case, I've instantiated a `DropdownField` much like the one we used in our `getCMSFields` function.
     * Another option is to just leave this undefined, and the DataObject will ask the fieldtype for its default search field, as we did with our `FeaturedOnHomepage` field. Every field type knows how to render its own search field. In this case, `Boolean` gives us a nice dropdown of three options: *Yes*, *No*, or *Any*, which is perfect. A `CheckboxField` would be either on or off. It wouldn't allow us to opt out of that filter.
 
 Give the search form a try now. It feels a little better, right?
@@ -293,9 +293,9 @@ class Property extends DataObject
   ];
 
   private static $versioned_gridfield_extensions = true;
-  
-	public function searchableFields()
-	{
+
+    public function searchableFields()
+    {
     //...
 ```
 
@@ -321,14 +321,14 @@ class HomePageController extends PageController
 {
 
   //...
-	public function FeaturedProperties()
-	{
-		return Property::get()
-				->filter(array(
-					'FeaturedOnHomepage' => true
-				))
-				->limit(6);
-	}	
+    public function FeaturedProperties()
+    {
+        return Property::get()
+                ->filter(array(
+                    'FeaturedOnHomepage' => true
+                ))
+                ->limit(6);
+    }
 }
 ```
 
@@ -338,20 +338,20 @@ Now let's render the output to the template.
 ```html
 <% loop $FeaturedProperties %>
 <div class="item col-md-4">
-	<div class="image">
-		<a href="$Link">
-			<h3>$Title</h3>
-			<span class="location">$Region.Title</span>
-		</a>
-		$PrimaryPhoto.Fill(220,194)
-	</div>
-	<div class="price">
-		<span>$PricePerNight.Nice</span><p>per night<p>
-	</div>
-	<ul class="amenities">
-		<li><i class="icon-bedrooms"></i> $Bedrooms</li>
-		<li><i class="icon-bathrooms"></i> $Bathrooms</li>
-	</ul>
+    <div class="image">
+        <a href="$Link">
+            <h3>$Title</h3>
+            <span class="location">$Region.Title</span>
+        </a>
+        $PrimaryPhoto.Fill(220,194)
+    </div>
+    <div class="price">
+        <span>$PricePerNight.Nice</span><p>per night<p>
+    </div>
+    <ul class="amenities">
+        <li><i class="icon-bedrooms"></i> $Bedrooms</li>
+        <li><i class="icon-bathrooms"></i> $Bathrooms</li>
+    </ul>
 </div>
 <% end_loop %>
 ```

@@ -16,16 +16,16 @@ Before we do anything, we'll need to add some JavaScript that will add this func
 // Pagination
 if ($('.pagination').length) {
   $('.main').on('click','.pagination a', function (e) {
-	    e.preventDefault();
-	    var url = $(this).attr('href');
-	    $.ajax(url)
-	        .done(function (response) {
-	            $('.main').html(response);
-	        })
-	        .fail (function (xhr) {
-	            alert('Error: ' + xhr.responseText);
-	        });
-	});
+        e.preventDefault();
+        var url = $(this).attr('href');
+        $.ajax(url)
+            .done(function (response) {
+                $('.main').html(response);
+            })
+            .fail (function (xhr) {
+                alert('Error: ' + xhr.responseText);
+            });
+    });
 }
 
 ```
@@ -46,16 +46,16 @@ Let's update `PropertySearchPageController.php` to detect Ajax.
 ```php
 public function index(HTTPRequest $request)
 {
-	
-	//...
 
-	if($request->isAjax()) {
-		return "Ajax response!";
-	}
-	
-	return [
-		'Results' => $paginatedProperties
-	];
+    //...
+
+    if($request->isAjax()) {
+        return "Ajax response!";
+    }
+
+    return [
+        'Results' => $paginatedProperties
+    ];
 }
 ```
 
@@ -72,30 +72,30 @@ use SilverStripe\View\ViewableData;
 
 class Address extends ViewableData
 {
-	
-	public $Street = '123 Main Street';
 
-	public $City = 'Compton';
+    public $Street = '123 Main Street';
 
-	public $Zip = '90210';
+    public $City = 'Compton';
 
-	public $Country = 'US';
+    public $Zip = '90210';
 
-	public function Country()
-	{
-		return MyGeoLibrary::get_country_name($this->Country);
-	}
+    public $Country = 'US';
 
-	public function getFullAddress()
-	{
-		return sprintf(
-			'%s<br>%s %s<br>%s'
-			$this->Street,
-			$this->City,
-			$this->Zip,
-			$this->Country() 
-		);
-	}
+    public function Country()
+    {
+        return MyGeoLibrary::get_country_name($this->Country);
+    }
+
+    public function getFullAddress()
+    {
+        return sprintf(
+            '%s<br>%s %s<br>%s'
+            $this->Street,
+            $this->City,
+            $this->Zip,
+            $this->Country()
+        );
+    }
 }
 ```
 
@@ -128,13 +128,13 @@ Another really useful feature of `ViewableData` is that the object itself can be
 ```php
 class Address extends ViewableData
 {
-	
-	//...	
 
-	public function forTemplate()
-	{
-		return $this->getFullAddress();
-	}
+    //...
+
+    public function forTemplate()
+    {
+        return $this->getFullAddress();
+    }
 }
 ```
 
@@ -150,8 +150,8 @@ At the centre of dealing with Ajax responses is the use of includes in your Layo
 ```html
 <!-- BEGIN MAIN CONTENT -->
 <div class="main col-sm-8">
-	<% include SilverStripe/Lessons/PropertySearchResults %>				
-</div>	
+    <% include SilverStripe/Lessons/PropertySearchResults %>
+</div>
 <!-- END MAIN CONTENT -->
 ```
 
@@ -166,17 +166,17 @@ Now, returning an Ajax response is trivial. Simply render the include.
 class PropertySearchPageController extends PageController
 {
 
-	public function index(HTTPRequest $request)
-	{
+    public function index(HTTPRequest $request)
+    {
 
-		//...
-		
-		if($request->isAjax()) {
-			return $this->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
-		}
-		
-		//..
-	}
+        //...
+
+        if($request->isAjax()) {
+            return $this->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+        }
+
+        //..
+    }
 }
 ```
 
@@ -194,21 +194,21 @@ Of these two options, the latter is much more favourable. There are cases where 
 class PropertySearchPageController extends PageController
 {
 
-	public function index(HTTPRequest $request)
-	{
+    public function index(HTTPRequest $request)
+    {
 
-		//...
-		
-		if($request->isAjax()) {
-			return $this->customise([
-				'Results' => $paginatedResults
-			])->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
-		}
+        //...
 
-		return [
-			'Results' => $paginatedProperties
-		];
-	}
+        if($request->isAjax()) {
+            return $this->customise([
+                'Results' => $paginatedResults
+            ])->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+        }
+
+        return [
+            'Results' => $paginatedProperties
+        ];
+    }
 }
 ```
 We now have repeated our array of data, so let's clean that up a bit.
@@ -219,21 +219,21 @@ class PropertySearchPageController extends PageController
 {
 
 
-	public function index(HTTPRequest $request) {
+    public function index(HTTPRequest $request) {
 
-		//...
-		
-		$data = [
-			'Results' => $paginatedProperties
-		];
+        //...
 
-		if($request->isAjax()) {
-			return $this->customise($data)
-						 ->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
-		}
+        $data = [
+            'Results' => $paginatedProperties
+        ];
 
-		return $data;
-	}
+        if($request->isAjax()) {
+            return $this->customise($data)
+                         ->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+        }
+
+        return $data;
+    }
 }
 ```
 
@@ -262,7 +262,7 @@ if ($('.pagination').length) {
                     {url: url},
                     document.title,
                     url
-                );    
+                );
             })
             .fail(function (xhr) {
                 alert('Error: ' + xhr.responseText);
@@ -274,7 +274,7 @@ if ($('.pagination').length) {
         var url = $(this).attr('href');
         paginate(url);
     });
-    
+
     window.onpopstate = function(e) {
         if (e.state.url) {
             paginate(e.state.url);
@@ -282,7 +282,7 @@ if ($('.pagination').length) {
         else {
             e.preventDefault();
         }
-    };        
+    };
 }
 
 ```
@@ -310,7 +310,7 @@ We'll export the `chosen()` plugin to a reusable function and call it when neede
   $(function () {
 
     applyChosen('select');
-    
+
     //...
 ```
 
@@ -339,8 +339,8 @@ We need to update our Javascript so that the Ajax request has a slightly differe
     if ($('.pagination').length) {
         var paginate = function (url) {
             var param = '&ajax=1',
-                ajaxUrl = (url.indexOf(param) === -1) ? 
-                           url + '&ajax=1' : 
+                ajaxUrl = (url.indexOf(param) === -1) ?
+                           url + '&ajax=1' :
                            url,
                 cleanUrl = url.replace(new RegExp(param+'$'),'');
 
