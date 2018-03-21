@@ -30,7 +30,7 @@ In the previous lesson, we created a search form that produced a list of results
 
 As said before, SilverStripe's `PaginatedList` class is essentially a wrapper for a `DataList` that does a lot of the legwork for us. It will automatically look at the request and add the correct `LIMIT` clause to the DataList, and it will also provide a public API for determining what page is active and what pages, if any, are available.
 
-Let's look at `PropertySearchPage.php` again and find the return value of our `index()` action. Right now, it's returning a `DataList`. Let's have it return a `PaginatedList` instead.
+Let's look at `PropertySearchPageController.php` again and find the return value of our `index()` action. Right now, it's returning a `DataList`. Let's have it return a `PaginatedList` instead.
 
 First things first, let's remove the artificial `->limit()` we've applied.
 
