@@ -13,7 +13,11 @@
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\Lessons\\": "src/"
-        }
-    }
+            "SilverStripe\\Lessons\\": "app/src/"
+        },
+        "classmap": [
+            "app/src/Page.php",
+            "app/src/PageController.php"
+        ]
+    },
 }
