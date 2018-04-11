@@ -285,7 +285,7 @@ Now that we understand how images work, this last step should be pretty straight
 
 Replace the placeholder image in the `<% loop $Children %>` with `$Photo.Fit(242,156)`.
 
-On `ArticlePage.ss`, the photo is larger, and it's important that we show all of its content, since this is the detail view. Let's use `SetWidth(750)` for this one.
+On `ArticlePage.ss`, the photo is larger, and it's important that we show all of its content, since this is the detail view. Let's use `ScaleWidth(750)` for this one.
 
 Replace the placeholder image in `<div class="blog-main-image" />` with `$Photo.ScaleWidth(750)`.
 
