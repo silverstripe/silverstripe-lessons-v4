@@ -9,6 +9,15 @@
     "require-dev": {
         "phpunit/PHPUnit": "^5.7"
     },
+    "autoload": {
+        "psr-4": {
+            "SilverStripe\\Lessons\\": "app/src/"
+        },
+        "classmap": [
+            "app/src/Page.php",
+            "app/src/PageController.php"
+        ]
+    },
     "extra": {
         "branch-alias": {
             "4.x-dev": "4.0.x-dev",
@@ -16,11 +25,11 @@
         },
         "project-files-installed": [
             ".htaccess",
-            "mysite/.htaccess",
-            "mysite/_config.php",
-            "mysite/_config/mysite.yml",
-            "mysite/code/Page.php",
-            "mysite/code/PageController.php",
+            "app/.htaccess",
+            "app/_config.php",
+            "app/_config/mysite.yml",
+            "app/src/Page.php",
+            "app/src/PageController.php",
             "web.config"
         ],
         "public-files-installed": [
