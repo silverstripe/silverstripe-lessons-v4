@@ -277,7 +277,6 @@ Give the search form a try now. It feels a little better, right?
 Properties are perhaps the most important elements on this entire website, so we'll want to ensure they have a draft state. We'll also add an `$owns` property for the primary photo, so it gets published as well.
 
 ```php
-```php
 //...
 use SilverStripe\Versioned\Versioned;
 
