@@ -125,7 +125,7 @@ Now that we have that method, we'll apply it to the template. Change all the has
         <a href="$Link">
             <span class="btn btn-default"><i class="fa fa-file-o"></i> Read More</span>
         </a>
-        $Photo.CroppedImage(720,255)
+        $Photo.Fit(720,255)
     </div>
     <div class="info-blog">
         <h3>
@@ -201,7 +201,7 @@ Copy your `app/templates/Layout/Page.ss` to `app/templates/Silverstripe/Lessons/
 <div class="main col-sm-8">
     <% with $Region %>
         <div class="blog-main-image">
-            $Photo.SetWidth(750)
+            $Photo.ScaleWidth(750)
         </div>
         $Description
     <% end_with %>
