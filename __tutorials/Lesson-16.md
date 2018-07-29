@@ -81,7 +81,7 @@ Up until now, the only syntax we've really used on a list has been `<% loop %>` 
 
 Let's use some of the properties we get from `PaginatedList` to render this pagination.
 
-*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss`*
+*app/templates/SilverStripe/Lessons/Layout/PropertySearchPage.ss*
 ```html
 <!-- BEGIN PAGINATION -->
 <% if $Results.MoreThanOnePage %>
