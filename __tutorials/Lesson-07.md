@@ -281,7 +281,7 @@ Resize to the given width and height, cropping it if necessary to maintain the a
 
 ### Adding images to the template
 
-Now that we understand how images work, this last step should be pretty straightforward. On `ArticleHolder.ss`, we see that the photos in list view are about `242x156` pixels. Let's use `CroppedImage` for these, as it is more important that they maintain a uniform size than it is to show all their content.
+Now that we understand how images work, this last step should be pretty straightforward. On `ArticleHolder.ss`, we see that the photos in list view are about `242x156` pixels. Let's use `Fit` for these, as it is more important that they maintain a uniform size than it is to show all their content.
 
 Replace the placeholder image in the `<% loop $Children %>` with `$Photo.Fit(242,156)`.
 
