@@ -42,6 +42,8 @@ Next, let's create that `ArticleCategory` object. It's going to be really simple
 
 _app/src/ArticleCategory.php_
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use SilverStripe\ORM\DataObject;
