@@ -10,6 +10,8 @@ In the last episode, we created our first custom page type, HomePage. Let's repe
 
 *app/src/ArticleHolder.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use Page;
@@ -22,6 +24,8 @@ class ArticleHolder extends Page
 
 *app/src/ArticleHolderController.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use PageController;
@@ -36,6 +40,8 @@ Likewise, we'll do the same thing for ArticlePage.
 
 *app/src/ArticlePage.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use Page;
@@ -48,6 +54,8 @@ class ArticlePage extends Page
 
 *app/src/ArticlePageController.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use PageController;
