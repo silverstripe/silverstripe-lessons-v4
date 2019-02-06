@@ -17,6 +17,8 @@ Then, create a new page type to go with it.
 
 *app/src/RegionsPage.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use Page;
@@ -29,6 +31,8 @@ class RegionsPage extends Page
 
 *app/src/RegionsPageController.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use PageController;
@@ -50,6 +54,8 @@ Let's first create the `Region` data type. Just like we discussed in the previou
 *app/src/Region.php*
 
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use SilverStripe\ORM\DataObject;
