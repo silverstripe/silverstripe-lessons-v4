@@ -203,6 +203,8 @@ When a user submits a comment, we want to save it to the database and add it to 
 Let's create a simple `ArticleComment` DataObject. We've seen all this before. _app/src/ArticleComment.php_
 
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use SilverStripe\ORM\DataObject;
@@ -262,7 +264,7 @@ Refresh, and the expected result is that no comments appear above the form.
 
 Now that we have our data models set up, we can start using them in our form handler. Looking at our form method, the name of the handler we've specified is `handleComment()`. Let's create that method, right below the form creation method.
 
-_app/src/AriticlePageController.php_
+_app/src/ArticlePageController.php_
 ```php
 public function CommentForm()
 {
@@ -356,7 +358,7 @@ Our form is accepting submissions and working as expected, so let's now add a bi
 
 If the logic were really complicated, we could write our own validator, which we'll cover in the future, but for simple validation, it's fine to do all of this in your form handler method. Let's run a check to make sure the user's comment has not already been added. You might think of this as really basic spam protection.
 
-_app/src/AritclePage.php_
+_app/src/ArticlePage.php_
 ```php
     public function handleComment($data, $form)
     {
