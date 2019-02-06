@@ -6,6 +6,8 @@ Create two files in your `app/src` folder: `HomePage.php` and `HomePageControlle
 
 *app/src/HomePage.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use Page;    
@@ -18,6 +20,8 @@ class HomePage extends Page
 
 *app/src/HomePageController.php*
 ```php
+<?php
+
 namespace SilverStripe\Lessons;
 
 use PageController;    
@@ -74,6 +78,8 @@ To include these dependencies, we'll make a call to the `Requirements` class in 
 Make the following update to the `init()` method.
 
 ```php
+<?php
+
 use SilverStripe\View\Requirements;
 
 // ...
