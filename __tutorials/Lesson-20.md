@@ -108,7 +108,7 @@ Now all we have to do is loop through that database result to create our final l
 *app/src/ArticleHolder.php*
 ```php
         if ($result) {
-            while($record = $result->nextRecord()) {
+            foreach($result as $record) {
                 list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
 
                 $list->push(ArrayData::create([
@@ -150,7 +150,7 @@ Here's the complete `ArchiveDates()` function:
     $result = $query->execute();
 
         if ($result) {
-            while($record = $result->nextRecord()) {
+            foreach($result as $record) {
                 list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
 
                 $list->push(ArrayData::create([
