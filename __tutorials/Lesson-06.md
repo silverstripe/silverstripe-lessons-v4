@@ -4,7 +4,7 @@ In the previous lesson, we developed a structure for our **Travel Guides** secti
 
 Let's first look at the list page and see if we can identify some fields that will be need to be editable in the CMS. At first glance, the following fields stand out:
 
-**The date of the article**: Every record in is timestamped with its creation time, which is contained in the `$Created` variable. This could work in a pinch, but most of the time, content authors will want to use a custom date for the articles, since the date they are created is not necessarily they are published to the website. We'll therefore need to create a custom field for the date.
+**The date of the article**: Every record in is timestamped with its creation time, which is contained in the `$Created` variable. This could work in a pinch, but most of the time, content authors will want to use a custom date for the articles, since the date they are created is not necessarily the date they are published to the website. We'll therefore need to create a custom field for the date.
 
 **The number of comments**: We can skip this one for now, as that will be addressed when we cover adding comments to the articles.
 
