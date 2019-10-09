@@ -102,23 +102,25 @@ Composer will now go out and read the SilverStripe installer package. Then, it's
 
 SilverStripe only exposes a very small slice of your entire project to the web. All of the PHP code, configuration files, templates, and other core files are stored in the project root, which is not web accessible. The actual `index.php` file that renders your website lives in the `public/` folder, along with any and all other frontend depedencies such as CSS, JavaScript, webfonts, and images.
 
-This means that if your localhost resolves to a generic, catch-all directory, you'll have to supply `public/` at the end of the URL in order to load the correct context.
 
-In our case, our site lives at `http://{your localhost}/example/public`.
+#### Will public/ always be in my URL?
+
+No! SilverStripe is configured to redirect all requests to the `public/` folder.
+This is done using the `.htaccess` in the root of your project.
+
+If you're using IIS please make sure you to set the root of your website to `public/`.
+
+In our case, our site lives at `http://{your localhost}/example`.
 
 
 <img width="600" src="https://silverstripe.org/assets/lessons/4.0/lesson0-10.png">
 
 
-#### Will public/ always be in my URL?
+It's a good idea to set up a virtual host for your project, so that your local project emulates how it will actually be accessed on the web. For instance, for our project, a virtual host like `http:://example.local` could point to the `example` folder. In an Apache installation, that is configured like this:
 
-No! It just takes a bit of setup.
-
-It's a good idea to set up a virtual host for your project, so that your local project emulates how it will actually be accessed on the web. For instance, for our project, a virtual host like `http:://example.local` could point to the `example/public` folder. In an Apache installation, that is configured like this:
-
-```
+```apacheconf
 <VirtualHost 127.0.0.1>
-DocumentRoot /path/to/my/websites/example/public
+    DocumentRoot /path/to/my/websites/example
 ServerName example.local
 </VirtualHost>
 ```
@@ -127,7 +129,7 @@ Setting up virtual hosts will look different for every web server, but it is alm
 
 ### Viewing your website
 
-Assuming you're not using a virtual host, go to the URL `http://{your localhost}/example/public`. You should see an install page. It's full of red errors that are telling us that the install isn't going to work, so let's go through this and see if we can sort it out.
+Assuming you're not using a virtual host, go to the URL `http://{your localhost}/example`. You should see an install page. It's full of red errors that are telling us that the install isn't going to work, so let's go through this and see if we can sort it out.
 
 
 ### Configuring the installer
