@@ -458,6 +458,7 @@ In order to get ready for the next lesson you need to clean up your project-fold
     ```ignore
     .devcontainer/mysql-data/
     ```
+5. In your .env-file change `SS_BASE_URL` from `http://localhost:8888/example` to `http://localhost:8888`
 
 <!--- References -->
 [VSCode]: https://code.visualstudio.com/
