@@ -456,7 +456,25 @@ In order to get ready for the next lesson you need to clean up your project-fold
     ```ignore
     .devcontainer/mysql-data/
     ```
-  6. In your web browser head to <http://localhost:8888/>
+6. In your web browser head to <http://localhost:8888/>
+7. Add the new variables to the `docker-compose-yml` file in the `.devcontainer` folder:
+    ```yml
+    [...]
+    silverstripe:
+      build:
+        context: .
+        dockerfile: Dockerfile
+      environment:
+        - SS_DATABASE_CHOOSE_NAME=true
+        - SS_DATABASE_CLASS=MySQLPDODatabase
+        - SS_DATABASE_SERVER=db
+        - SS_DATABASE_USERNAME=root
+        - SS_DATABASE_PASSWORD=root
+        - SS_ENVIRONMENT_TYPE=dev
+        - SS_DEFAULT_ADMIN_USERNAME=root
+        - SS_DEFAULT_ADMIN_PASSWORD=password
+    [...]
+    ```
 
 Congratulations!  
 Now you're ready to work through the next lesson.
