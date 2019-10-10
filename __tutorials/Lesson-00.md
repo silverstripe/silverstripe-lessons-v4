@@ -448,17 +448,20 @@ In order to get ready for the next lesson you need to clean up your project-fold
 1. Delete following files and folders:
     * `example2`
     * `example3`
-    * `.env`
     * `.gitignore`
     * `index.php`
-2. The only remaining folders should be `.devcontainer` and `example`.
-3. Move the contents of `example` to your project-folder.
-4. Delete the `example` folder
-5. Add following line to the `.giticnore` file:
+2. The only remaining files and folders should be `.devcontainer`, `.env` and `example`.
+3. In your `example` folder remove the `.env` file
+4. Move the contents of `example` to your project-folder.
+5. Delete the `example` folder
+6. Add following line to the `.gitignore` file:
     ```ignore
     .devcontainer/mysql-data/
     ```
-5. In your .env-file change `SS_BASE_URL` from `http://localhost:8888/example` to `http://localhost:8888`
+7. In your `.env`-file add the following line:
+   ```bash
+   SS_BASE_URL='http://localhost:8888'
+   ```
 
 <!--- References -->
 [VSCode]: https://code.visualstudio.com/
