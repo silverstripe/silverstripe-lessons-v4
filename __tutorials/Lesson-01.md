@@ -64,7 +64,7 @@ app/
     Layout/
 ```
 
-You can now delete the `themes/` directory.
+You can now delete your theme directory.
 
 This is entirely a preferential change. You might want to keep the templates in `themes/`, and that's fine. Just be aware that subsequent tutorials will assume you have your templates in your project directory.
 
@@ -85,7 +85,7 @@ with public files.
 ```
 
 Then if you do a composer update, or run `composer vendor-expose`, you'll see a folder created at
-`public/resources/themes/my-theme/css` which will allow your css files (and only those css files) from
+`public/_resources/themes/my-theme/css` which will allow your css files (and only those css files) from
 your theme to be available to the web.
 
 ### Creating your first template
@@ -131,9 +131,9 @@ In this configuration file, the theme `my-theme` is given the highest priority. 
 
 ### Don't forget to ?flush
 
-These files are written in YAML, which is a markup language, similar to JSON or XML, that is very [well-documented](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml). Configuration is a very rich topic in SilverStripe that we’ll cover in later tutorials, but for now, the only important bit you need to know is that any changes you make to these files requires a cache refresh in order to be used. To clear the cache, simply access any page on your site and append ?flush to the URL, e.g. `http://{your localhost}/tutorial/public/?flush`
+These files are written in YAML, which is a markup language, similar to JSON or XML, that is very [well-documented](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml). Configuration is a very rich topic in SilverStripe that we’ll cover in later tutorials, but for now, the only important bit you need to know is that any changes you make to these files requires a cache refresh in order to be used. To clear the cache, simply access any page on your site and append ?flush to the URL, e.g. <http://localhost:8888/?flush>
 
-Once the page is loaded, you should see your “Hello, world” page template.I'
+Once the page is loaded, you should see your “Hello, world” page template.
 
 ### Setup psr-4 autoloading
 
@@ -144,44 +144,44 @@ and upgrade resistant. The intricacies of PSR-4 autoloading are out of scope for
 documentation is very accessible and easy to understand. Basically, PSR-4 establishes a contract between the
 namespace of a class and its location in the filesystem.
 
-To specify a PSR-4 autoloading declaration, we'll need to put a `composer.json` file in our project. This is also
+To specify a PSR-4 autoloading declaration, we'll need to put an `autoload`-section into the `composer.json` file in our project folder. This is also
 generally a good idea, in the spirit of making our code as modular as possible.
 
 Note the `classmap` directive allows us to add additional non-namespaced classes to the autoload, reducing dependency
 on the SilverStripe manifest further.
 
-_app/composer.json_
-```
+***composer.json:***
+```json
 {
-    "name": "silverstripe/lessons",
-    "description": "The silverstripe.org lessons example code",
-    "license": "BSD-3-Clause",
-    "authors": [
-        {
-            "name": "Uncle Cheese",
-            "email": "aaron@silverstripe.com"
-        }
-    ],
+    "name": "silverstripe/installer",
+    "type": "silverstripe-recipe",
+    "description": "The SilverStripe Framework Installer",
     "require": {
-        "silverstripe/recipe-cms": "^1.1"
+        "php": ">=5.6.0",
+        "silverstripe/recipe-plugin": "^1.2",
+        "silverstripe/recipe-cms": "4.4.4@stable",
+        "silverstripe-themes/simple": "~3.2.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\Lessons\\": "app/src/"
+            "SilverStripe\\Example\\": "app/src/"
         },
         "classmap": [
             "app/src/Page.php",
             "app/src/PageController.php"
         ]
-    }
+    },
+    [...]
 }
 ```
 
 Once you've added this block, you can run `composer dump-autoload` to rebuild the composer class manifest.
 
-Most of this is populated with pretty generic information, but the important section is the `"autoload":` node.
-It maps the name space `SilverStripe\Lessons` to the directory `src/`. Should we ever need another level of
-namespacing, e.g. `SilverStripe\Lessons\Controllers`, we would put those class definitions in `src/Controllers`.
+The `autoload`-section maps the name space `SilverStripe\Example` to the directory `app/src/`. Should we ever need another level of
+namespacing, e.g. `SilverStripe\Example\Controllers`, we would put those class definitions in `app/src/Controllers`.
 PSR-4 is just a simple method to make autoloading more predictable and deterministic.
 
 ### That's it
