@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+  silverstripe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - SS_DATABASE_CLASS=MySQLPDODatabase
+      - SS_DATABASE_SERVER=db
+      - SS_DATABASE_USERNAME=root
+      - SS_DATABASE_PASSWORD=root
+    ports:
+      - 8888:80
+    volumes:
+      - ..:/var/www/html
+  db:
+    image: mysql:5
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./mysql-data:/var/lib/mysql
