@@ -445,23 +445,21 @@ We're now off and running with a local development environment for SilverStripe 
 
 In order to get ready for the next lesson you need to clean up your project-folder.
 
-1. Delete following files and folders:
-    * `example2`
-    * `example3`
-    * `.gitignore`
-    * `index.php`
-2. The only remaining files and folders should be `.devcontainer`, `.env` and `example`.
-3. In your `example` folder remove the `.env` file
-4. Move the contents of `example` to your project-folder.
-5. Delete the `example` folder
-6. Add following line to the `.gitignore` file:
+1. In your project folder delete everything but `.devcontainer` and `.env`.
+2. Create one last SilverStripe project:
+   ```bash
+   composer create-project silverstripe/installer website
+   ```
+3. Move the contents of `website` to your project-folder.
+4. Delete the `website` folder.
+5. Add following line to the `.gitignore` file:
     ```ignore
     .devcontainer/mysql-data/
     ```
-7. In your `.env`-file add the following line:
-   ```bash
-   SS_BASE_URL='http://localhost:8888'
-   ```
+  6. In your web browser head to <http://localhost:8888/>
+
+Congratulations!  
+Now you're ready to work through the next lesson.
 
 <!--- References -->
 [VSCode]: https://code.visualstudio.com/
