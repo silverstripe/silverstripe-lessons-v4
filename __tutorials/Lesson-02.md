@@ -23,9 +23,9 @@ public/
   static/
 ```
 
-Now we'll simply dump the all the contents of our static site (one-ring-rentals-static.zip) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
+Now we'll simply dump the all the contents of our static site ([one-ring-rentals-static.zip](https://github.com/silverstripe/silverstripe-lessons-v4/raw/c717b90dff1ee9cae02080ab6f2ddb6c612c1d3e/Lesson-02-begin/__assets/one-ring-rentals-static.zip)) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
 
-Let's test it out. Navigate your browser to `/static/default.html` off whatever hostname you're using (e.g. http://myproject.local/), and you should see our home page. Try the same thing for `home.html`.
+Let's test it out. Navigate your browser to <http://localhost:8888/static/default.html>, and you should see our home page. Try the same thing for [home.html](http://localhost:8888/static/home.html).
 
 ### SS-izing
 
@@ -33,58 +33,16 @@ Now that we've dropped our bags and have rewarded ourselves with a quick glimpse
 
 ### Copy and correct
 
-We'll start with `default.html`. This mockup is intended to represent the most basic of page types in our site. As discussed earlier, SilverStripe conventionally purposes the `Page.ss` template for this case. Copy the contents of `default.html` into your `templates/Page.ss` file, which currently contains our "Hello, world" proof-of-concept, and reload your site on the base URL (e.g. http://{your hostname}).
+We'll start with `default.html`. This mockup is intended to represent the most basic of page types in our site. As discussed earlier, SilverStripe conventionally purposes the `Page.ss` template for this case. Copy the contents of `default.html` into your `templates/Page.ss` file, which currently contains our "Hello, world" proof-of-concept, and reload your site on the base URL (e.g. <http://localhost:8888/>).
 
 Look good? No, it shouldn't. It should look like an unstyled mess. Let's copy over all the static assets into our project. Make the following copies:
 
-<table style="width: 624px; height: 92px;">
-
-<tbody>
-
-<tr>
-
-<td><strong>From</strong></td>
-
-<td><strong>To</strong></td>
-
-</tr>
-
-<tr>
-
-<td>public/static/css</td>
-
-<td>public/css</td>
-
-</tr>
-
-<tr>
-
-<td>public/static/js</td>
-
-<td>public/javascript</td>
-
-</tr>
-
-<tr>
-
-<td>public/static/images</td>
-
-<td>public/images</td>
-
-</tr>
-
-<tr>
-
-<td>public/static/fonts</td>
-
-<td>public/fonts</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
+| From                   | To                  |
+| ---------------------- | ------------------- |
+| `public/static/css`    | `public/css`        |
+| `public/static/js`     | `public/javascript` |
+| `public/static/images` | `public/images`     |
+| `public/static/fonts`  | `public/fonts`      |
 
 While the site looks better, a quick glance at the web inspector shows us that there are still a lot of 404s coming through, mostly for our Javascript files. Let's update all the `<script>` tags to point to `javascript` instead of `js/`. For example, `js/common/modernizr.js` becomes `javascript/common/modernizr.js`. Most of these updates are at the bottom of the document.
 
