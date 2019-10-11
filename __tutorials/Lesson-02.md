@@ -23,7 +23,7 @@ public/
   static/
 ```
 
-Now we'll simply dump the all the contents of our static site ([one-ring-rentals-static.zip](https://github.com/silverstripe/silverstripe-lessons-v4/raw/5abba100b71b38e23f6eb7c0dfef854836c46f32/Lesson-02-begin/__assets/one-ring-rentals-static.zip)) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
+Now we'll simply dump the all the contents of our static site ([one-ring-rentals-static.zip](https://github.com/silverstripe/silverstripe-lessons-v4/raw/1fd177c8a4a9992e84fdab19c2e5a83a3494b070/Lesson-02-begin/__assets/one-ring-rentals-static.zip)) into the `static/` folder, preserving the file structure. Since we've used relative paths for all the assets, having the site deep into the directory structure will not break anything.
 
 Let's test it out. Navigate your browser to <http://localhost:8888/static/default.html>, and you should see our home page. Try the same thing for [home.html](http://localhost:8888/static/home.html).
 
