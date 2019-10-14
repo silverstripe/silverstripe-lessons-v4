@@ -120,6 +120,5 @@ Repeat the process once again for the entire `<footer />` tag, and call the temp
 Lastly, remove all of the HTML comments from your Page.ss, as the template is now too sparse to require such guides.
 
 <!--- References -->
-[Home]: https://github.com/silverstripe/silverstripe-lessons-v4/blob/2d5181c89598e559492d083a8d5d8ca9b6275e0f/Lesson-04-begin/__assets/home.html
-
-[ChangedContent]: https://github.com/silverstripe/silverstripe-lessons-v4/blob/2d5181c89598e559492d083a8d5d8ca9b6275e0f/Lesson-04-begin/__assets/home.html#L113-L543
+[Home]: https://github.com/silverstripe/silverstripe-lessons-v4/blob/ae14855cd2a438fff9f93a2456a67c971b3d8092/Lesson-04-begin/__assets/home.html
+[ChangedContent]: https://github.com/silverstripe/silverstripe-lessons-v4/blob/ae14855cd2a438fff9f93a2456a67c971b3d8092/Lesson-04-begin/__assets/home.html#L117-L577
