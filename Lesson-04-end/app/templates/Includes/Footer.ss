@@ -1,4 +1,3 @@
-<!-- BEGIN FOOTER -->
 <footer id="footer">
     <div id="footer-top" class="container">
         <div class="row">
@@ -12,7 +11,7 @@
                 <ul class="footer-links">
                     <li><a href="#">All rentals</a></li>
                     <li><a href="#">List your rental</a></li>
-                    <li><a href="#">Read our FAQs</a></li>							
+                    <li><a href="#">Read our FAQs</a></li>
                 </ul>
             </div>
             <div class="block col-sm-6">
@@ -66,16 +65,11 @@
             </div>
         </div>
     </div>
-    
-    
-    <!-- BEGIN COPYRIGHT -->
     <div id="copyright">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
                     &copy; 2014 One Ring Rentals
-                    
-                    <!-- BEGIN SOCIAL NETWORKS -->
                     <ul class="social-networks">
                         <li><a href="#"><i class="fa fa-facebook"></i></a></li>
                         <li><a href="#"><i class="fa fa-twitter"></i></a></li>
@@ -84,14 +78,8 @@
                         <li><a href="#"><i class="fa fa-youtube"></i></a></li>
                         <li><a href="#"><i class="fa fa-rss"></i></a></li>
                     </ul>
-                    <!-- END SOCIAL NETWORKS -->
-                
                 </div>
             </div>
         </div>
     </div>
-    <!-- END COPYRIGHT -->
-    
 </footer>
-
-<!-- END FOOTER -->
