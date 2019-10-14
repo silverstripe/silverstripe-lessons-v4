@@ -1,4 +1,4 @@
-## Requirements
+### Requirements
 
 In order to work with your development environment efficiently you need some tools installed on your client:
 
@@ -7,19 +7,19 @@ In order to work with your development environment efficiently you need some too
 * [Docker] which can be downloaded [here](https://hub.docker.com/?overlay=onboarding):  
   A service for running containers (sort of tiny virtual machines)
 
-## Creating a project folder
+### Creating a project folder
 
 Create a directory in your home called `silverstripe-lessons`. This is where you're going to code, edit and develop your first silverstripe-project.
 
 This folder will be called `project folder` in all following lessons. Please also note, that all further lessons require that you're working in this folder.
 
-## Installing a local web server
+### Installing a local web server
 
 SilverStripe is a PHP-based application that connects to a database, so in order to run it, you'll need a web server. You won't want to be doing all of your development on a remote environment, so setting up a local web server is highly recommended. If you're running OSX or Linux, you probably have all the tools you need already installed on your system, but that's not always ideal. Installing your own local web server affords you more granular control over your environment and insulates it from system-level upgrades.
 
 While this tutorial will explain how to run a local web server using Docker, there are several other choices to be aware of on which there will be a brief explanation given later.
 
-### Setting up a docker container
+#### Setting up a docker container
 
 First please make sure you have [Docker](https://www.docker.com/) installed on your client.  
 Docker works with so-called "images".
@@ -27,7 +27,7 @@ You can consider an image as a building plan for creating a "container".
 
 Containers are small virtual machines which share the operating system with your client which makes them much smaller, faster and more powerful.
 
-#### Setting up an image for SilverStripe
+##### Setting up an image for SilverStripe
 
 First you need to create an image which provides all components for running SilverStripe (such as php, apache, composer and a bunch of PHP-extensions).
 
@@ -51,7 +51,7 @@ docker build .devcontainer -t silverstripe-example
 
 This creates an image named `silverstripe-example`.
 
-#### Runing the container
+##### Runing the container
 
 Next you might want to check whether the container is running correctly.
 
@@ -84,7 +84,7 @@ docker stop example
 docker rm example
 ```
 
-#### Setting up a docker-environment
+##### Setting up a docker-environment
 
 You might remember that SilverStripe not only requires a web server but also a database server running MySQL.
 
@@ -137,9 +137,9 @@ Create a file called `.gitignore` to exclude the `mysql-data` folder from your p
 .devcontainer/mysql-data/
 ```
 
-### Other alternatives
+#### Other alternatives
 
-#### Virtualisation
+##### Virtualisation
 
 Installing a virtual web server, on your local machine is fast, fairly easy, and eliminates many of the variables and unknowns that are often hazardous to local development. There are two main players in this space:
 
@@ -148,13 +148,13 @@ Installing a virtual web server, on your local machine is fast, fairly easy, and
 
 In general, Vagrant is much easier to set up, but is much more resource intensive as each instance uses its own operating system, while Docker is more difficult to learn and set up, but uses far less resources and runs more efficiently than Vagrant.
 
-#### Create your own
+##### Create your own
 
 There are a number of tutorials available for assembling your own recipe of Apache, PHP, and MySQL using package managers like [Homebrew](https://brew.sh/) or [Macports](https://www.macports.org/).
 * [macOS 10.12 Sierra Apache Setup](https://getgrav.org/blog/macos-sierra-apache-mysql-vhost-apc)
 * A [Github Gist](https://gist.github.com/pwenzel/f06419631bd172331281) of setting up a LAMP stack on OSX
 
-#### Turnkey solutions
+##### Turnkey solutions
 
 While less flexible than building an environment from scratch or using a virtual machine, there are some single-click installs that will put a basic server on your workstation. Some of these include:
 * [MAMP](https://www.mamp.info/en/)
@@ -164,7 +164,7 @@ While less flexible than building an environment from scratch or using a virtual
 
 What these products offer in ease of use and simplicity they revoke in the form of flexibility. They are often pretty rigid and cannot be extended without a lot of work and/or hacking. SilverStripe requires the `php-intl` extension, for instance, which is not included in any of these products.
 
-## Setting up the IDE
+### Setting up the IDE
 
 You can configure VSCode to run in a docker container.  
 Open up VSCode and install the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)-extension.
@@ -186,11 +186,11 @@ The only thing that's left to do is opening up your project folder in VSCode by 
 
 Next you must hit the green remote-icon on the bottom left and select `Remote-Containers: Reopen in Container`.
 
-## Introducing Composer
+### Introducing Composer
 
 Before we get into installing Composer, we should probably go over what exactly Composer is and how it works.
 
-### What is Composer, and why do I need it?
+#### What is Composer, and why do I need it?
 
 [Composer](https://getcomposer.org/) is a dependency manager for PHP. Dependency managers are increasingly popular these days, especially for front-end libraries; You may have heard of [NPM](https://www.npmjs.com/). At their most fundamental level, dependency managers are simply abstractions of a source code repository. They obscure all the minute details about where the projects live and what branches are available, and they allow you to simply refer to packages semantically by name and by version number.
 
@@ -223,7 +223,7 @@ composer require example/some-module
 
 This is by no means a magic bullet. You will still have to resolve conflicts, but it will tell you what those conflicts are, and it won't let your project exist in a state with incompatibilities.
 
-### Installing Composer
+#### Installing Composer
 
 Though composer is already installed on your container (thanks to `silverstripe-dev`) it might be a good idea to go and grab the most recent version from the internet.
 
@@ -248,7 +248,7 @@ Let's run the first command, which installs Composer. It doesn't matter where in
 
 The second command will move the Composer executable to a place where it's globally accessible, so we can just run Composer anywhere.
 
-### Adding Composer to the image
+#### Adding Composer to the image
 
 If you ever re-create your `silverstripe-example` image, which often might be the case, your composer-installation will be undone.
 
@@ -261,7 +261,7 @@ RUN mv composer.phar /usr/bin/composer
 
 Next time you recreate your `Dockerfile` the most recent version of composer will be included.
 
-## Creating a SilverStripe project
+### Creating a SilverStripe project
 
 Let's create a SilverStripe project using Composer. Because this is a new project, we'll use the `create-project` command and point Composer at the `silverstripe/installer`. We'll specify a project name of *example*.
 
@@ -271,12 +271,12 @@ composer create-project silverstripe/installer example
 
 Composer will now go out and read the SilverStripe installer package. Then, it's going to pull down all the dependencies, including SilverStripe Framework, and several other core modules, along with various supporting PHP libraries. Lastly, it's going to install the default theme that comes with the SilverStripe installer.
 
-### The public/ folder
+#### The public/ folder
 
 SilverStripe only exposes a very small slice of your entire project to the web. All of the PHP code, configuration files, templates, and other core files are stored in the project root, which is not web accessible. The actual `index.php` file that renders your website lives in the `public/` folder, along with any and all other frontend depedencies such as CSS, JavaScript, webfonts, and images.
 
 
-#### Will public/ always be in my URL?
+##### Will public/ always be in my URL?
 
 No! SilverStripe is configured to redirect all requests to the `public/` folder.
 This is done using the `.htaccess` in the root of your project.
@@ -289,12 +289,12 @@ In our case, our site lives at `http://localhost:8888/example`.
 <img width="600" src="https://silverstripe.org/assets/lessons/4.0/lesson0-10.png">
 
 
-### Viewing your website
+#### Viewing your website
 
 Go to the URL `http://localhost:8888/example`. You should see an install page. It's full of red errors that are telling us that the install isn't going to work, so let's go through this and see if we can sort it out.
 
 
-### Configuring the installer
+#### Configuring the installer
 
 One thing that it's complaining about is that there isn't enough information to connect to the database. So let's fill out the database username and password. In many local MySQL installations, the root password is often empty. If that's the case, you probably won't see this error, as no password is the correct password!
 
@@ -312,11 +312,11 @@ Lastly, we can create an admin account. Let's specify a password. That'll be the
 
 Now that the installation is complete, SilverStripe is going to prompt you to delete the install files, as they are a security risk. Click on that, and it will authenticate you before moving forward. Provide that admin password you chose earlier.
 
-## Refining your development environment
+### Refining your development environment
 
 Now that we've installed SilverStripe, let's finely tune our development environment so we can get things working a little bit faster.
 
-### .env
+#### .env
 
 The main ingredient in environment management in SilverStripe is the `.env` file. This file provides a shared configuration across all your projects through the injection of environment variables. It should contain information such as database credentials, as those are most likely to be shared across all of your local development projects.
 
@@ -348,7 +348,7 @@ After adding this section to the `docker-compose.yml` you can safely delete `SS_
 
 Do that and recreate your docker-containers by bringing VSCode to the front, pressing the green button at the bottom left and hitting `Remote-Containers: Rebuild Container`.
 
-### How .env works
+#### How .env works
 
 Let's take a look at an example directory structure, where we have an `htdocs` folder, and three example projects underneath it.
 
@@ -380,7 +380,7 @@ You can place an `.env` file in, say project B's project root 'project-b', and i
 </div>
 
 
-### Some common configurations
+#### Some common configurations
 
 In a typical `.env` file, you definitely want to define the database server, database username and database password. Everything is defined in constants.
 
@@ -408,7 +408,7 @@ Some of the fields have been populated for you, such as the database username an
 
 Click "Install SilverStripe," and once again, clear out those install files.
 
-### Going further
+#### Going further
 
 Let's now take this a step further. There are some more things we want to throw into our `.env` file. We can use `SS_DATABASE_CHOOSE_NAME` to tell SilverStripe to intelligently determine a database name so that you don't have to. It will look at the filesystem, see where the project is installed, and choose a database name based on that. By default this takes the form of e.g. `SS_project-a`, keeping with the examples above.
 
@@ -441,7 +441,7 @@ We're now off and running with a local development environment for SilverStripe 
 
 [Get started building your first SilverStripe website](learn/lessons/creating-your-first-theme) with our series of lessons.
 
-## Cleaning up
+### Cleaning up
 
 In order to get ready for the next lesson you need to clean up your project-folder.
 
