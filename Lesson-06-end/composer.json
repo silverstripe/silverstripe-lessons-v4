@@ -4,14 +4,16 @@
     "description": "The SilverStripe Framework Installer",
     "require": {
         "php": ">=5.6.0",
-        "silverstripe/recipe-cms": "^1.1"
+        "silverstripe/recipe-plugin": "^1.2",
+        "silverstripe/recipe-cms": "4.4.4@stable",
+        "silverstripe-themes/simple": "~3.2.0"
     },
     "require-dev": {
-        "phpunit/PHPUnit": "^5.7"
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": {
-            "SilverStripe\\Lessons\\": "app/src/"
+            "SilverStripe\\Example\\": "app/src/"
         },
         "classmap": [
             "app/src/Page.php",
@@ -19,18 +21,13 @@
         ]
     },
     "extra": {
-        "branch-alias": {
-            "4.x-dev": "4.0.x-dev",
-            "dev-master": "5.x-dev"
-        },
+        "resources-dir": "_resources",
         "project-files-installed": [
-            ".htaccess",
             "app/.htaccess",
             "app/_config.php",
             "app/_config/mysite.yml",
             "app/src/Page.php",
-            "app/src/PageController.php",
-            "web.config"
+            "app/src/PageController.php"
         ],
         "public-files-installed": [
             ".htaccess",
