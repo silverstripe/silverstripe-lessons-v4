@@ -82,7 +82,6 @@
                                     <button type="submit" class="btn btn-fullcolor">Search</button>
                                 </div>
                             </form>
-
                         </div>
                     </div>
                 </div>
