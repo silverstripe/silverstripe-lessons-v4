@@ -37,12 +37,12 @@ class ArticlePage extends Page
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'Author' => 'Varchar',
+        'ArticleAuthor' => 'Varchar',
     ];
 }
 ```
 
-We've defined a field called `$Date` that will store, appropriately, as a date. The `$Teaser` field will be simple text, and the `$Author` field will also be text, but since we know it will contain a short string of characters (a person's name), we could also declare this as a `Varchar`, which by default is limited to 100 characters.
+We've defined a field called `$Date` that will store, appropriately, as a date. The `$Teaser` field will be simple text, and the `$ArticleAuthor` field will also be text, but since we know it will contain a short string of characters (a person's name), we could also declare this as a `Varchar`, which by default is limited to 100 characters.
 
 Since we made changes to the database, let's run `/dev/build` and we should see some green text indicating that new fields were created.
 
@@ -108,7 +108,7 @@ class ArticlePage extends Page
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'Author' => 'Varchar',
+        'ArticleAuthor' => 'Varchar',
     ];
 
     public function getCMSFields()
@@ -128,15 +128,14 @@ use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 
-// [...]
+// ...
 
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
         $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'));
         $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser'));
-        $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'));
-
+        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'));
         return $fields;
     }
 ```
@@ -159,7 +158,7 @@ There are a couple usability issues we can address here. One is that the fields 
         $fields = parent::getCMSFields();
         $fields->addFieldToTab('Root.Main', DateField::create('Date','Date of article'),'Content');
         $fields->addFieldToTab('Root.Main', TextareaField::create('Teaser'),'Content');
-        $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
+        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'),'Content');
         return $fields;
     }
 ```
@@ -175,7 +174,7 @@ Second, it might not be too clear to the user what "teaser" means. Let's add som
             ->setDescription('This is the summary that appears on the article list page.'),
             'Content'
         );
-        $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
+        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'),'Content');
         return $fields;
     }
 ```
@@ -187,7 +186,7 @@ Reload the edit screen in the CMS and see that our changes have taken effect.
 
 ### Adding the fields to the template
 
-Most of the hard work is done now. It's time to insert all the variables in to our templates to pull in the CMS content. In `ArticleHolder.ss` and `ArticlePage.ss` replace any references to the date with `$Date`, the author with `$Author`, and the teaser with `$Teaser`. Reload the page to see the the articles are pulling in the new content.
+Most of the hard work is done now. It's time to insert all the variables in to our templates to pull in the CMS content. In `ArticleHolder.ss` and `ArticlePage.ss` replace any references to the date with `$Date`, the author with `$ArticleAuthor`, and the teaser with `$Teaser`. Reload the page to see the the articles are pulling in the new content.
 
 One issue we can see is that the date is not formatting the way it should. Since we casted the field as Date, we have some control over that at the template level. The Long method will give us what we need. Replace `$Date` with `$Date.Long`.
 
