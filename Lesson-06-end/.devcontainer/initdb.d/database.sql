@@ -825,6 +825,86 @@ INSERT INTO `RememberLoginHash` VALUES (1,'SilverStripe\\Security\\RememberLogin
 UNLOCK TABLES;
 
 --
+-- Table structure for table `SilverStripe_Example_ArticlePage`
+--
+
+DROP TABLE IF EXISTS `SilverStripe_Example_ArticlePage`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SilverStripe_Example_ArticlePage` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` date DEFAULT NULL,
+  `Teaser` mediumtext,
+  `Author` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SilverStripe_Example_ArticlePage`
+--
+
+LOCK TABLES `SilverStripe_Example_ArticlePage` WRITE;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage` DISABLE KEYS */;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `SilverStripe_Example_ArticlePage_Live`
+--
+
+DROP TABLE IF EXISTS `SilverStripe_Example_ArticlePage_Live`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SilverStripe_Example_ArticlePage_Live` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Date` date DEFAULT NULL,
+  `Teaser` mediumtext,
+  `Author` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SilverStripe_Example_ArticlePage_Live`
+--
+
+LOCK TABLES `SilverStripe_Example_ArticlePage_Live` WRITE;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage_Live` DISABLE KEYS */;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage_Live` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `SilverStripe_Example_ArticlePage_Versions`
+--
+
+DROP TABLE IF EXISTS `SilverStripe_Example_ArticlePage_Versions`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SilverStripe_Example_ArticlePage_Versions` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `RecordID` int(11) NOT NULL DEFAULT '0',
+  `Version` int(11) NOT NULL DEFAULT '0',
+  `Date` date DEFAULT NULL,
+  `Teaser` mediumtext,
+  `Author` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `RecordID_Version` (`RecordID`,`Version`),
+  KEY `RecordID` (`RecordID`),
+  KEY `Version` (`Version`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SilverStripe_Example_ArticlePage_Versions`
+--
+
+LOCK TABLES `SilverStripe_Example_ArticlePage_Versions` WRITE;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage_Versions` DISABLE KEYS */;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticlePage_Versions` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `SiteConfig`
 --
 
@@ -943,7 +1023,7 @@ DROP TABLE IF EXISTS `SiteTree`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SiteTree` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Lessons\\ArticleHolder','SilverStripe\\Lessons\\ArticlePage') DEFAULT 'Page',
+  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'Page',
   `LastEdited` datetime DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers','Inherit') DEFAULT 'Inherit',
@@ -1046,7 +1126,7 @@ DROP TABLE IF EXISTS `SiteTree_Live`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SiteTree_Live` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Lessons\\ArticleHolder','SilverStripe\\Lessons\\ArticlePage') DEFAULT 'Page',
+  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'Page',
   `LastEdited` datetime DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers','Inherit') DEFAULT 'Inherit',
@@ -1255,4 +1335,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-14 22:42:53
+-- Dump completed on 2019-10-15  0:20:31

@@ -216,3 +216,11 @@ In `ArticleHolder.ss` make following change:
 ```
 
 All text-based field types in SilverStripe offer methods such as `FirstSentence`, `FirstParagraph`, `LimitCharacterCount`, and more, to give you some control over the presentation on the template. Using these methods to create teasers is very common.
+
+### Database backup
+
+Save the progress you've made to the database-backup:
+
+```bash
+mysqldump -hdb -uroot -proot -B SS_html > .devcontainer/initdb.d/database.sql
+```
