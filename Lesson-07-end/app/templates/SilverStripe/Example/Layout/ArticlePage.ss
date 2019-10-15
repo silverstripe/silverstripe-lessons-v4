@@ -9,7 +9,9 @@
                 <h1 class="blog-title">$Title</h1>
 
                 <div class="blog-main-image">
-                    <img src="http://placehold.it/765x362" alt="" />
+                    <% with $Photo.ScaleWidth(750) %>
+                        <img class="my-custom-class" src="$URL" alt="" width="$Width" height="$Height" />
+                    <% end_with %>
                     <div class="tag"><i class="fa fa-file-text"></i></div>
                 </div>
 
@@ -26,6 +28,19 @@
                 <div class="post-content">
                     $Content
                 </div>
+
+                <% if $Brochure %>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <% with $Brochure %>
+                                <a class="btn btn-warning btn-block" href="$URL">
+                                    <i class="fa fa-download"></i>
+                                    Download brochure ($Extension, $Size)
+                                </a>
+                            <% end_with %>
+                        </div>
+                    </div>
+                <% end_if %>
 
                 <div class="share-wraper col-sm-12 clearfix">
                     <h5>Share this Post:</h5>

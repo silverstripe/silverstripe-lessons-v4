@@ -24,22 +24,27 @@ All of these techniques make sense in certain contexts, of course, but a framewo
 
 As of the 4.0 release, all of the above approaches are possible through configuration. In SilverStripe, the storage of files and all of its moving pieces have been abstracted and exposed to the user as composable services. A `File` object doesn't need to know anything about where files live or how to stream them to the browser. As long as a service is in place to provide the mechanics to do that, files will use it to do what they need to do, without regard for how the internals work. Fortunately, SilverStripe comes pre-configured with a fairily common and robust implementation of file storage that you should only have to override if you have specific needs, such as storage in a CDN like Amazon S3.
 
-Fundamentally, files in SilverStripe are objects, with its their own table in the database, which essentially keeps a leger of all the files in the filesystem. The responsibility of keeping it in sync is left entirely to these file records. Any pages or other types of database content that rely on files do not have to worry about this problem. Instead, all they need to store is the `ID` of the file they need. An `ID`, as you might know, is considered immutable in the database world, and therefore, no matter what happens to the file -- whether it moves, changes its name, or gets replaced -- the page doesn't need to be informed. It retains the `ID` of the file, and can acquire all of its metadata when it needs to.
+Fundamentally, files in SilverStripe are objects, with their own table in the database, which essentially keeps a leger of all the files in the filesystem. The responsibility of keeping it in sync is left entirely to these file records. Any pages or other types of database content that rely on files do not have to worry about this problem. Instead, all they need to store is the `ID` of the file they need. An `ID`, as you might know, is considered immutable in the database world, and therefore, no matter what happens to the file – whether it moves, changes its name, or gets replaced – the page doesn't need to be informed. It retains the `ID` of the file, and can acquire all of its metadata when it needs to.
 
 
-### Introducing the has_one
+### Introducing the `$has_one`
 
 So far we've been talking about fields that are native to the page type. `$Author`, `$Date`, and `$Teaser` are all stored on the `ArticlePage` table, and are stored in the `$db` array. Sometimes fields are stored on foreign table, and all the native table needs is a reference to the `ID` of the foreign record. The main advantage of this design is that if the foreign content ever changes, all the records who refer to it don't need to worry about staying up to date.
 
-To relate a page type to a foreign object, you might think all you need is afield in the `$db` array, cast as an `Int`, storing the ID of the foreign record. That's an option, but it's much more clean to set up that field as a foreign key, so that both the database and the SilverStripe framework will know how to handle it properly.
+To relate a page type to a foreign object, you might think all you need is a field in the `$db` array, cast as an `Int`, storing the ID of the foreign record. That's an option, but it's much more clean to set up that field as a foreign key, so that both the database and the SilverStripe framework will know how to handle it properly.
 
-Let's create a new private static array in the `ArticlePage` class called `$has_one`. This works much like the `$db` array, only instead of mapping the field names to field types, we'll map them to the class name (or table name) of the related object. Let's call our image field "Photo" and our file field "Brochure".
+Let's create a new private static array in the `ArticlePage` class called `$has_one`. This works much like the `$db` array, only instead of mapping the field names to field types, we'll map them to the class name (or table name) of the related object. Let's call our image field `Photo` and our file field `Brochure`.
 
+***app/src/ArticlePage.php***
 ```php
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
-use SilverStripe\Assets\Image;
+use Page;
 use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\DateField;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\TextField;
 
 class ArticlePage extends Page
 {
@@ -51,7 +56,7 @@ class ArticlePage extends Page
         'Brochure' => File::class
     ];
 
-    // …
+    // ...
 }
 ```
 
@@ -64,23 +69,28 @@ Run `dev/build` and notice the new fields that are created. They take on the nam
 Let's now add some upload functionality to our `getCMSFields` function. For file relations, `UploadField` is the best choice. For tidiness, we'll put the uploaders on their own tab.
 
 ```php
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
-use SilverStripe\Assets\Image;
-use SilverStripe\Assets\File;
+use Page;
 use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
+use SilverStripe\Forms\DateField;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\TextField;
 
 class ArticlePage extends Page
 {
     // ...
     public function getCMSFields() {
-         $fields = parent::getCMSFields();
-         // ...
-
-         $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
-         $fields->addFieldToTab('Root.Attachments', UploadField::create('Brochure','Travel brochure, optional (PDF only)'));
-
-           return $fields;
+        $fields = parent::getCMSFields();
+        // ...
+        $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
+        $fields->addFieldToTab('Root.Attachments', UploadField::create(
+            'Brochure',
+            'Travel brochure, optional (PDF only)'
+        ));
+        return $fields;
     }
 }
 ```
@@ -92,22 +102,17 @@ This works well, but we can tighten it up a bit. First, giving a written indicat
 For this, we'll tap into the UploadField's **validator**.
 
 ```php
-  public function getCMSFields()
-  {
+    public function getCMSFields()
+    {
         $fields = parent::getCMSFields();
-
-        // ..
-
-        $fields->addFieldToTab('Root.Attachments', UploadField::create('Photo'));
+        // ...
         $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create(
-          'Brochure',
-          'Travel brochure, optional (PDF only)'
+            'Brochure',
+            'Travel brochure, optional (PDF only)'
         ));
-
         $brochure->getValidator()->setAllowedExtensions(['pdf']);
-
         return $fields;
-  }
+    }
 ```
 
 Notice that we can use the shortcut of concurrently adding the field to the tab, and assigning it to a variable. This technique is often used when making updates to form fields after instantiation.
@@ -116,23 +121,22 @@ Now when we try to upload anything but a PDF to the brochure field, it refuses i
 
 It would also be nice if the uploader put all the files in a folder of our choosing. By default, everything will end up in `assets/Uploads`, and that directly can become quite polluted if you don't stay on top of configuring your upload directories.
 
-We can use `setFolderName()` on the `UploadField` to assign a folder, relative to `assets/*. If the folder doesn't exist, it will be created, along with any non-existent ancestors your specify, i.e. "does/not/exist" would create three new folders.
+We can use `setFolderName()` on the `UploadField` to assign a folder, relative to `assets/*`. If the folder doesn't exist, it will be created, along with any non-existent ancestors you specify, i.e. `does/not/exist` would create `does`, `does/not` as well as the `does/not/exist` folder.
 
 ```php
     public function getCMSFields() {
-          $fields = parent::getCMSFields();
-
-          //...
-
-          $fields->addFieldToTab('Root.Attachments', $photo = UploadField::create('Photo'));
-          $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create('Brochure','Travel brochure, optional (PDF only)'));
-
-          $photo->setFolderName('travel-photos');
-          $brochure
+        $fields = parent::getCMSFields();
+        //...
+        $fields->addFieldToTab('Root.Attachments', $photo = UploadField::create('Photo'));
+        $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create(
+            'Brochure',
+            'Travel brochure, optional (PDF only)'
+        ));
+        $photo->setFolderName('travel-photos');
+        $brochure
             ->setFolderName('travel-brochures')
             ->getValidator()->setAllowedExtensions(array('pdf'));
-
-          return $fields;
+        return $fields;
     }
 ```
 Try uploading a new file, and see that it goes to the appropriate place.
@@ -144,38 +148,46 @@ Because we declared the file relation as a `$has_one`, we can access the propert
 Let's make an update to `ArticlePage.ss` to show a download button for the brochure, if one exists. Below `<div class="share-wrapper" />`, add the following:
 
 ```html
-    <% if $Brochure %>
-      <div class="row">
-        <div class="col-sm-12"><a class="btn btn-warning btn-block" href="$Brochure.URL"> Download brochure ($Brochure.Extension, $Brochure.Size)</a>
+<% if $Brochure %>
+    <div class="row">
+        <div class="col-sm-12">
+            <a class="btn btn-warning btn-block" href="$Brochure.URL">
+                <i class="fa fa-download"></i>
+                Download brochure ($Brochure.Extension, $Brochure.Size)
+            </a>
         </div>
-      </div>
-    <% end_if %>
+    </div>
+<% end_if %>
 ```
 
 Calling the property `$Brochure`, as defined in our `$has_one` gets us a `File` object with its own set of properties. We'll display some of them, but there are many others made available to you, including `$Brochure.Filename`, `$Brochure.Title`, and more.
 
 Reload the page and give it a test. You should be able to download your PDF.
 
-### The <% with %> block
+### The `<% with %>` block
 
 This file download works great, but we can clean up the template syntax a bit. There are multiple references to properties that we're getting by traversing the `$Brochure` object. We can remove all that dot-separated syntax by wrapping the whole thing in a scope block, known as `<% with %>`.
 
 ```html
-    <% if $Brochure %>
+<% if $Brochure %>
     <div class="row">
-        <% with $Brochure %>
         <div class="col-sm-12">
-            <a href="$URL" class="btn btn-warning btn-block"><i class="fa fa-download"></i> Download brochure [$Extension] ($Size)</a>
+            <% with $Brochure %>
+                <a class="btn btn-warning btn-block" href="$URL">
+                    <i class="fa fa-download"></i>
+                    Download brochure ($Extension, $Size)
+                </a>
+            <% end_with %>
         </div>
-        <% end_with %>
     </div>
-    <% end_if %>
+<% end_if %>
 ```
+
 While there's little, if any, performance gain to this approach, some may find it easier to read. Some developers make more use of scope operators than others. Generally speaking, the more properties you're getting of the object, the more utility you'll get out of a `<% with %>` block.
 
 ### How image resampling works
 
-You might have noticed that we've only chosen to use a single upload field for what appears to be two different photo sizes -- a small one in list view, and a larger one on the detail view. This is because, when dealing with images, we're only concerned about distinct content. The sizing and resampling of the photos is done on page load through function calls on the template, effectively giving you an unlimited number of different sizes and formats of any given image.
+You might have noticed that we've only chosen to use a single upload field for what appears to be two different photo sizes – a small one in list view, and a larger one on the detail view. This is because, when dealing with images, we're only concerned about distinct content. The sizing and resampling of the photos is done on page load through function calls on the template, effectively giving you an unlimited number of different sizes and formats of any given image.
 
 If you're even remotely concerned about page optimisation, the very thought of resampling images on page load is probably turning your stomach. Fortunately, as we'll see in a moment, it's not quite that simple.
 
@@ -185,109 +197,47 @@ If we invoke a an image resampling function against the photo, we'll get the sam
 
 The following syntax will show the photo at a width of 600 pixels, with unconstrained height, reduced proportionately:
 
-```
-    $Photo.ScaleWidth(600)
+```html
+$Photo.ScaleWidth(600)
 ```
 
 It's effectively the same as reducing a photo by dragging the corner box while holding the shift key in image editing software.
 
 Does this seem like a lot of overhead to add to your templates? Most of the time, it's almost nothing. Here's how it works:
 
-SilverStripe generates a sku for the resampled image based on the original filename, the resampling method, and the argument(s) passed to it. For example, given the filename "photo.jpeg", the above function will generate an image like this:
+SilverStripe generates a copy for the resampled image based on the original filename, the resampling method, and the argument(s) passed to it. For example, given the filename `photo.jpeg`, the above function will generate an image like this:
 
-`ScaleWidth600-photo.jpeg`
+`photo__ScaleWidthWzYwMF0.jpeg` where `WzYwMF0` is the base64-encoded representation of `[600]`.
 
 When the `ScaleWidth()` method is called, SilverStripe generates the file name, and checks to see if it exists. If it does, it renders the existing image. If not, it creates it, and returns the path to the new file. Either way, you still get your image tag, and the resampling is transparent to you.
 
 The benefit of this approach is that it's fantastically simple and declarative, but the downside of declarative programming is that it obscures the developer from what is really happening under the hood. In this case, the developer should be aware that the first page load after adding or modifying a resizing function will always be slower than subsequent page loads. How much slower depends on how many images you have. Most of the time, you'll never notice, but it's important to be aware that if you're rendering a lot of new photos (say, 10 or more), you probably want to hit the page once to ensure that all those photos get cached. It is never a good idea to put hundreds of new photos on a page and attempt to resample them all in a single page load, as you're likely to timeout your PHP process.
 
-There are many image resampling functions that ship with the default install of SilverStripe. It's also very easy to create your own, which will cover in another tutorial. Here are a few common methods you might find useful:
+There are many image resampling functions that ship with the default install of SilverStripe. It's also very easy to create your own, which we'll cover in another tutorial. Here are a few common methods you might find useful:
 
-<div dir="ltr">
-
-<table>
-
-<tbody>
-
-<tr>
-
-<td>
-
-$Image.ScaleWidth(width)
-
-</td>
-
-<td>
-
-Resize the image proportionately to fit inside the given width
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>
-
-$Image.ScaleHeight(height)
-
-</td>
-
-<td>
-
-Resize the image proportionately to fit inside the given height
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>
-
-$Image.FixMax(width, height)
-
-</td>
-
-<td>
-
-Force the image to be a certain width and height. If one dimension falls short, add padding.
-
-</td>
-
-</tr>
-
-<tr>
-
-<td>
-
-$Image.Fit(width, height)
-
-</td>
-
-<td>
-
-Resize to the given width and height, cropping it if necessary to maintain the aspect ratio.
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
+| Example                        | Description                                                                                      |
+| ------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `$Image.ScaleWidth(width)`     | Resize the image proportionately to fit inside the given `width`.                                |
+| `$Image.ScaleHeight(height)`   | Resize the image proportionately to fit inside the given `height`.                               |
+| `$Image.FitMax(width, height)` | Force the image to be certain `width` and `height`. If one dimension falls short, add padding.   |
+| `$Image.Fit(width, height)`    | Resize to the given `width` and `height`, cropping it if necessary to maintain the aspect ratio. |
 
 ### Adding images to the template
 
-Now that we understand how images work, this last step should be pretty straightforward. On `ArticleHolder.ss`, we see that the photos in list view are about `242x156` pixels. Let's use `Fit` for these, as it is more important that they maintain a uniform size than it is to show all their content.
+Now that we understand how images work, this last step should be pretty straightforward. On `ArticleHolder.ss`, we see that the photos in list view are about `766x515` pixels. Let's use `Fit` for these, as it is more important that they maintain a uniform size than it is to show all their content.
 
-Replace the placeholder image in the `<% loop $Children %>` with `$Photo.Fit(242,156)`.
+Replace the placeholder image in the `<% loop $Children %>` with `$Photo.Fit(766, 515)`.
 
-On `ArticlePage.ss`, the photo is larger, and it's important that we show all of its content, since this is the detail view. Let's use `ScaleWidth(750)` for this one.
+On `ArticlePage.ss`, the photo is larger, and it's important that we show all of its content, since this is the detail view. Let's use `ScaleWidth(765)` for this one.
 
-Replace the placeholder image in `<div class="blog-main-image" />` with `$Photo.ScaleWidth(750)`.
+Replace the placeholder image in `<div class="blog-main-image" />` with `$Photo.ScaleWidth(765)`:
+
+```html
+<div class="blog-main-image">
+    $Photo.ScaleWidth(765)
+    <div class="tag"><i class="fa fa-file-text"></i></div>
+</div>
+```
 
 Reload the page, and see that your images are displaying properly.
 
@@ -302,14 +252,14 @@ The good news is that these methods actually don't return strings of text. They 
 Let's rewrite those template variables to output custom HTML.
 
 ```html
-    <img class="my-custom-class" src="$Photo.ScaleWidth(750).URL" alt="" width="$Photo.ScaleWidth(750).Width" height="$Photo.ScaleWidth(750).Height" />
+<img class="my-custom-class" src="$Photo.ScaleWidth(765).URL" alt="" width="$Photo.ScaleWidth(765).Width" height="$Photo.ScaleWidth(765).Height" />
 ```
 
 That gets a bit unwieldy, so let's revisit that `<% with %>` block that we used earlier to clean things up a bit.
 ```html
-    <% with $Photo.ScaleWidth(750) %>
+<% with $Photo.ScaleWidth(765) %>
     <img class="my-custom-class" src="$URL" alt="" width="$Width" height="$Height" />
-    <% end_with %>
+<% end_with %>
 ```
 
 ### Adding ownership
@@ -318,7 +268,7 @@ Try previewing your article page in another browser, where you're not logged in 
 
 So how do you publish files? The most obvious way is in the **Files** section of the CMS. But in this case, it would be nice if when we published the article, any attached files became implicitly published as well. For that, we need to declare ownership of the files to ensure they receive publication by association.
 
-```
+```php
 class ArticlePage extends Page
 {
     //...
@@ -330,3 +280,27 @@ class ArticlePage extends Page
 ```
 
 Now the attached files will be sympathetic to the publication state of their containing page.
+
+### Database backup
+
+As we want the brochures and photos to presist when recreating the docker-environment, we have to make sure said files are not excluded.  
+Add following lines to the `public/assets/.gitignore` file:
+
+```bash
+!/.protected/
+/.protected/*
+
+# Ignore everything but travel-brochures and travel-photos
+!/**/travel-brochures/
+!/**/travel-photos/
+!/**/travel-*/**/*
+
+# Ignore mutated files
+**/*__*.*
+```
+
+Take a backup of the database to save the progress you've made:
+
+```bash
+mysqldump -hdb -uroot -proot -B SS_html > .devcontainer/initdb.d/database.sql
+```

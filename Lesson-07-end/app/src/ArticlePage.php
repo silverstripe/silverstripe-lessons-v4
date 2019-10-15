@@ -3,6 +3,9 @@
 namespace SilverStripe\Example;
 
 use Page;
+use SilverStripe\AssetAdmin\Forms\UploadField;
+use SilverStripe\Assets\File;
+use SilverStripe\Assets\Image;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
@@ -17,6 +20,16 @@ class ArticlePage extends Page
         'ArticleAuthor' => 'Varchar',
     ];
 
+    private static $has_one = [
+        'Photo' => Image::class,
+        'Brochure' => File::class
+    ];
+
+    private static $owns = [
+        'Photo',
+        'Brochure',
+    ];
+
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
@@ -26,6 +39,15 @@ class ArticlePage extends Page
             'Content'
         );
         $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'),'Content');
+        $fields->addFieldToTab('Root.Attachments', $photo = UploadField::create('Photo'));
+        $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create(
+            'Brochure',
+            'Travel brochure, optional (PDF only)'
+        ));
+        $photo->setFolderName('travel-photos');
+        $brochure
+            ->setFolderName('travel-brochures')
+            ->getValidator()->setAllowedExtensions(array('pdf'));
         return $fields;
     }
 }
