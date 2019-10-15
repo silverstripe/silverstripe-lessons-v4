@@ -9,6 +9,8 @@ use SilverStripe\Forms\TextField;
 
 class ArticlePage extends Page
 {
+    private static $can_be_root = false;
+
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
