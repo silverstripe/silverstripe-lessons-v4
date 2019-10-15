@@ -9,10 +9,12 @@ use SilverStripe\Forms\TextField;
 
 class ArticlePage extends Page
 {
+    private static $can_be_root = false;
+
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'Author' => 'Varchar',
+        'ArticleAuthor' => 'Varchar',
     ];
 
     public function getCMSFields()
@@ -23,7 +25,7 @@ class ArticlePage extends Page
             ->setDescription('This is the summary that appears on the article list page.'),
             'Content'
         );
-        $fields->addFieldToTab('Root.Main', TextField::create('Author','Author of article'),'Content');
+        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'),'Content');
         return $fields;
     }
 }

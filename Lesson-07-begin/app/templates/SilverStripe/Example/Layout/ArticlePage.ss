@@ -20,7 +20,7 @@
                         <li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
                     </ul>
 
-                    <div id="post-author"><i class="fa fa-pencil"></i> By $Author</div>
+                    <div id="post-author"><i class="fa fa-pencil"></i> By $ArticleAuthor</div>
                 </div>
 
                 <div class="post-content">
