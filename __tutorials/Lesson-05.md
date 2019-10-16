@@ -12,7 +12,7 @@ In the last episode, we created our first custom page type, `HomePage`. Let's re
 ```php
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use Page;
 
@@ -26,7 +26,7 @@ class ArticleHolder extends Page
 ```php
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;
 
@@ -42,7 +42,7 @@ Likewise, we'll do the same thing for `ArticlePage`.
 ```php
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use Page;
 
@@ -56,7 +56,7 @@ class ArticlePage extends Page
 ```php
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;
 
@@ -72,6 +72,7 @@ Open up `ArticlePage.ss`.
 
 Notice that our designer has made things easier for us by only including what belongs in our `$Layout` template. We still have to add our common variables, though. Before we go any further, let's add `$Title`, `$Content`, and `$Breadcrumbs` to their appropriate places:
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <h1 class="page-title">$Title</h1>
 
@@ -80,6 +81,7 @@ Notice that our designer has made things easier for us by only including what be
 </div>
 ```
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <!-- BEGIN MAIN CONTENT -->
 <div class="main col-sm-8">
@@ -87,6 +89,7 @@ Notice that our designer has made things easier for us by only including what be
     <h1 class="blog-title">$Title</h1>
 ```
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <div class="post-content">
     $Content
@@ -95,7 +98,7 @@ Notice that our designer has made things easier for us by only including what be
 
 Also, while we're at it, let's tidy up a bit and move the `<div class="parallax colored-bg pattern-bg">` section to its own include template, which we'll call `Banner.ss`. Don't forget to update your `templates/SilverStripe/Example/Layout/ArticleHolder.ss` and `templates/Layout/Page.ss` file, as well:
 
-***templates/Includes/Banner.ss***
+***app/templates/Includes/Banner.ss***
 ```html
 <div class="parallax colored-bg pattern-bg" data-stellar-background-ratio="0.5">
     <div class="container">
@@ -111,7 +114,7 @@ Also, while we're at it, let's tidy up a bit and move the `<div class="parallax 
 </div>
 ```
 
-***templates/SilverStripe/Example/Layout/ArticlePage.ss***
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <% include Banner %>
 <div class="content">
@@ -151,6 +154,7 @@ To accomplish this, we'll use a template method that is afforded to all pages in
 
 Edit the `<div id="blog-listing">` section as followed:
 
+***templates/SilverStripe/Example/Layout/ArticleHolder.ss***
 ```html
 <div id="blog-listing" class="list-style clearfix">
     <div class="row">
@@ -203,8 +207,8 @@ Lest we forget, ultimately what we're building is an experience for a content ed
 
 Let's take a moment to assume the role of a content author, and imagine that we want to create a new article. Going through this process, we notice two glaring usability hazards:
 
-*   The user can add an **ArticlePage** anywhere in the site tree
-*   When adding a child page to Travel Guides, the user has to know to use the **ArticlePage** page type.
+* The user can add an **ArticlePage** anywhere in the site tree
+* When adding a child page to Travel Guides, the user has to know to use the **ArticlePage** page type.
 
 SilverStripe offers an API for hierarchical constraints that will enforce that pattern that we require. Let's start by ensuring that only ArticlePage can be created underneath Travel Guides. Add the following to your **ArticleHolder** class:
 
@@ -234,7 +238,7 @@ Let's flush the cache, by appending `?flush` to the URL, and go back into the CM
 But what about pages at the root level? Because there is no page type for the root, we can't specify `$allowed_children`. For this, we can use the boolean variable `$allowed_children` on our `ArticlePage` class, and flush the cache.
 
 ```php
-    private static $can_be_root = false;
+private static $can_be_root = false;
 ```
 
 Now if we try to create an **ArticlePage** at the root level of the site tree, the action is disallowed.
@@ -260,6 +264,7 @@ This creates a database-backup into your `.devcontainer/initdb.d` directory.
 
 Next you have to add a new volume in your `docker-compose.yml` file. Adjust the `docker-compose.yml` file as followed:
 
+***.devcontainer/docker-compose.yml***
 ```yml
   db:
     image: mysql:5
