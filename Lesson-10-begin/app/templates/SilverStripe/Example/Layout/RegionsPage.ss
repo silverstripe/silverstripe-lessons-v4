@@ -1,4 +1,3 @@
-
 <!-- BEGIN CONTENT WRAPPER -->
 <div class="content">
     <div class="container">
@@ -6,24 +5,32 @@
 
             <!-- BEGIN MAIN CONTENT -->
             <div class="main col-sm-8">
+
+
+                <!-- BEGIN BLOG LISTING -->
                 <div class="grid-style1 clearfix">
-                  <% loop $Regions %>
-                      <div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
-                          <div class="image image-large">
-                              <a href="#">
-                                  <span class="btn btn-default"><i class="fa fa-file-o"></i> Read More</span>
-                              </a>
-                            $Photo.Fit(720,255)
-                          </div>
-                          <div class="info-blog">
-                              <h3>
-                                  <a href="#">$Title</a>
-                              </h3>
-                              <p>$Description</p>
-                          </div>
-                      </div>
-                  <% end_loop %>
+                    <% loop $Regions %>
+                        <div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
+                            <div class="image image-large">
+                                <a href="#">
+                                    <span class="btn btn-default"><i class="fa fa-file-0"></i> Read More</span>
+                                </a>
+                                $Photo.Fit(720, 255)
+                            </div>
+                            <div class="info-blog">
+                                <h3>
+                                    <a href="#">$Title</a></h3>
+                                </h3>
+                                <p>
+                                    $Description
+                                </p>
+                            </div>
+                        </div>
+                    <% end_loop %>
                 </div>
+                <!-- END BLOG LISTING -->
+
+
                 <!-- BEGIN PAGINATION -->
                 <div class="pagination">
                     <ul id="previous">
