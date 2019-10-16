@@ -74,6 +74,7 @@ If you want to continue using the themes directory, you might need to make a few
 those files to the web. For instance, you will need to add this to your root composer.json for each folder
 with public files.
 
+***composer.json***
 ```json
 {
     "extra": {
@@ -94,6 +95,7 @@ Next we’ll create the most fundamental component of a theme -- a template. In 
 
 In your `templates/` directory, create a file called `Page.ss`. Inside that file, create a basic HTML document.
 
+***app/templates/Page.ss***
 ```html
 <html>
   <body>
@@ -108,8 +110,8 @@ Why `Page.ss`? A default installation of SilverStripe ships with a page type cal
 
 To activate the theme, we’ll have to dig into the project directory. Open the file `theme.yml` in the `app/_config` directory. Under the heading `SilverStripe\View\SSViewer`, take note of the setting for `themes`. All we need to do here is to supply the variable `$public` as a theme, so that web accessible resources don't 404 in certain cases.
 
-
-```yaml
+***app/_config/theme.yml***
+```yml
 SilverStripe\View\SSViewer:
   themes:
     - '$public'
@@ -118,7 +120,7 @@ SilverStripe\View\SSViewer:
 
 If you have chosen to keep your `themes/` directory, you will have to supply the theme name in this list.
 
-```yaml
+```yml
 SilverStripe\View\SSViewer:
   themes:
     - 'my-theme'
@@ -150,7 +152,7 @@ generally a good idea, in the spirit of making our code as modular as possible.
 Note the `classmap` directive allows us to add additional non-namespaced classes to the autoload, reducing dependency
 on the SilverStripe manifest further.
 
-***composer.json:***
+***composer.json***
 ```json
 {
     "name": "silverstripe/installer",
