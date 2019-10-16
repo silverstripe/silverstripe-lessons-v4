@@ -206,6 +206,7 @@ Typically in SilverStripe, it is a `<% loop %>` block on your template, if not a
 
 Let's now take all of this into practice and add a custom database query to a controller. Looking at the home page, we see there is a section where the latest articles are syndicated. To get these to display, we'll need to write a method in our controller to fetch the list. Let's call it `LatestArticles`.
 
+***app/src/HomePageController.php***
 ```php
 namespace SilverStripe\Example;
 
@@ -224,6 +225,7 @@ class HomePageController extends PageController
 
 There is no need to pass this method into the template. Because it's in the controller and defined as public, we can access it using `$LatestArticles`. Let's update `HomePage.ss` to loop through the articles.
 
+***app/templates/SilverStripe/Example/Layout/HomePage.ss***
 ```html
 <h1 class="section-title">Recent Articles</h1>
 <div class="grid-style1">
@@ -262,6 +264,7 @@ There's one minor improvement we can make to this function. Right now, the limit
 
 Update the `LatestArticles` function to accept a `$count` parameter, and set its default value to `3`. Pass this parameter into the `limit()` method.
 
+***app/src/HomePageController.php***
 ```php
 //...
 class HomePageController extends PageController 
