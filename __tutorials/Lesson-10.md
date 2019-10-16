@@ -237,4 +237,5 @@ Now update `HomePage.ss`, `ArticleHolder.ss`, and `ArticlePage.ss` to use the `$
 As we changed the database once more we have to create another database backup:
 
 ```bash
+mysqldump -hdb -uroot -proot -B SS_html > .devcontainer/initdb.d/database.sql
 ```
