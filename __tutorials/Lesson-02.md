@@ -33,7 +33,7 @@ Now that we've dropped our bags and have rewarded ourselves with a quick glimpse
 
 ### Copy and correct
 
-We'll start with `default.html`. This mockup is intended to represent the most basic of page types in our site. As discussed earlier, SilverStripe conventionally purposes the `Page.ss` template for this case. Copy the contents of `default.html` into your `templates/Page.ss` file, which currently contains our "Hello, world" proof-of-concept, and reload your site on the base URL (e.g. <http://localhost:8888/>).
+We'll start with `default.html`. This mockup is intended to represent the most basic of page types in our site. As discussed earlier, SilverStripe conventionally purposes the `Page.ss` template for this case. Copy the contents of `default.html` into your `app/templates/Page.ss` file, which currently contains our "Hello, world" proof-of-concept, and reload your site on the base URL (e.g. <http://localhost:8888/>).
 
 Look good? No, it shouldn't. It should look like an unstyled mess. Let's copy over all the static assets into our project. Make the following copies:
 
