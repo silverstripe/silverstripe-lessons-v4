@@ -1026,7 +1026,7 @@ DROP TABLE IF EXISTS `SiteTree`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SiteTree` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage') DEFAULT 'Page',
+  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'Page',
   `LastEdited` datetime DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers','Inherit') DEFAULT 'Inherit',
@@ -1129,7 +1129,7 @@ DROP TABLE IF EXISTS `SiteTree_Live`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `SiteTree_Live` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage') DEFAULT 'Page',
+  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'Page',
   `LastEdited` datetime DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers','Inherit') DEFAULT 'Inherit',
@@ -1182,7 +1182,7 @@ CREATE TABLE `SiteTree_Versions` (
   `WasDraft` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `AuthorID` int(11) NOT NULL DEFAULT '0',
   `PublisherID` int(11) NOT NULL DEFAULT '0',
-  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage') DEFAULT 'Page',
+  `ClassName` enum('SilverStripe\\CMS\\Model\\SiteTree','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'Page',
   `LastEdited` datetime DEFAULT NULL,
   `Created` datetime DEFAULT NULL,
   `CanViewType` enum('Anyone','LoggedInUsers','OnlyTheseUsers','Inherit') DEFAULT 'Inherit',
