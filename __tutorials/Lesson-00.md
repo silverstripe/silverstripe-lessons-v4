@@ -57,6 +57,7 @@ Next you might want to check whether the container is running correctly.
 
 Create a file called `index.php`:
 
+***index.php***
 ```php
 <?php
     /* If you can read this, PHP is not working */
@@ -92,6 +93,7 @@ Docker provides the functionality to create environments with any amount of dock
 
 In the `.devcontainer`-folder create a file called `docker-compose.yml` with following content:
 
+***.devcontainer/docker-compose.yml***
 ```yml
 version: '3'
 
@@ -132,7 +134,7 @@ docker-compose -f ./.devcontainer/docker-compose.yml down
 
 Create a file called `.gitignore` to exclude the `mysql-data` folder from your project:
 
-***.gitignore:***
+***.gitignore***
 ```ignore
 .devcontainer/mysql-data/
 ```
@@ -171,6 +173,7 @@ Open up VSCode and install the [Remote - Containers](https://marketplace.visuals
 
 After that you have to create a `devcontainer.json`-file in your `.devcontainer` folder with following content:
 
+***.devcontainer/devcontainer.json***
 ```json
 {
     "name": "SilverStripe Development",
@@ -254,6 +257,7 @@ If you ever re-create your `silverstripe-example` image, which often might be th
 
 In order to permanentally add composer to your `silverstripe-example` image append these lines to the `Dockerfile` inside the `.devcontainer`-folder:
 
+***.devcontainer/Dockerfile***
 ```dockerfile
 RUN curl -s https://getcomposer.org/installer | php
 RUN mv composer.phar /usr/bin/composer
@@ -330,6 +334,7 @@ The key attribute of the `.env` file, however, is that it should not ship with t
 
 In our docker-scernario we can simply add an `environment`-section to our `docker-compose.yml`:
 
+***.devcontainer/docker-compose.yml***
 ```yml
 [...]
   silverstripe:
@@ -386,7 +391,7 @@ In a typical `.env` file, you definitely want to define the database server, dat
 
 Lastly, you'll probably want to define the environment type as *dev*, so you can take advantage of all the debugging tools and get some verbose errors.
 
-*project-folder/.env*
+***.env***
 ```bash
 SS_ENVIRONMENT_TYPE='dev'
 ```
@@ -414,8 +419,8 @@ Let's now take this a step further. There are some more things we want to throw 
 
 Also, you can specify the default admin username and password. For local development you're probably not too concerned about security, so having something easy to remember such as *root/password*, is just fine as long as the password has **at least 8 characters**.
 
-*project-folder/.env*
-```php
+***.env***
+```bash
 SS_ENVIRONMENT_TYPE='dev'
 SS_DATABASE_CHOOSE_NAME=true
 SS_DEFAULT_ADMIN_USERNAME='root'
@@ -452,12 +457,14 @@ In order to get ready for the next lesson you need to clean up your project-fold
    ```
 3. Move the contents of `website` to your project-folder.
 4. Delete the `website` folder.
-5. Add following line to the `.gitignore` file:
+5. Add following line to the `.gitignore` file:  
+   ***.gitignore***
     ```ignore
     .devcontainer/mysql-data/
     ```
 6. In your web browser head to <http://localhost:8888/>
-7. Add the new variables to the `docker-compose-yml` file in the `.devcontainer` folder:
+7. Add the new variables to the `docker-compose.yml` file in the `.devcontainer` folder:  
+   ***.devcontainer/docker-compose.yml***
     ```yml
     [...]
     silverstripe:
