@@ -2,6 +2,7 @@
 
 To create our main menu, we'll use a global method that SilverStripe provides to all your templates: the `$Menu` function. `$Menu` returns a list of all the pages in a given section of the site. Because it returns a set rather than a single value, we'll need to loop through the result to create a menu of varying length. Inside the `<ul>` tag that wraps the primary navigation, remove the hardcoded `<li>` tags and add the following syntax:
 
+***app/templates/Page.ss***
 ```html
 <ul class="nav navbar-nav">
     <% loop $Menu(1) %>
@@ -52,6 +53,7 @@ Below that, we have some breadcrumbs hardcoded into the template. This is likely
 
 Replace the contents of `<div class="breadcrumb" />` with `$Breadcrumbs`:
 
+***app/templates/Page.ss***
 ```html
 <div class="breadcrumb">
     $Breadcrumbs
@@ -62,6 +64,7 @@ The most important section of our page is the `<!-- BEGIN CONTENT -->` area. In 
 
 Replace the contents of `<div class="main col-sm-8" />` with $Content:
 
+***app/templates/Page.ss***
 ```html
 <div class="main col-sm-8">
     $Content
@@ -72,6 +75,7 @@ Alongside the content, we have a sidebar that contains subnavigation. Earlier in
 
 Replace the contents of the sidebar as follows:
 
+***app/templates/Page.ss***
 ```html
 <div class="sidebar gray col-sm-4">
     <% if $Menu(2) %>
