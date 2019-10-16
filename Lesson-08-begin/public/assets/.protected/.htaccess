@@ -1,2 +1,2 @@
-Deny from all
+Require all denied
 RewriteRule .* - [F]
