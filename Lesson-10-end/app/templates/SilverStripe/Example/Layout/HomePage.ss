@@ -253,7 +253,7 @@
                                 <ul class="top-info">
                                     <li><i class="fa fa-calendar"></i> $Date.Format('LLLL d, yyyy')</li>
                                     <li><i class="fa fa-comments-o"></i> 2</li>
-                                    <li><i class="fa fa-tags"></i> Properties, Prices, best deals</li>
+                                    <li><i class="fa fa-tags"></i> $CategoriesList</li>
                                 </ul>
                                 <h3>
                                     <a href="$Link">$Title</a>

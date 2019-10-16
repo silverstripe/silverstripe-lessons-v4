@@ -1,27 +1,26 @@
 ### What we'll cover
 
-*   Creating a DataObject for our $many_many
-*   Adding interface for $many_many
-*   Pulling the data into the template
+* Creating a `DataObject` for our `$many_many`
+* Adding interface for `$many_many`
+* Pulling the data into the template
 
-### Creating a DataObject for $many_many
+### Creating a `DataObject` for `$many_many`
 
-Let's turn our focus back to the `ArticlePage` now and see that each article is associated with many categories. We can imagine that in the CMS, we want a list of selectable categories, perhaps checkboxes, that are offered to each article. The first thing we'll need to do is set up a place to manage the categories. There are several different ways you can do this. It really depends on what kind of user experience you want to create, but for now, let's stick them on the ArticleHolder object, so that, conceivably, another `ArticleHolder` page could provide its own set of distinct categories.
+Let's turn our focus back to the `ArticlePage` now and see that each article is associated with many categories. We can imagine that in the CMS, we want a list of selectable categories, perhaps checkboxes, that are offered to each article. The first thing we'll need to do is set up a place to manage the categories. There are several different ways you can do this. It really depends on what kind of user experience you want to create, but for now, let's stick them on the `ArticleHolder` object, so that, conceivably, another `ArticleHolder` page could provide its own set of distinct categories.
 
-#### Managing the ArticleCategory objects
+#### Managing the `ArticleCategory` objects
 
-_app/src/ArticleHolder.php_
-
+***app/src/ArticleHolder.php***
 ```php
 //...
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 
-class ArticleHolder extends Page {
-    
+class ArticleHolder extends Page
+{
     //...
     private static $has_many = [
-        'Categories' => ArticleCategory::class,
+        'Categories' => ArticleCategory::class
     ];
 
     public function getCMSFields()
@@ -38,26 +37,27 @@ class ArticleHolder extends Page {
     }
 }
 ```
+
 Next, let's create that `ArticleCategory` object. It's going to be really simple.
 
-_app/src/ArticleCategory.php_
+***app/src/ArticleCategory.php***
 ```php
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 
-class ArticleCategory extends DataObject {
-
+class ArticleCategory extends DataObject
+{
     private static $db = [
-        'Title' => 'Varchar',
+        'Title' => 'Varchar'
     ];
 
     private static $has_one = [
-        'ArticleHolder' => ArticleHolder::class,
+        'ArticleHolder' => ArticleHolder::class
     ];
 
     public function getCMSFields()
@@ -81,34 +81,35 @@ Now that we have some categories to work with, let's relate them to the articles
 
 In this case, a `$has_many` is not what we want. Remember that reciprocal `$has_one` we used with `$has_many`? That declares that each related object can only belong to one parent. Once that relation is created, it can't be used anywhere else. We don't want that behaviour with categories. Once a category is claimed by an article, it should still be available to other articles. Therefore, articles have many categories, and categories have many articles. This is a `$many_many` relationship.
 
-_app/src/ArticlePage.php_
-
+***app/src/ArticlePage.php***
 ```php
-//...
-class ArticlePage extends Page {
-    //...
+// ...
+class ArticlePage extends Page
+{
+    // ...
     private static $many_many = [
         'Categories' => ArticleCategory::class,
     ];
-    //...
+    // ...
 }
 ```
 
-Run `dev/build` and see that we get a new table, `SilverStripe_Lessons_ArticlePage_Categories`.
+Run `dev/build?flush` and see that we get a new table, `SilverStripe_Example_ArticlePage_Categories`.
 
-#### Reciprocating the $many_many
+#### Reciprocating the `$many_many`
 
 Optional, but strongly recommended is a reciprocation of this relationship on the `ArticleCategory` object, using `$belongs_many_many`. This variable does not create any database mutations, but will provide an magic method to the object for getting its parent records. In this case, we know that we'll need any `ArticleCategory` object to get its articles, because our design includes a filter by category in the sidebar, so this is quite important.
 
-_app/src/ArticleCategory.php_
+***app/src/ArticleCategory.php***
 ```php
-//...
-class ArticleCategory extends DataObject {
-    //...
+// ...
+class ArticleCategory extends DataObject
+{
+    // ...
     private static $belongs_many_many = [
-        'Articles' => ArticlePage::class,
+        'Articles' => ArticlePage::class
     ];
-    //...
+    // ...
 }
 ```
 
@@ -122,17 +123,19 @@ So if both sides of the relationship have many associated records, how do you kn
 
 Speaking of interface, we need to add some to the `ArticlePage` object. Let's introduce `CheckboxSetField`.
 
-_app/src/ArticlePage.php_
+***app/src/ArticlePage.php***
 ```php
-//...
+// ...
 use SilverStripe\Forms\CheckboxSetField;
+// ...
 
-class ArticlePage extends Page {
-    //...
+class ArticlePage extends Page
+{
+    // ...
     public function getCMSFields()
     {
         $fields = parent::getCMSFields();
-        //...
+        // ...
         $fields->addFieldToTab('Root.Categories', CheckboxSetField::create(
             'Categories',
             'Selected categories',
@@ -142,12 +145,13 @@ class ArticlePage extends Page {
     }
 }
 ```
+
 Let's take a look at the argument signature of `CheckboxSetField`:
 
-*   **'Categories'**: The name of the `$many_many` relation we're managing.
-*   **'Selected categories'**: A label for the checkboxes.
-*   **$this->Parent()->Categories()**: The categories are stored on the parent `ArticleHolder` page, so we need to invoke `Parent()` first.
-*   **->map('ID', 'Title')**: Using the resulting list of categories, create an array that maps each category's ID to its Title. This tells the checkboxes to save the ID to the relation, but present the `Title` field as a label. Note that `Title` can be any public method executable on the object, which is useful if you want a computed value or concatenation of multiple fields. 99% of the time, you will want to use `ID` as the first argument here, as relational data is all held together by unique identifiers.
+* **`'Categories'`**: The name of the `$many_many` relation we're managing.
+* **`'Selected categories'`**: A label for the checkboxes.
+* **`$this->Parent()->Categories()`**: The categories are stored on the parent `ArticleHolder` page, so we need to invoke `Parent()` first.
+* **`->map('ID', 'Title')`**: Using the resulting list of categories, create an array that maps each category's ID to its Title. This tells the checkboxes to save the ID to the relation, but present the `Title` field as a label. Note that `Title` can be any public method executable on the object, which is useful if you want a computed value or concatenation of multiple fields. 99% of the time, you will want to use `ID` as the first argument here, as relational data is all held together by unique identifiers.
 
 Go into the CMS and edit an article under "Travel Guides." Check off some categories and make sure they save.
 
@@ -157,26 +161,36 @@ Go into the CMS and edit an article under "Travel Guides." Check off some catego
 
 Now let's look at adding the comma-separated category list to the articles.
 
-_app/templates/SilverStripe/Lessons/Layout/ArticlePage.ss, line 23_
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
-<li><i class="fa fa-tags"></i> 
-     <% loop $Categories %>$Title<% if not $Last %>, <% end_if %><% end_loop %>
-</li>
+<ul>
+    <li><i class="fa fa-calendar"></i> $Date.Long</li>
+    <li><i class="fa fa-comments-o"></i> 3 Comments</li>
+    <li>
+        <i class="fa fa-tags"></i>
+        <% loop $Categories %>
+            $Title<% if not $Last %>, <% end_if %>
+        <% end_loop %>
+    </li>
+</ul>
 ```
+
 We can use the global template variable `$Last` to tell us whether we're in the last iteration of the loop, which will determine whether or not we show the comma. Also available are `$First`, `$Even`, `$Odd`, and many others.
 
 #### Using a custom getter
 
 If we reload the page, this all looks great, but we're not done yet. The categories are also displayed on `ArticleHolder.ss` and `HomePage.ss`. This is a lot of template syntax to keep replicating. We could put this into an include, but it would be better if the `ArticlePage` objects could render a comma-separated list of categories themselves. Let's create a new method that does this.
 
-_app/src/ArticlePage.php_
+***app/src/ArticlePage.php***
 ```php
-//...
-class ArticlePage extends Page {
-    //...
+// ...
+class ArticlePage extends Page
+{
+    // ...
     public function CategoriesList()
     {
-        if($this->Categories()->exists()) {
+        if ($this->Categories()->exists())
+        {
             return implode(', ', $this->Categories()->column('Title'));
         }
         
@@ -191,15 +205,36 @@ Invoking `column()` on the list of `ArticleCategory` objects will get an array o
 
 Now update `HomePage.ss`, `ArticleHolder.ss`, and `ArticlePage.ss` to use the `$CategoriesList` method.
 
-_app/templates/Silverstripe/Lessons/Layout/ArticlePage.ss, line 23_
+***app/templates/Silverstripe/Example/Layout/ArticlePage.ss***
 ```html
-<li><i class="fa fa-tags"></i> $CategoriesList</li>
+<ul>
+    <li><i class="fa fa-calendar"></i> $Date.Long</li>
+    <li><i class="fa fa-comments-o"></i> 3 Comments</li>
+    <li><i class="fa fa-tags"></i> $CategoriesList</li>
+</ul>
 ```
-_app/templates/Silverstripe/Lessons/Layout/ArticleHolder.ss, line 23_
+
+***app/templates/Silverstripe/Example/Layout/ArticleHolder.ss***
 ```html
-<li><i class="fa fa-tags"></i> $CategoriesList</li>
+<ul class="top-info">
+    <li><i class="fa fa-calendar"></i> $Date.Long</li>
+    <li><i class="fa fa-comments-o"></i> 2</li>
+    <li><i class="fa fa-tags"></i> $CategoriesList</li>
+</ul>
 ```
-_app/templates/SilverStripe/Lessons/Layout/HomePage.ss, line 284_
+
+***app/templates/SilverStripe/Lessons/Layout/HomePage.ss***
 ```html
-<li><i class="fa fa-tags"></i> $CategoriesList</li>
+<ul class="top-info">
+    <li><i class="fa fa-calendar"></i> $Date.Format('LLLL d, yyyy')</li>
+    <li><i class="fa fa-comments-o"></i> 2</li>
+    <li><i class="fa fa-tags"></i> $CategoriesList</li>
+</ul>
+```
+
+### Database backup
+
+As we changed the database once more we have to create another database backup:
+
+```bash
 ```

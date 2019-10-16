@@ -6,6 +6,7 @@ use Page;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\Image;
+use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
@@ -23,6 +24,10 @@ class ArticlePage extends Page
     private static $has_one = [
         'Photo' => Image::class,
         'Brochure' => File::class
+    ];
+
+    private static $many_many = [
+        'Categories' => ArticleCategory::class,
     ];
 
     private static $owns = [
@@ -48,6 +53,22 @@ class ArticlePage extends Page
         $brochure
             ->setFolderName('travel-brochures')
             ->getValidator()->setAllowedExtensions(array('pdf'));
+        $fields->addFieldToTab('Root.Categories', CheckboxSetField::create(
+            'Categories',
+            'Selected categories',
+            $this->Parent()->Categories()->map('ID','Title')
+        ));
         return $fields;
+        return $fields;
+    }
+
+    public function CategoriesList()
+    {
+        if ($this->Categories()->exists())
+        {
+            return implode(', ', $this->Categories()->column('Title'));
+        }
+        
+        return null;
     }
 }
