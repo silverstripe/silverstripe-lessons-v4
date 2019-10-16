@@ -196,7 +196,7 @@ Most of the hard work is done now. It's time to insert all the variables in to o
 
 One issue we can see is that the date is not formatting the way it should. Since we casted the field as Date, we have some control over that at the template level. The Long method will give us what we need. Replace `$Date` with `$Date.Long`.
 
-There are a number of other methods available on the Date class to help you get the format you want. You might try `$Date.Nice`, or, if you're in the USA, `$Date.NiceUS` for a format that puts the month first. If all else fails, you can always invoke `$Date.Format` which essentially exposes PHP's date() method, allowing you to pass a string of text to get the format you need.
+There are a number of other methods available on the Date class to help you get the format you want. You might try `$Date.Nice`, or, if you're in the USA, `$Date.NiceUS` for a format that puts the month first. If all else fails, you can always invoke `$Date.Format` which allows you to pass a string of text to get the format you need.
 
 Lastly, we said earlier that we would like the teaser to be an optional field, falling back on the first sentence of the content if it isn't populated. Let's set that up.
 
