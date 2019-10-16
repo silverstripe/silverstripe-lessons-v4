@@ -22,6 +22,7 @@ Since all these fields appear on the `ArticlePage` records, we'll only need to b
 
 Let's define a new private static variable in `ArticlePage.php` called `$db`. Set it to an empty array.
 
+***app/src/ArticlePage.php***
 ```php
 class ArticlePage extends Page
 {
@@ -31,6 +32,7 @@ class ArticlePage extends Page
 
 The `$db` array is the cornerstone of data modelling in SilverStripe. Its function is pretty simple – it maps a field name to a field type. So the keys of the array are going to represent the variables that you can invoke on the object, such as `$Content`, `$Title`, etc, and the values of the array will be the field type. We'll talk more about field types in just a moment, but for now, let's populate this array with the fields we need.
 
+***app/src/ArticlePage.php***
 ```php
 class ArticlePage extends Page
 {
@@ -102,6 +104,7 @@ Our database is ready to store these new fields on our page type, so now it's ti
 
 Let's define a new method that exposes the API for updating the CMS interface for this page.
 
+***app/src/ArticlePage.php***
 ```php
 class ArticlePage extends Page
 {
@@ -123,6 +126,7 @@ The method `getCMSFields` is what the CMS invokes to create all of the tabs and 
 
 In this case, we're going to want three new fields. Let's use the `FieldList` API to add some new form inputs.
 
+***app/src/ArticlePage.php***
 ```php
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\TextareaField;
@@ -152,6 +156,7 @@ Let's go into the CMS and edit any `ArticlePage`. Notice our new fields at the b
 
 There are a couple usability issues we can address here. One is that the fields are all pinned to the bottom of the page, below the content editor, making it difficult for the user to find. Fortunately, the `addFieldToTab()` method accepts an optional argument to specify an existing field that the new field should come before. In this case, we want these fields before the `Content` field.
 
+***app/src/ArticlePage.php***
 ```php
     public function getCMSFields()
     {
@@ -165,6 +170,7 @@ There are a couple usability issues we can address here. One is that the fields 
 
 Second, it might not be too clear to the user what "teaser" means. Let's add some help text.
 
+***app/src/ArticlePage.php***
 ```php
     public function getCMSFields()
     {
@@ -196,6 +202,7 @@ Lastly, we said earlier that we would like the teaser to be an optional field, f
 
 In `ArticleHolder.ss` make following change:
 
+***app/templates/SilverStripe/Example/Layout/ArticleHolder.ss***
 ```html
     <div class="info-blog">
         <ul class="top-info">
