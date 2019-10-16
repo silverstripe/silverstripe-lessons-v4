@@ -13,19 +13,19 @@ To create our main menu, we'll use a global method that SilverStripe provides to
 
 Let's examine what each piece of syntax does:
 
-**<% loop $Menu(1) %>** Begins a loop through all the menu items, repeating all the HTML that is in the loop for each one. By passing (1) as an argument, we are asking the CMS to give us all the pages at level 1 of the hierarchy. Changing that to (2) would give us all the pages at the second level of the hierarchy in the current section, and so on.  
+**`<% loop $Menu(1) %>`** Begins a loop through all the menu items, repeating all the HTML that is in the loop for each one. By passing (1) as an argument, we are asking the CMS to give us all the pages at level 1 of the hierarchy. Changing that to (2) would give us all the pages at the second level of the hierarchy in the current section, and so on.  
 
-**$Link** The link to the page in the current iteration of the loop. 
+**`$Link`** The link to the page in the current iteration of the loop. 
 
-**$Title** The title of the page in the current iteration of the loop
+**`$Title`** The title of the page in the current iteration of the loop
 
-**$MenuTitle** SilverStripe distinguishes between the title of a page (i.e. in your `<h1>` tag) and the title that should appear in the context of navigation. Often times these are the same, but since the user is given the option to customise the title in menus, we use the $MenuTitle variable here.
+**`$MenuTitle`** SilverStripe distinguishes between the title of a page (i.e. in your `<h1>` tag) and the title that should appear in the context of navigation. Often times these are the same, but since the user is given the option to customise the title in menus, we use the $MenuTitle variable here.
 
-**$LinkingMode** A helper method that indicates the state of our menu. For each item in the list, this method will return one of three strings:
+**`$LinkingMode`** A helper method that indicates the state of our menu. For each item in the list, this method will return one of three strings:
 
-*   **link**: the page is not active
-*   **current**: this is the current page
-*   **section**: the current page is a descendant of this page (i.e. on the URL `/about-us/company`, the "company" page is current, and the "about-us" page is "section."
+*   **`link`**: the page is not active
+*   **`current`**: this is the current page
+*   **`section`**: the current page is a descendant of this page (i.e. on the URL `/about-us/company`, the "company" page is current, and the "about-us" page is "section."
 
 Refresh the page. You should now see the three default pages SilverStripe creates for you in the primary navigation: Home, About Us, and Contact Us.
 
