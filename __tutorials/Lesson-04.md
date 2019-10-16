@@ -51,11 +51,11 @@ To illustrate how this works, let's first find all the content that will not be 
 
 In your `app/templates/Page.ss` file highlight all of the content between `</header>` and `<footer>` and cut it into your clipboard. Replace all of that content with the variable **$Layout**.
 
-Create a new template in `templates/Layout` called `Page.ss`. Paste the content from your clipboard into that file, and save.
+Create a new template in `app/templates/Layout` called `Page.ss`. Paste the content from your clipboard into that file, and save.
 
-Likewise, we'll need to create a new `Layout/` template for our `HomePage` class. Unlike `Page` however, our `HomePage` page type is namespaced. We'll need to create the appropriate pathing in our `templates/` directory for the fully-qualified name.
+Likewise, we'll need to create a new `Layout/` template for our `HomePage` class. Unlike `Page` however, our `HomePage` page type is namespaced. We'll need to create the appropriate pathing in our `app/templates/` directory for the fully-qualified name.
 
-Make a directory called `templates/SilverStripe/Example`. In that directory, create another directory called `Layout/`. In that directory, create `HomePage.ss`. The full path should be `templates/SilverStripe/Example/Layout/HomePage.ss`.
+Make a directory called `app/templates/SilverStripe/Example`. In that directory, create another directory called `Layout/`. In that directory, create `HomePage.ss`. The full path should be `app/templates/SilverStripe/Example/Layout/HomePage.ss`.
 
 Now copy the content between [`</header>` and `<footer>` in the `home.html` file][ChangedContent] to your clipboard and paste it into this new file.
 
@@ -64,10 +64,10 @@ Any time we create a new template, we need to flush the cache, so append `?flush
 It may seem trivial, but you've just achieved massive gains in efficiency and code organisation. Here's how it works:
 
 *   SilverStripe sees that you are requesting a URL for a page that uses the `HomePage.ss` template
-*   It first looks in the main `templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Example\HomePage`, which is `Page`, and uses it.
-*   The `$Layout` variable tells SilverStripe to look in the `templates/{page namespace}/Layout` directory for a template that matches this page type. It finds `templates/SilverStripe/Example/HomePage.ss` and uses it. If it had not found `templates/SilverStripe/Example/HomePage.ss`, it would chase up the ancestry and find `templates/Page.ss`, and use that as a fallback.
+*   It first looks in the main `app/templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Example\HomePage`, which is `Page`, and uses it.
+*   The `$Layout` variable tells SilverStripe to look in the `app/templates/{page namespace}/Layout` directory for a template that matches this page type. It finds `app/templates/SilverStripe/Example/HomePage.ss` and uses it. If it had not found `app/templates/SilverStripe/Example/HomePage.ss`, it would chase up the ancestry and find `app/templates/Page.ss`, and use that as a fallback.
 
-A vast majority of SilverStripe projects have only one template, `Page.ss`, in the root `templates/`, leaving everything else to `{namespace}/Layout/`. In some circumstances, you may have a page type that has such a distinct design that it needs its own chrome. A common example of this is a login page, where the user is presented with a very streamlined, isolated form.
+A vast majority of SilverStripe projects have only one template, `Page.ss`, in the root `app/templates/`, leaving everything else to `{namespace}/Layout/`. In some circumstances, you may have a page type that has such a distinct design that it needs its own chrome. A common example of this is a login page, where the user is presented with a very streamlined, isolated form.
 
 ### Injecting assets through the controller
 
@@ -77,6 +77,7 @@ To include these dependencies, we'll make a call to the `Requirements` class in 
 
 Make the following update to the `init()` method.
 
+***app/src/PageController.php***
 ```php
 <?php
 
@@ -105,13 +106,13 @@ We use `themedCSS` and `themedJavascript` to auto-locate the resource based on t
 
 The only resources we haven't included are the html5 shim that is conditionally included for IE8, and the Google font that is loaded from an absolute path.
 
-Next, remove all the `<script>` and stylesheet tags from your `templates/Page.ss` file that are now loaded via `Requirements`.
+Next, remove all the `<script>` and stylesheet tags from your `app/templates/Page.ss` file that are now loaded via `Requirements`.
 
 ### Tidying up with includes
 
-To keep our templates less dense and easier to work on, we'll spin off parts of the template into the `templates/Includes` directory. Start by cutting the `<div id="top-bar" />` into your clipboard. Replace that entire div with `<% include TopBar %>`. The include declaration tells SilverStripe to look in the `templates/Includes` directory for a template with the name that you specified. 
+To keep our templates less dense and easier to work on, we'll spin off parts of the template into the `app/templates/Includes` directory. Start by cutting the `<div id="top-bar" />` into your clipboard. Replace that entire div with `<% include TopBar %>`. The include declaration tells SilverStripe to look in the `app/templates/Includes` directory for a template with the name that you specified. 
 
-Create a file named `TopBar.ss` in `templates/Includes` and paste the content from your clipboard. We don't need a namespaced path in this case, since the `Page.ss` template is not namespaced itself.
+Create a file named `TopBar.ss` in `app/templates/Includes` and paste the content from your clipboard. We don't need a namespaced path in this case, since the `Page.ss` template is not namespaced itself.
 
 Repeat this process for `<div id="nav-section" />`, and call the template `MainNav.ss`.
 
