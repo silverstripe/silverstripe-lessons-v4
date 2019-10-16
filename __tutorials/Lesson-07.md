@@ -68,6 +68,7 @@ Run `dev/build` and notice the new fields that are created. They take on the nam
 
 Let's now add some upload functionality to our `getCMSFields` function. For file relations, `UploadField` is the best choice. For tidiness, we'll put the uploaders on their own tab.
 
+***app/src/ArticlePage.php***
 ```php
 namespace SilverStripe\Example;
 
@@ -101,6 +102,7 @@ This works well, but we can tighten it up a bit. First, giving a written indicat
 
 For this, we'll tap into the UploadField's **validator**.
 
+***app/src/ArticlePage.php***
 ```php
     public function getCMSFields()
     {
@@ -123,6 +125,7 @@ It would also be nice if the uploader put all the files in a folder of our choos
 
 We can use `setFolderName()` on the `UploadField` to assign a folder, relative to `assets/*`. If the folder doesn't exist, it will be created, along with any non-existent ancestors you specify, i.e. `does/not/exist` would create `does`, `does/not` as well as the `does/not/exist` folder.
 
+***app/src/ArticlePage.php***
 ```php
     public function getCMSFields() {
         $fields = parent::getCMSFields();
@@ -147,6 +150,7 @@ Because we declared the file relation as a `$has_one`, we can access the propert
 
 Let's make an update to `ArticlePage.ss` to show a download button for the brochure, if one exists. Below `<div class="share-wrapper" />`, add the following:
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <% if $Brochure %>
     <div class="row">
@@ -168,6 +172,7 @@ Reload the page and give it a test. You should be able to download your PDF.
 
 This file download works great, but we can clean up the template syntax a bit. There are multiple references to properties that we're getting by traversing the `$Brochure` object. We can remove all that dot-separated syntax by wrapping the whole thing in a scope block, known as `<% with %>`.
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <% if $Brochure %>
     <div class="row">
@@ -232,6 +237,7 @@ On `ArticlePage.ss`, the photo is larger, and it's important that we show all of
 
 Replace the placeholder image in `<div class="blog-main-image" />` with `$Photo.ScaleWidth(765)`:
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <div class="blog-main-image">
     $Photo.ScaleWidth(765)
@@ -251,11 +257,14 @@ The good news is that these methods actually don't return strings of text. They 
 
 Let's rewrite those template variables to output custom HTML.
 
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <img class="my-custom-class" src="$Photo.ScaleWidth(765).URL" alt="" width="$Photo.ScaleWidth(765).Width" height="$Photo.ScaleWidth(765).Height" />
 ```
 
 That gets a bit unwieldy, so let's revisit that `<% with %>` block that we used earlier to clean things up a bit.
+
+***app/templates/SilverStripe/Example/Layout/ArticlePage.ss***
 ```html
 <% with $Photo.ScaleWidth(765) %>
     <img class="my-custom-class" src="$URL" alt="" width="$Width" height="$Height" />
@@ -268,6 +277,7 @@ Try previewing your article page in another browser, where you're not logged in 
 
 So how do you publish files? The most obvious way is in the **Files** section of the CMS. But in this case, it would be nice if when we published the article, any attached files became implicitly published as well. For that, we need to declare ownership of the files to ensure they receive publication by association.
 
+***app/src/ArticlePage.php***
 ```php
 class ArticlePage extends Page
 {
@@ -286,6 +296,7 @@ Now the attached files will be sympathetic to the publication state of their con
 As we want the brochures and photos to presist when recreating the docker-environment, we have to make sure said files are not excluded.  
 Add following lines to the `public/assets/.gitignore` file:
 
+***public/assets/.gitignore***
 ```bash
 !/.protected/
 /.protected/*
