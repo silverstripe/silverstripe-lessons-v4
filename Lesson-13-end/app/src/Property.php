@@ -26,7 +26,7 @@ class Property extends DataObject
 
     private static $has_one = [
         'Region' => Region::class,
-        'PrimaryPhoto' => Image::class,
+        'PrimaryPhoto' => Image::class
     ];
 
     private static $summary_fields = [
@@ -37,11 +37,11 @@ class Property extends DataObject
     ];
 
     private static $owns = [
-        'PrimaryPhoto',
+        'PrimaryPhoto'
     ];
 
     private static $extensions = [
-        Versioned::class,
+        Versioned::class
     ];
 
     private static $versioned_gridfield_extensions = true;
