@@ -17,6 +17,19 @@ High-powered, intelligent keyword searching is perhaps a topic for another tutor
 
 On an unrelated note, please raise your tolerance level for imperfect visual design. The forms we'll create will not render markup that is compatible with our stylesheet. We have a whole tutorial on customising forms coming up very soon, and in the interest of maintaining a single focus, that step has been omitted from this tutorial.
 
+### Generating new properties
+
+We wawnt to create or own search/filter page for the `Property` `DataObject`.  
+At this point we have only about 6 properties in our database and for testing it might be helpful to get a handful more properties in our database.
+
+Therefore an `.sql`-script is ready for you in the assets-directory to generate 200 random properties.
+
+[Go grab it here](https://raw.githubusercontent.com/silverstripe/silverstripe-lessons-v4/41c626de448e119d9f7d599351b2ef060ce8f3c3/Lesson-15-begin/__assets/generate_properties.sql), copy it to `__assets/generate_properties.sql` and execute it:
+
+```bash
+mysql -hdb -uroot -proot -DSS_html < __assets/generate_properties.sql
+```
+
 ### Making a minor update to the Property object
 
 Let's look at the search form on the home page. We have four parameters we can use in our search:
@@ -64,7 +77,7 @@ We'll spare you the trouble of populating those values for all records, so now i
 After downloading you can execute the `.sql`-file using this command:
 
 ```bash
-mysql -uroot -proot -hdb -DSS_html < set_property_dates.sql
+mysql -uroot -proot -hdb -DSS_html < __assets/set_property_dates.sql
 ```
 
 Our keyword search will need to search a property description. We'll add that field, as well.
