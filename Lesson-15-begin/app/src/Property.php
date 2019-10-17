@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
@@ -16,7 +16,6 @@ use SilverStripe\Versioned\Versioned;
 
 class Property extends DataObject
 {
-
     private static $db = [
         'Title' => 'Varchar',
         'PricePerNight' => 'Currency',
@@ -25,10 +24,9 @@ class Property extends DataObject
         'FeaturedOnHomepage' => 'Boolean'
     ];
 
-
     private static $has_one = [
         'Region' => Region::class,
-        'PrimaryPhoto' => Image::class,
+        'PrimaryPhoto' => Image::class
     ];
 
     private static $summary_fields = [
@@ -39,38 +37,14 @@ class Property extends DataObject
     ];
 
     private static $owns = [
-        'PrimaryPhoto',
+        'PrimaryPhoto'
     ];
 
     private static $extensions = [
-        Versioned::class,
+        Versioned::class
     ];
 
     private static $versioned_gridfield_extensions = true;
-
-    public function searchableFields()
-    {
-        return [
-            'Title' => [
-                'filter' => 'PartialMatchFilter',
-                'title' => 'Title',
-                'field' => TextField::class,
-            ],
-            'RegionID' => [
-                'filter' => 'ExactMatchFilter',
-                'title' => 'Region',
-                'field' => DropdownField::create('RegionID')
-                    ->setSource(
-                        Region::get()->map('ID','Title')
-                    )
-                    ->setEmptyString('-- Any region --')
-            ],
-            'FeaturedOnHomepage' => [
-                'filter' => 'ExactMatchFilter',
-                'title' => 'Only featured'
-            ]
-        ];
-    }
 
     public function getCMSfields()
     {
@@ -97,5 +71,29 @@ class Property extends DataObject
         $upload->setFolderName('property-photos');
 
         return $fields;
+    }
+
+    public function searchableFields()
+    {
+        return [
+            'Title' => [
+                'filter' => 'PartialMatchFilter',
+                'title' => 'Title',
+                'field' => TextField::class,
+            ],
+            'RegionID' => [
+                'filter' => 'ExactMatchFilter',
+                'title' => 'Region',
+                'field' => DropdownField::create('RegionID')
+                    ->setSource(
+                        Region::get()->map('ID','Title')
+                    )
+                    ->setEmptyString('-- Any region --')
+            ],
+            'FeaturedOnHomepage' => [
+                'filter' => 'ExactMatchFilter',
+                'title' => 'Only featured'
+            ]
+        ];
     }
 }
