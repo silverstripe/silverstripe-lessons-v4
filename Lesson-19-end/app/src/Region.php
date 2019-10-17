@@ -1,31 +1,30 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+use SilverStripe\Forms\TextareaField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\Control\Controller;
 
 class Region extends DataObject
 {
-
     private static $db = [
         'Title' => 'Varchar',
-        'Description' => 'HTMLText',
+        'Description' => 'HTMLText'
     ];
 
     private static $has_one = [
         'Photo' => Image::class,
-        'RegionsPage' => RegionsPage::class,
+        'RegionsPage' => RegionsPage::class
     ];
-
-    private static $has_many = [
-        'Articles' => ArticlePage::class,
+    
+    private static $owns = [
+        'Photo'
     ];
 
     private static $summary_fields = [
@@ -34,24 +33,14 @@ class Region extends DataObject
         'Description' => 'Description'
     ];
 
-    private static $owns = [
-        'Photo',
+    private static $searchable_fields = [
+        'Title',
+        'Description'
     ];
 
     private static $extensions = [
-        Versioned::class,
+        Versioned::class
     ];
-
-    private static $versioned_gridfield_extensions = true;
-
-    public function getGridThumbnail()
-    {
-        if($this->Photo()->exists()) {
-            return $this->Photo()->ScaleWidth(100);
-        }
-
-        return "(no image)";
-    }
 
     public function getCMSFields()
     {
@@ -67,6 +56,16 @@ class Region extends DataObject
         return $fields;
     }
 
+    public function getGridThumbnail()
+    {
+        if($this->Photo()->exists())
+        {
+            return $this->Photo()->ScaleWidth(100);
+        }
+
+        return "(no image)";
+    }
+
     public function Link()
     {
         return $this->RegionsPage()->Link('show/'.$this->ID);
@@ -76,14 +75,4 @@ class Region extends DataObject
     {
         return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
     }
-
-    public function ArticlesLink()
-    {
-        $page = ArticleHolder::get()->first();
-
-        if($page) {
-            return $page->Link('region/'.$this->ID);
-        }
-    }
-
 }

@@ -1,23 +1,23 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
 
-class ArticleCategory extends DataObject {
-
+class ArticleCategory extends DataObject
+{
     private static $db = [
-        'Title' => 'Varchar',
+        'Title' => 'Varchar'
     ];
 
     private static $has_one = [
-        'ArticleHolder' => ArticleHolder::class,
+        'ArticleHolder' => ArticleHolder::class
     ];
 
     private static $belongs_many_many = [
-        'Articles' => ArticlePage::class,
+        'Articles' => ArticlePage::class
     ];
 
     public function getCMSFields()
@@ -26,12 +26,4 @@ class ArticleCategory extends DataObject {
             TextField::create('Title')
         );
     }
-
-    public function Link()
-    {
-        return $this->ArticleHolder()->Link(
-            'category/'.$this->ID
-        );
-    }
-
 }

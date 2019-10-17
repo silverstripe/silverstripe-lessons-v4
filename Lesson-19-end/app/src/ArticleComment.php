@@ -1,12 +1,11 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 
 class ArticleComment extends DataObject
 {
-
     private static $db = [
         'Name' => 'Varchar',
         'Email' => 'Varchar',
