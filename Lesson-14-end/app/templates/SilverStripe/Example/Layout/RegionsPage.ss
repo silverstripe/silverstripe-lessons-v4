@@ -12,17 +12,17 @@
                     <% loop $Regions %>
                         <div class="item col-md-12"><!-- Set width to 4 columns for grid view mode only -->
                             <div class="image image-large">
-                                <a href="#">
+                                <a href="$Link">
                                     <span class="btn btn-default"><i class="fa fa-file-0"></i> Read More</span>
                                 </a>
                                 $Photo.Fit(720, 255)
                             </div>
                             <div class="info-blog">
                                 <h3>
-                                    <a href="#">$Title</a></h3>
+                                    <a href="$Link">$Title</a></h3>
                                 </h3>
                                 <p>
-                                    $Description
+                                    $Description.FirstParagraph
                                 </p>
                             </div>
                         </div>
