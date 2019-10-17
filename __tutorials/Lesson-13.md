@@ -367,3 +367,38 @@ Now let's render the output to the template.
 You may have noticed that we deliberately added a non-existent method, `$Link` to the property. That's okay. It will just get ignored for now, but in the future, we'll add that method, and we won't have to come back here to make the update.
 
 Reload the page and see your featured properties!
+
+### Backup
+
+Since we've added a new directory to the assets which we want to use in future lessons you have to adjust the `.gitignore` file in the `assets`-directory once more.
+
+***public/assets/.gitignore***
+```bash
+/**/*
+!.gitignore
+!.htaccess
+!web.config
+
+!/.protected/
+/.protected/*
+
+# Ignore everything but travel-brochures, travel-photos, property-photos and region-photos
+!/**/travel-brochures/
+!/**/travel-photos/
+!/**/travel-*/**/*
+!/**/property-photos/
+!/**/property-photos/**/*
+!/**/region-photos/
+!/**/region-photos/**/*
+
+# Ignore mutated files
+**/*__*.*
+```
+
+This adds the `property-photos` to the project.
+
+Also don't forget to take a backup of the database to save the changes we've made to the database:
+
+```bash
+mysqldump -hdb -uroot -proot --databases SS_html > .devcontainer/initdb.d/database.sql
+```
