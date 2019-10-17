@@ -174,7 +174,7 @@ We also want to take advantage of the `Currency` field type that we used. Rememb
 
 Right now, the tab for our *Properties* section of the CMS is using a pretty generic icon, and if we have several of these custom admins, they won't be easily distinguished. Let's give it our own icon.
 
-Find [the `property.png` file that is included in the `__assets/`](https://github.com/manuth/silverstripe-lessons-v4/raw/master/Lesson-13-begin/__assets/property.png) directory of this lesson and move it into  `public/icons`.
+Find [the `property.png` file that is included in the `__assets/`](https://github.com/silverstripe/silverstripe-lessons-v4/raw/0359f2184f10e6b40484b8ff82d249c2ad7937e8/Lesson-13-begin/__assets/property.png) directory of this lesson and move it into  `public/icons`.
 
 ```php
 namespace SilverStripe\Example;
@@ -306,9 +306,9 @@ Run a `dev/build` to get the new tables.
 
 #### Importing data
 
-If you haven't been doing so all along, it's probably a good time to replace your `.devcontainer/initdb.d/database.sql` by [the one provided in the code repository](https://github.com/silverstripe/silverstripe-lessons-v4/raw/80fc1ae9c074e35c0c1a33bda6ff2ff0a06c0149/Lesson-13-begin/.devcontainer/initdb.d/database.sql). That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
+If you haven't been doing so all along, it's probably a good time to replace your `.devcontainer/initdb.d/database.sql` by [the one provided in the code repository](https://github.com/silverstripe/silverstripe-lessons-v4/raw/0359f2184f10e6b40484b8ff82d249c2ad7937e8/Lesson-13-end/.devcontainer/initdb.d/database.sql). That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
 
-Don't forget to copy over the [`assets/`](https://github.com/manuth/silverstripe-lessons-v4/tree/80fc1ae9c074e35c0c1a33bda6ff2ff0a06c0149/Lesson-13-begin/public/assets) folder, too. The property photos are in there.
+Don't forget to copy over the [`assets/`](https://github.com/silverstripe/silverstripe-lessons-v4/tree/0359f2184f10e6b40484b8ff82d249c2ad7937e8/Lesson-13-end/public/assets) folder, too. The property photos are in there.
 
 ### Adding properties to the template
 
