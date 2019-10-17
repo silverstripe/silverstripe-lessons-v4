@@ -953,7 +953,7 @@ CREATE TABLE `SilverStripe_Example_Region` (
 
 LOCK TABLES `SilverStripe_Example_Region` WRITE;
 /*!40000 ALTER TABLE `SilverStripe_Example_Region` DISABLE KEYS */;
-INSERT INTO `SilverStripe_Example_Region` VALUES (1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51',2,'The Northeast','Description about the Northeast',6,8),(2,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43',2,'The Northwest','Description about the Northwest',7,8),(3,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33',2,'The Southeast','Description about the Southeast',8,8),(4,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40',2,'The Southwest','Description about the Southwest',9,8);
+INSERT INTO `SilverStripe_Example_Region` VALUES (1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51',2,'The Northeast','Description about the Northeast',10,8),(2,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43',2,'The Northwest','Description about the Northwest',11,8),(3,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33',2,'The Southeast','Description about the Southeast',12,8),(4,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40',2,'The Southwest','Description about the Southwest',13,8);
 /*!40000 ALTER TABLE `SilverStripe_Example_Region` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -987,7 +987,7 @@ CREATE TABLE `SilverStripe_Example_Region_Live` (
 
 LOCK TABLES `SilverStripe_Example_Region_Live` WRITE;
 /*!40000 ALTER TABLE `SilverStripe_Example_Region_Live` DISABLE KEYS */;
-INSERT INTO `SilverStripe_Example_Region_Live` VALUES (1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51',2,'The Northeast','Description about the Northeast',6,8),(2,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43',2,'The Northwest','Description about the Northwest',7,8),(3,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33',2,'The Southeast','Description about the Southeast',8,8),(4,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40',2,'The Southwest','Description about the Southwest',9,8);
+INSERT INTO `SilverStripe_Example_Region_Live` VALUES (1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51',2,'The Northeast','Description about the Northeast',10,8),(2,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43',2,'The Northwest','Description about the Northwest',11,8),(3,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33',2,'The Southeast','Description about the Southeast',12,8),(4,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40',2,'The Southwest','Description about the Southwest',13,8);
 /*!40000 ALTER TABLE `SilverStripe_Example_Region_Live` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1032,7 +1032,7 @@ CREATE TABLE `SilverStripe_Example_Region_Versions` (
 
 LOCK TABLES `SilverStripe_Example_Region_Versions` WRITE;
 /*!40000 ALTER TABLE `SilverStripe_Example_Region_Versions` DISABLE KEYS */;
-INSERT INTO `SilverStripe_Example_Region_Versions` VALUES (1,1,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:32:51','2019-10-17 02:32:51','The Northeast','Description about the Northeast',6,8),(2,2,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:33:43','2019-10-17 02:33:43','The Northwest','Description about the Northwest',7,8),(3,3,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:34:33','2019-10-17 02:34:33','The Southeast','Description about the Southeast',8,8),(4,4,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:35:40','2019-10-17 02:35:40','The Southwest','Description about the Southwest',9,8),(5,1,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51','The Northeast','Description about the Northeast',6,8),(6,2,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43','The Northwest','Description about the Northwest',7,8),(7,3,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33','The Southeast','Description about the Southeast',8,8),(8,4,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40','The Southwest','Description about the Southwest',9,8);
+INSERT INTO `SilverStripe_Example_Region_Versions` VALUES (1,1,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:32:51','2019-10-17 02:32:51','The Northeast','Description about the Northeast',10,8),(2,2,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:33:43','2019-10-17 02:33:43','The Northwest','Description about the Northwest',11,8),(3,3,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:34:33','2019-10-17 02:34:33','The Southeast','Description about the Southeast',12,8),(4,4,1,0,0,1,1,0,'SilverStripe\\Example\\Region','2019-10-17 02:35:40','2019-10-17 02:35:40','The Southwest','Description about the Southwest',13,8),(5,1,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:32:51','The Northeast','Description about the Northeast',10,8),(6,2,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:33:43','The Northwest','Description about the Northwest',11,8),(7,3,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:34:33','The Southeast','Description about the Southeast',12,8),(8,4,2,1,0,1,1,1,'SilverStripe\\Example\\Region','2019-10-17 02:37:16','2019-10-17 02:35:40','The Southwest','Description about the Southwest',13,8);
 /*!40000 ALTER TABLE `SilverStripe_Example_Region_Versions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1467,4 +1467,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-16 13:43:47
+-- Dump completed on 2019-10-17 14:23:05
