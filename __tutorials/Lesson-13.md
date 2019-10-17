@@ -1,4 +1,4 @@
-## What we'll cover:
+### What we'll cover:
 
 * What is ModelAdmin, and when do I use it?
 * An overview of the CMS taxonomies
@@ -7,7 +7,7 @@
 * Basic customisations for ModelAdmin
 * Adding our data to the template
 
-## What is ModelAdmin, and when do I use it?
+### What is ModelAdmin, and when do I use it?
 
 In the last several lessons, we've talked a lot about DataObject content versus Page content. To recap, when content represents an entire page, which is to say, the `$Layout` section of our template, we subclass `Page` and manage this content in the site tree. When content is just part of a page, but merits its own editing interface, we use DataObjects. We looked at DataObject based content in our `RegionsPage`. While each `Region` object is part of a page, it needs its own editing tool. It wouldn't make sense to manage all that structured and repeating content on one page.
 
@@ -17,17 +17,17 @@ What we're talking about here is the idea of *standalone* DataObjects. They're f
 
 When we create a ModelAdmin interface, we get a new top-level section of the CMS, living among Pages, Files, Security, etc., that is dedicated to managing content per our specification. The great thing about ModelAdmin is that you can get up and running really fast, and customisations come fairly cheap.
 
-## An overview of CMS taxonomies
+### An overview of CMS taxonomies
 
 Before we start writing code, let's take a step back a bit and look at the bigger picture of how the CMS is architected and how it relates to ModelAdmin.
 
-### LeftAndMain
+#### LeftAndMain
 
 Every top-level "page" you use in the CMS -- that is, *Pages*, *Files*, *Security*, *Reports*, and *Settings* -- is a subclass of `SilverStripe\Admin\LeftAndMain`. LeftAndMain is kind of the matriarch of the entire CMS. It oversees and handles everything from permissions, to generating edit forms, to CSS and JavaScript bootstrapping, to request negotiation, to saving and deleting records. All of that said, the primary job of this behemoth is to provide a secure user interface that contains a `Left` section, like the site tree, or a search form, and a `Main` section, which is often an edit form. I know you're probably wondering, based on that, how did they come up with the name *LeftAndMain*? If you think of it, please let me know as soon as you figure it out. It's had me puzzled for years.
 
 Any subclass of `LeftAndMain` will automatically get added to the main menu in the CMS. All you have to do is provide templates that define its *Main* section, and another that defines its *Tools* section. ModelAdmin is an example of a class that does that, and it makes a lot of assumptions about what we want in both sections, so it's supremely easy to get started.
 
-## Building a standalone DataObject
+### Building a standalone DataObject
 
 As I said before, in this tutorial we're going to tackle the main content type in our application -- the *property* object, which represents any given holiday rental that an end user can rent, or that any property owner can let out. The property object will undoubtedly continue to grow with our application, but for now, we're just focused on giving them a home in the CMS, so let's keep it simple for now. Let's just give this object all the fields it needs for its representation on the home page.
 
@@ -114,7 +114,7 @@ Most of this is straightforward, but let's look at a few peculiarities that migh
 
 Alright, now that we have all that sorted, let's run `dev/build`.
 
-## Creating a ModelAdmin interface
+### Creating a ModelAdmin interface
 
 We'll now create the `ModelAdmin` interface that will give us a place to hang all these `Property` records. A basic ModelAdmin interface is exceedingly simple to create.
 
@@ -144,11 +144,11 @@ That's it! Let's walk through it:
 
 We created a new class, so we need to run a `?flush`. Let's do that and go into the CMS to see what we got. You should see a new *Properties* tab on the left. Give it a try, and see if you can add a few new `Property` records.
 
-## Making customisations
+### Making customisations
 
 Now that we've got our simple editing UI, we can start to customise it a bit to make it more powerful and user-friendly for our content editors.
 
-### Adding $summary_fields
+#### Adding $summary_fields
 We'll start with what we've seen before. `$summary_fields` gives us control over what fields display in list view.
 
 *app/src/Property.php*
@@ -169,7 +169,7 @@ We also want to take advantage of the `Currency` field type that we used. Rememb
 
 `Boolean` field types are quite generous, as well. We can invoke the `Nice()` method to return a value of *Yes* or *No*, translated per the user's locale.
 
-### Providing a custom icon
+#### Providing a custom icon
 
 Right now, the tab for our *Properties* section of the CMS is using a pretty generic icon, and if we have several of these custom admins, they won't be easily distinguished. Let's give it our own icon.
 
@@ -196,7 +196,7 @@ class PropertyAdmin extends ModelAdmin
 ```
 We changed a static property, so we'll run `?flush` and see that we have a new icon.
 
-### Customising the search form
+#### Customising the search form
 
 Just like the fields displayed in list view, the fields that appear in the search form are also customisable in the class definition of the DataObject. All we have to do is define a new private static variable called `$searchable_fields`. By default, the DataObject will provide the same fields that are specified in `$summary_fields`, but that may not be what you're looking for. In this case, we have `PricePerNight` in our `$summary_fields`, but that's not necessarily a field we want to search on in the admin, so let's explicitly declare a `$searchable_fields` array to list what we want.
 
@@ -272,7 +272,7 @@ When we define `searchableFields()`, we need to be much more explicit about how 
 
 Give the search form a try now. It feels a little better, right?
 
-### Adding versioning
+#### Adding versioning
 
 Properties are perhaps the most important elements on this entire website, so we'll want to ensure they have a draft state. We'll also add an `$owns` property for the primary photo, so it gets published as well.
 
@@ -300,13 +300,13 @@ class Property extends DataObject
 
 Run a `dev/build` to get the new tables.
 
-### Importing data
+#### Importing data
 
 If you haven't been doing so all along, it's probably a good time to import a database from the `__assets/database.sql` file in the completed version of this lesson. That file will add many sample properties to the database for you, which will really help when testing features like search and sort.
 
 Don't forget to copy over the `assets/` folder, too. The property photos are in there.
 
-## Adding properties to the template
+### Adding properties to the template
 
 The last step is simple. Let's just write a method in our `HomePage` controller that gets the featured properties.
 
