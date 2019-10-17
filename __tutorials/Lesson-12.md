@@ -263,3 +263,11 @@ Lastly, we'll update our template to use the new fields. All `Page` templates ar
 ```
 
 We've skipped over Pintrest, as it probably wouldn't apply to this business. We'll cover RSS in another tutorial, but either way, it won't be a site-wide RSS feed, so we can remove that button, as well.
+
+### Database backup
+
+Once more we've made changes to the database. Let's create a backup of the database:
+
+```bash
+mysqldump -hdb -uroot -proot -B SS_html > .devcontainer/initdb.d/database.sql
+```
