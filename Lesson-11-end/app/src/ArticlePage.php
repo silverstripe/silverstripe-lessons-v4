@@ -26,8 +26,12 @@ class ArticlePage extends Page
         'Brochure' => File::class
     ];
 
+    private static $has_many = [
+        'Comments' => ArticleComment::class
+    ];
+
     private static $many_many = [
-        'Categories' => ArticleCategory::class,
+        'Categories' => ArticleCategory::class
     ];
 
     private static $owns = [

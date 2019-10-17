@@ -79,7 +79,7 @@ CREATE TABLE `ChangeSetItem` (
   `Added` enum('explicitly','implicitly') DEFAULT 'implicitly',
   `ChangeSetID` int(11) NOT NULL DEFAULT '0',
   `ObjectID` int(11) NOT NULL DEFAULT '0',
-  `ObjectClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
+  `ObjectClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\ArticleComment','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
   PRIMARY KEY (`ID`),
   UNIQUE KEY `ObjectUniquePerChangeSet` (`ObjectID`,`ObjectClass`,`ChangeSetID`),
   KEY `ClassName` (`ClassName`),
@@ -258,7 +258,7 @@ CREATE TABLE `FileLink` (
   `Created` datetime DEFAULT NULL,
   `LinkedID` int(11) NOT NULL DEFAULT '0',
   `ParentID` int(11) NOT NULL DEFAULT '0',
-  `ParentClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
+  `ParentClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\ArticleComment','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
   PRIMARY KEY (`ID`),
   KEY `ClassName` (`ClassName`),
   KEY `LinkedID` (`LinkedID`),
@@ -859,6 +859,38 @@ INSERT INTO `SilverStripe_Example_ArticleCategory` VALUES (1,'SilverStripe\\Exam
 UNLOCK TABLES;
 
 --
+-- Table structure for table `SilverStripe_Example_ArticleComment`
+--
+
+DROP TABLE IF EXISTS `SilverStripe_Example_ArticleComment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `SilverStripe_Example_ArticleComment` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ClassName` enum('SilverStripe\\Example\\ArticleComment') DEFAULT 'SilverStripe\\Example\\ArticleComment',
+  `LastEdited` datetime DEFAULT NULL,
+  `Created` datetime DEFAULT NULL,
+  `Name` varchar(255) DEFAULT NULL,
+  `Email` varchar(255) DEFAULT NULL,
+  `Comment` mediumtext,
+  `ArticlePageID` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`),
+  KEY `ClassName` (`ClassName`),
+  KEY `ArticlePageID` (`ArticlePageID`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `SilverStripe_Example_ArticleComment`
+--
+
+LOCK TABLES `SilverStripe_Example_ArticleComment` WRITE;
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticleComment` DISABLE KEYS */;
+INSERT INTO `SilverStripe_Example_ArticleComment` VALUES (1,'SilverStripe\\Example\\ArticleComment','2019-10-17 12:58:37','2019-10-17 12:58:37','John Doe','john@example.com','Hello World',10);
+/*!40000 ALTER TABLE `SilverStripe_Example_ArticleComment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `SilverStripe_Example_ArticlePage`
 --
 
@@ -1263,7 +1295,7 @@ CREATE TABLE `SiteTreeLink` (
   `Created` datetime DEFAULT NULL,
   `LinkedID` int(11) NOT NULL DEFAULT '0',
   `ParentID` int(11) NOT NULL DEFAULT '0',
-  `ParentClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
+  `ParentClass` enum('SilverStripe\\Example\\ArticleCategory','SilverStripe\\Example\\ArticleComment','SilverStripe\\Example\\Region','SilverStripe\\Assets\\File','SilverStripe\\SiteConfig\\SiteConfig','SilverStripe\\Versioned\\ChangeSet','SilverStripe\\Versioned\\ChangeSetItem','SilverStripe\\Assets\\Shortcodes\\FileLink','SilverStripe\\CMS\\Model\\SiteTree','SilverStripe\\CMS\\Model\\SiteTreeLink','SilverStripe\\Security\\Group','SilverStripe\\Security\\LoginAttempt','SilverStripe\\Security\\Member','SilverStripe\\Security\\MemberPassword','SilverStripe\\Security\\Permission','SilverStripe\\Security\\PermissionRole','SilverStripe\\Security\\PermissionRoleCode','SilverStripe\\Security\\RememberLoginHash','SilverStripe\\Assets\\Folder','SilverStripe\\Assets\\Image','Page','SilverStripe\\Example\\ArticleHolder','SilverStripe\\Example\\ArticlePage','SilverStripe\\Example\\HomePage','SilverStripe\\Example\\RegionsPage','SilverStripe\\ErrorPage\\ErrorPage','SilverStripe\\CMS\\Model\\RedirectorPage','SilverStripe\\CMS\\Model\\VirtualPage') DEFAULT 'SilverStripe\\Example\\ArticleCategory',
   PRIMARY KEY (`ID`),
   KEY `ClassName` (`ClassName`),
   KEY `LinkedID` (`LinkedID`),
@@ -1524,4 +1556,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-10-16 14:34:39
+-- Dump completed on 2019-10-17  0:02:02
