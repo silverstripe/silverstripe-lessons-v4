@@ -114,8 +114,16 @@ class PropertySearchPageController extends PageController
             ->setPageLength(15)
             ->setPaginationGetVar('s');
 
-        return [
+        $data = [
             'Results' => $paginatedProperties
         ];
+
+        if ($request->isAjax()) {
+            return $this
+                ->customise($data)
+                ->renderWith('SilverStripe/Example/Includes/PropertySearchResults');
+        }
+
+        return $data;
     }
 }

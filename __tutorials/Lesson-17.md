@@ -1,17 +1,17 @@
-## What we'll cover
+### What we'll cover
+
 * Writing the Javascript
-* An overview of ViewableData
+* An overview of `ViewableData`
 * Rendering a partial template
 * Adding some UX enhancements
 
-
-## Writing the Javascript
+### Writing the Javascript
 
 In the last tutorial, we added pagination to our list of search results. Let's now enhance the user experience a bit by adding Ajax to the pagination links.
 
 Before we do anything, we'll need to add some JavaScript that will add this functionality. We'll do this in our catch-all JavaScript file, `scripts.js`.
 
-*public/javascript/scripts.js*
+***public/javascript/scripts.js***
 ```js
 // Pagination
 if ($('.pagination').length) {
@@ -27,29 +27,28 @@ if ($('.pagination').length) {
             });
     });
 }
-
 ```
 
 This is pretty specific to this use-case. Further down the track, we may find that we're adding a lot of Ajax events that closely resemble this, so we may want to make it more reusable at some point, but for now, let's just get this working.
 
 Let's give this a try. Click on a link in the pagination and see if it works.
 
-It kind of works, right? But we've still got a way to go. The controller is returning the entire page -- from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The Ajax URL is just the `href` attribute, so anything different would be unusual.
+It kind of works, right? But we've still got a way to go. The controller is returning the entire page –c from `<html>` to `</html>` into our `.main` div. Not good, but it is the expected result. The Ajax URL is just the `href` attribute, so anything different would be unusual.
 
 So what do we do? Change the URL in our Javascript to use something other than `href`? We could use an alternative URL in something like `data-ajax-url`. That's actually not necessary. We always aim to keep things tidy with single endpoints. The controller ideally know as little about the UI as possible, and setting up a separate endpoint for Ajax requests in this case would be antithetical to that. We'll keep the same endpoint, and we'll just assign the controller the ability to detect Ajax requests.
 
-## Detecting Ajax in a controller
+### Detecting Ajax in a controller
 
 Let's update `PropertySearchPageController.php` to detect Ajax.
 
-*app/src/PropertySearchPageController.php*
+***app/src/PropertySearchPageController.php***
 ```php
 public function index(HTTPRequest $request)
 {
 
-    //...
+    // ...
 
-    if($request->isAjax()) {
+    if ($request->isAjax()) {
         return "Ajax response!";
     }
 
@@ -61,7 +60,7 @@ public function index(HTTPRequest $request)
 
 Now give the link a try, and see what we get. You should see your custom Ajax response. Now we just need to return some partial content. Before we do that, let's talk a bit about a key player in SilverStripe Framework called `ViewableData`.
 
-## An overview of ViewableData
+### An overview of `ViewableData`
 
 To establish a basis for the next section of this lesson, we'll need to know more about how `ViewableData` objects work. `SilverStripe\View\ViewableData` is a primitive class in SilverStripe that essentially allows its public properties and methods to render content to a template. The most common occurance of `SilverStripe\View\ViewableData` objects is in `SilverStripe\ORM\DataObject` instances, which we've been working with on templates exclusively. But templates are capable of rendering much more than database content. You just need to go further up the inheritance chain, above `DataObject` to `ViewableData`, or a subclass thereof.
 
@@ -101,7 +100,7 @@ class Address extends ViewableData
 
 Now let's create a template to render our `Address` object.
 
-*AddressTemplate.ss*
+***AddressTemplate.ss***
 ```html
 <p>I live on $Street in $City.</p>
 <p>My full address is $FullAddress.</p>
@@ -109,10 +108,10 @@ Now let's create a template to render our `Address` object.
 
 As you can see, we're rendering data using a combination of both methods and properties. `ViewableData` has a very specific way of resolving the template variables on the object:
 
-* Check if there is a public method on the object called [VariableName]
-* If not, check if a method called "get[VariableName]" exists
-* If not, check if there is a public property named [VariableName]
-* Otherwise, call "getField([VariableName])"
+* Check if there is a public method on the object called `[VariableName]`
+* If not, check if a method called `get[VariableName]` exists
+* If not, check if there is a public property named `[VariableName]`
+* Otherwise, call `getField([VariableName])`
 
 `getField()` is a fallback method. For the base `ViewableData` class, it simply returns `$this->$VariableName`. The idea is that subclasses can invoke their own handlers for this. For example, in `DataObject`, `getField()` looks to the `$db` array.
 
@@ -129,7 +128,7 @@ Another really useful feature of `ViewableData` is that the object itself can be
 class Address extends ViewableData
 {
 
-    //...
+    // ...
 
     public function forTemplate()
     {
@@ -140,17 +139,17 @@ class Address extends ViewableData
 
 A great example of this is SilverStripe's `Image` class. When you call `$MyImage` on a template, it invokes its `forTemplate()` method, which returns a string of HTML representing an `<img />` tag with all the correct attributes and values.
 
-## Rendering a partial template
+### Rendering a partial template
 
 So now that we have a good understanding of `ViewableData`, let's play around with some of its features. Right now, we're just returning a string to the template for our Ajax response. Let's instead return a partial template.
 
 At the centre of dealing with Ajax responses is the use of includes in your Layout template. Let's take everything in the `.main` div, and export it to an include called `PropertySearchResults`.
 
-*app/templates/SilverStripe/Lessons/Includes/PropertySearchResults.ss*
+***app/templates/SilverStripe/Example/Includes/PropertySearchResults.ss***
 ```html
 <!-- BEGIN MAIN CONTENT -->
 <div class="main col-sm-8">
-    <% include SilverStripe/Lessons/PropertySearchResults %>
+    <% include SilverStripe/Example/PropertySearchResults %>
 </div>
 <!-- END MAIN CONTENT -->
 ```
@@ -161,21 +160,22 @@ Reload the page with `?flush` to get the new template.
 
 Now, returning an Ajax response is trivial. Simply render the include.
 
+***app/src/PropertySearchPageController.php***
 ```php
-//...
+// ...
 class PropertySearchPageController extends PageController
 {
 
     public function index(HTTPRequest $request)
     {
 
-        //...
+        // ...
 
-        if($request->isAjax()) {
-            return $this->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+        if ($request->isAjax()) {
+            return $this->renderWith('SilverStripe/Example/Includes/PropertySearchResults');
         }
 
-        //..
+        // ...
     }
 }
 ```
@@ -189,6 +189,7 @@ Let's try this out. It's not quite working right. We're getting a "no results" m
 
 Of these two options, the latter is much more favourable. There are cases where the first option makes more sense, but in this case, explicitly passing the list makes our `PropertySearchResults` template more reusable, and assigning a new member property would pollute our controller unnecessarily. Let's make that update now.
 
+***app/src/PropertySearchPageController.php***
 ```php
 //...
 class PropertySearchPageController extends PageController
@@ -202,7 +203,7 @@ class PropertySearchPageController extends PageController
         if($request->isAjax()) {
             return $this->customise([
                 'Results' => $paginatedResults
-            ])->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+            ])->renderWith('SilverStripe/Example/Includes/PropertySearchResults');
         }
 
         return [
@@ -211,25 +212,28 @@ class PropertySearchPageController extends PageController
     }
 }
 ```
+
 We now have repeated our array of data, so let's clean that up a bit.
 
+***app/src/PropertySearchPageController.php***
 ```php
-//...
+// ...
 class PropertySearchPageController extends PageController
 {
 
 
     public function index(HTTPRequest $request) {
 
-        //...
+        // ...
 
         $data = [
             'Results' => $paginatedProperties
         ];
 
-        if($request->isAjax()) {
-            return $this->customise($data)
-                         ->renderWith('SilverStripe/Lessons/Includes/PropertySearchResults');
+        if ($request->isAjax()) {
+            return $this
+                ->customise($data)
+                ->renderWith('SilverStripe/Example/Includes/PropertySearchResults');
         }
 
         return $data;
@@ -239,7 +243,7 @@ class PropertySearchPageController extends PageController
 
 Try it now. It's looking much better!
 
-## Adding some UX enhancements
+### Adding some UX enhancements
 
 There are two major shortcomings of this user experience:
 * The scroll stays fixed to the bottom of the results, leaving the user with little indication that the content has been updated
@@ -247,7 +251,7 @@ There are two major shortcomings of this user experience:
 
 Let's clean up both of these things now, with some updates to our Javascript.
 
-*public/javascript/scripts.js*
+***public/javascript/scripts.js***
 ```js
 // Pagination
 if ($('.pagination').length) {
@@ -284,19 +288,19 @@ if ($('.pagination').length) {
         }
     };
 }
-
 ```
+
 First, we'll add an `animate()` method that will handle the automatic scrolling. Then, we'll push some state to the browser history using `pushState`.
 
 Lastly, we make export the `.ajax()` call to a function, so that both the pagination links and the browser back button will be able to invoke it when we add an `onpopstate` event.
 
-### Reapplying plugins
+#### Reapplying plugins
 
 A lot of the UI plugins we're using are applied on document load, which means that when part of the DOM gets replaced, they won't be applied. Notice as you paginated through the results that the "sort by" dropdown degrades back to a standard HTML input. Let's ensure the fancy dropdown gets reapplied.
 
 We'll export the `chosen()` plugin to a reusable function and call it when needed.
 
-*public/javascript/scripts.js*
+***public/javascript/scripts.js***
 ```js
 (function($) {
   var applyChosen = function (selector) {
@@ -311,12 +315,12 @@ We'll export the `chosen()` plugin to a reusable function and call it when neede
 
     applyChosen('select');
 
-    //...
+    // ...
 ```
 
 Now, on the successful ajax response, we'll reapply it.
 
-*public/javascript/scripts.js*
+***public/javascript/scripts.js***
 ```js
   $.ajax(ajaxUrl)
     .done(function (response) {
@@ -325,7 +329,8 @@ Now, on the successful ajax response, we'll reapply it.
 
 ```
 
-### Cache busting
+#### Cache busting
+
 There's one last idiosyncrasy we need to sort out before we can call this finished. Let's just try paginating a few times, and clicking on a non-Ajax link that will take us to another page. Now click the back button. Yikes! We're only getting back the content for the Ajax request. You may not be able to replicate this in all browsers. Google Chrome seems to reliably reproduce the bug, though. So why is this happening?
 
 The short answer is that good browsers like Google Chrome are really, really smart. That's what makes them so fast. In this case, perhaps it's being a bit too smart, but ultimately, we have made a pretty critical mistake.
