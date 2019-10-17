@@ -59,7 +59,6 @@ class ArticlePage extends Page
             $this->Parent()->Categories()->map('ID','Title')
         ));
         return $fields;
-        return $fields;
     }
 
     public function CategoriesList()
