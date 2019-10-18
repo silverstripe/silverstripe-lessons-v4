@@ -6,7 +6,7 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\TextField;
-use SilverStripe\Forms\TextareaField;
+use SilverStripe\Forms\HTMLEditorField;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Versioned\Versioned;
 use SilverStripe\Control\Controller;
@@ -46,7 +46,7 @@ class Region extends DataObject
     {
         $fields = FieldList::create(
             TextField::create('Title'),
-            HtmlEditorField::create('Description'),
+            HTMLEditorField::create('Description'),
             $uploader = UploadField::create('Photo')
         );
 

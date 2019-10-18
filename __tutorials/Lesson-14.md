@@ -1,4 +1,5 @@
 ### What we'll cover
+
 * What are controller actions, and how are they used?
 * Create a controller action to render a `DataObject`
 * Rendering a `DataObject` as a page
@@ -32,13 +33,13 @@ Let's look at the next line of debug output.
 
 `Rule '$Action//$ID/$OtherID' matched to action 'handleAction' on SilverStripe\Lessons\RegionsPageController. Latest request params: array ( 'Action' => 'test', 'ID' => NULL, 'OtherID' => NULL, )`
 
-So here we are. The request handler actually did match the `$Action/$ID/$OtherID` pattern, and it's trying to resolve our action, `test`. In the rest of the output, you can see that it fails to do that, and it renders an ErrorPage.
+So here we are. The request handler actually did match the `$Action/$ID/$OtherID` pattern, and it's trying to resolve our action, `test`. In the rest of the output, you can see that it fails to do that, and it renders an `ErrorPage`.
 
 Why did it fail? As we said before, the `$Action` parameter should represent a publicly accessible function on the controller. We have no method called `test` right now.
 
 Let's add that controller method now.
 
-**app/src/RegionsPageController.php**
+***app/src/RegionsPageController.php***
 ```php
 <?php
 
@@ -106,6 +107,7 @@ namespace SilverStripe\Example;
 class Region extends DataObject
 {
     // ...
+
     public function Link()
     {
         return $this->RegionsPage()->Link('show/'.$this->ID);
@@ -113,9 +115,9 @@ class Region extends DataObject
 }
 ```
 
-We get the `RegionsPage` that owns this `Region` via the `has_many` / `has_one` parity, and call its link method. We pass in some extra URL segments we want appended to its link. We specify an `$Action` of `show` and an `ID` that represents the `Region`'s ID.
+We get the `RegionsPage` that owns this `Region` via the `has_many`/`has_one` parity, and call its link method. We pass in some extra URL segments we want appended to its link. We specify an `$Action` of `show` and an `ID` that represents the `Region`'s ID.
 
-Now that we have that method, we'll apply it to the template. Change all the hash (#) links to `$Link`.
+Now that we have that method, we'll apply it to the template. Change all the hash `#` links to `$Link`.
 
 ***app/templates/SilverStripe/Example/Layout/RegionsPage.ss***
 ```html
@@ -151,7 +153,6 @@ use SilverStripe\Control\HTTPRequest;
 
 class RegionsPageController extends PageController
 {
-
     private static $allowed_actions = [
         'show'
     ];
@@ -160,7 +161,6 @@ class RegionsPageController extends PageController
     {
 
     }
-
 }
 ```
 
@@ -169,12 +169,11 @@ We're not doing anything new here, other than ensuring that the `show` method ge
 Now that we have the skeleton of how this is going to work, we'll build out the `show` method to fetch and return the Region being requested.
 
 ```php
-
     public function show($id)
     {
         $region = Region::get()->byID($request->param('ID'));
 
-        if(!$region) {
+        if (!$region) {
             return $this->httpError(404,'That region could not be found');
         }
 
@@ -182,7 +181,6 @@ Now that we have the skeleton of how this is going to work, we'll build out the 
             'Region' => $region
         ];
     }
-
 }
 ```
 
@@ -226,7 +224,7 @@ class Region extends DataObject
 
     private static $db = [
         'Title' => 'Varchar',
-        'Description' => 'HTMLText',
+        'Description' => 'HTMLText'
     ];
 ```
 
@@ -277,6 +275,7 @@ While the new title is showing on the page itself, it is not affecting the `<tit
         $MetaTags(false)
         <title>One Ring Rentals - $Title</title>
 ```
+
 Refresh the page, and see that the `<title>` tag is now working.
 
 #### Creating peer navigation
@@ -301,7 +300,7 @@ Refresh the page and see that the regions are now all displaying.
 
 #### Adding navigational state
 
-We're still missing the "current" state for the region. That's because the method `$LinkingMode` doesn't exist on a `DataObject` by default, so we need to write our own.
+We're still missing the `current` state for the region. That's because the method `$LinkingMode` doesn't exist on a `DataObject` by default, so we need to write our own.
 
 ***app/src/Region.php***
 ```php
