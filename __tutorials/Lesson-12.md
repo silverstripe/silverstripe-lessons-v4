@@ -16,7 +16,7 @@ private static $db = [
 
 public function getFullAddress()
 {
-    //...
+    // ...
 }
 
 public function geocodeAddress()
@@ -98,16 +98,15 @@ use SilverStripe\ORM\DataExtension;
 
 class MyMemberExtension extends DataExtension
 {
-
     protected function apiCall()
     {
-        //.. call API here...
+        // ...call API here...
     }
 
     public function getMemberFormFields()
     {
        $someData = $this->apiCall();
-       //... get normal fields, and add $someData
+       // ...get normal fields, and add $someData
     }
 }
 ```
@@ -119,11 +118,11 @@ Fortunately, to address this, SilverStripe offers **extension points**. Extensio
 Let's look again at our login method. In `framework/src/Security/Member.php`, we can see that the `getMemberFormFields()` method we're trying to update offers an extension point:
 
 ```php
-      public function getMemberFormFields()
-      {
-        //... build form fields
+    public function getMemberFormFields()
+    {
+        // ...build form fields
         $this->extend('updateMemberFormFields', $fields);
-      }
+    }
 ```
 
 Given this knowledge, we could write our extension to use either of those two hooks.
@@ -157,7 +156,6 @@ Let's look again at our API call. Suppose the API requires a parameter to define
 use SilverStripe\ORM\DataExtension;
 
 class MyMemberExtension extends DataExtension {
-
     protected function apiCall()
     {
         $myAPIClient->getUser($this->getName());
@@ -168,7 +166,6 @@ class MyMemberExtension extends DataExtension {
        $someData = $this->apiCall();
        $fields->push(HiddenField::create('SomeData', null, $someData));
     }
-
 }
 ```
 
@@ -243,7 +240,7 @@ Because we changed the config, we have to flush the cache. Build the database us
 
 Now access the Settings tab in the CMS and populate the fields with some values.
 
-Lastly, we'll update our template to use the new fields. All `Page` templates are given a variable called `$SiteConfig` that accesses the single SiteConfig record. Since we'll be getting multiple properties off that object, this is a great opportunity to use the `<% with %>` block.
+Lastly, we'll update our template to use the new fields. All `Page` templates are given a variable called `$SiteConfig` that accesses the single `SiteConfig` record. Since we'll be getting multiple properties off that object, this is a great opportunity to use the `<% with %>` block.
 
 ***app/templates/Includes/Footer.ss***
 ```html
