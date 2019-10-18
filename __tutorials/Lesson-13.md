@@ -71,7 +71,7 @@ class Property extends DataObject
 
     private static $has_one = [
         'Region' => Region::class,
-        'PrimaryPhoto' => Image::class,
+        'PrimaryPhoto' => Image::class
     ];
 
     public function getCMSfields()
@@ -79,14 +79,14 @@ class Property extends DataObject
         $fields = FieldList::create(TabSet::create('Root'));
         $fields->addFieldsToTab('Root.Main', [
             TextField::create('Title'),
-            CurrencyField::create('PricePerNight','Price (per night)'),
+            CurrencyField::create('PricePerNight', 'Price (per night)'),
             DropdownField::create('Bedrooms')
                 ->setSource(ArrayLib::valuekey(range(1,10))),
             DropdownField::create('Bathrooms')
                 ->setSource(ArrayLib::valuekey(range(1,10))),
-            DropdownField::create('RegionID','Region')
-                ->setSource(Region::get()->map('ID','Title')),
-            CheckboxField::create('FeaturedOnHomepage','Feature on homepage')
+            DropdownField::create('RegionID', 'Region')
+                ->setSource(Region::get()->map('ID', 'Title')),
+            CheckboxField::create('FeaturedOnHomepage', 'Feature on homepage')
         ]);
         $fields->addFieldToTab('Root.Photos', $upload = UploadField::create(
             'PrimaryPhoto',
@@ -94,7 +94,7 @@ class Property extends DataObject
         ));
 
         $upload->getValidator()->setAllowedExtensions(array(
-            'png','jpeg','jpg','gif'
+            'png', 'jpeg', 'jpg', 'gif'
         ));
         $upload->setFolderName('property-photos');
 
@@ -139,6 +139,7 @@ class PropertyAdmin extends ModelAdmin
 ```
 
 That's it! Let's walk through it:
+
 * **`$menu_title`**: The title that will appear in the left-hand menu of the CMS.
 * **`$url_segment`**: The URL part that will follow `admin/` to access this section. In this case, the path to our `ModelAdmin` interface will be `admin/properties`.
 * **`$managed_models`**: An array of class names that will be managed. Each `ModelAdmin` can manage multiple models. Each one is placed on its own tab across the top of the screen. In this case, we just have one, but we'll be adding more down the track.
@@ -149,7 +150,7 @@ We created a new class, so we need to run a `?flush`. Let's do that and go into 
 
 Now that we've got our simple editing UI, we can start to customise it a bit to make it more powerful and user-friendly for our content editors.
 
-#### Adding $summary_fields
+#### Adding `$summary_fields`
 We'll start with what we've seen before. `$summary_fields` gives us control over what fields display in list view.
 
 ***app/src/Property.php***
@@ -183,7 +184,6 @@ use SilverStripe\Admin\ModelAdmin;
 
 class PropertyAdmin extends ModelAdmin
 {
-
     private static $menu_title = 'Properties';
 
     private static $url_segment = 'properties';
@@ -243,7 +243,7 @@ class Property extends DataObject
             'Title' => [
                 'filter' => 'PartialMatchFilter',
                 'title' => 'Title',
-                'field' => TextField::class,
+                'field' => TextField::class
             ],
             'RegionID' => [
                 'filter' => 'ExactMatchFilter',
@@ -288,18 +288,18 @@ class Property extends DataObject
 {
     // ...
     private static $owns = [
-        'PrimaryPhoto',
+        'PrimaryPhoto'
     ];
 
     private static $extensions = [
-        Versioned::class,
+        Versioned::class
     ];
 
     private static $versioned_gridfield_extensions = true;
 
     public function getCMSfields()
     {
-    // ...
+        // ...
 ```
 
 Run a `dev/build` to get the new tables.
@@ -324,8 +324,7 @@ use PageController;
 
 class HomePageController extends PageController
 {
-
-    //...
+    // ...
     public function FeaturedProperties()
     {
         return Property::get()
@@ -373,7 +372,7 @@ Reload the page and see your featured properties!
 Since we've added a new directory to the assets which we want to use in future lessons you have to adjust the `.gitignore` file in the `assets`-directory once more.
 
 ***public/assets/.gitignore***
-```bash
+```ignore
 /**/*
 !.gitignore
 !.htaccess
