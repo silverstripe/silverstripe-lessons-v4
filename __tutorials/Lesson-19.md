@@ -428,4 +428,8 @@ One missing piece you'll notice is that the detail page still has a static sideb
 
 ### Database backup
 
-We 
+Once more we messed around with the database and need to take a backup again:
+
+```bash
+mysqldump -hdb -uroot -proot --databases SS_html > .devcontainer/initdb.d/database.sql
+```
