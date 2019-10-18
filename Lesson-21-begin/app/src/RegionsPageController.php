@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;
 use SilverStripe\Control\HTTPRequest;
@@ -21,8 +21,7 @@ class RegionsPageController extends PageController
 
         return [
             'Region' => $region,
-            'Title' => $region->Title,
+            'Title' => $region->Title
         ];
     }
-
 }
