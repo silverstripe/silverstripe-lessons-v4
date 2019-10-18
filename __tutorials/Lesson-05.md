@@ -190,8 +190,8 @@ When we step into a loop, the scope of all of our variables is set to the curren
 
 Let's go through the loop and replace any static content with variables that we know to exist on the child pages.
 
-*   Replace the title with `$Title`
-*   Replace the links to `blog-detail.html` with `$Link`
+* Replace the title with `$Title`
+* Replace the links to `blog-detail.html` with `$Link`
 
 Everything else can be left static for now.
 
@@ -207,10 +207,10 @@ Lest we forget, ultimately what we're building is an experience for a content ed
 
 Let's take a moment to assume the role of a content author, and imagine that we want to create a new article. Going through this process, we notice two glaring usability hazards:
 
-* The user can add an **ArticlePage** anywhere in the site tree
-* When adding a child page to Travel Guides, the user has to know to use the **ArticlePage** page type.
+* The user can add an **`ArticlePage`** anywhere in the site tree
+* When adding a child page to Travel Guides, the user has to know to use the **`ArticlePage`** page type.
 
-SilverStripe offers an API for hierarchical constraints that will enforce that pattern that we require. Let's start by ensuring that only ArticlePage can be created underneath Travel Guides. Add the following to your **ArticleHolder** class:
+SilverStripe offers an API for hierarchical constraints that will enforce that pattern that we require. Let's start by ensuring that only ArticlePage can be created underneath Travel Guides. Add the following to your **`ArticleHolder`** class:
 
 ***app/src/ArticleHolder.php***
 ```php
@@ -233,7 +233,7 @@ Whichever way you choose is a matter of preference. Historically, these types of
 
 Because of this overlap, just like in the config API, private static variable changes do not apply until we flush the cache. If it seems odd that you have to flush the cache after making a simple change to your class definition, that's a good sign. You're normal. This is an idiosyncrasy of the SilverStripe framework, and without getting into the specifics in this tutorial, suffice it to say it's just one of those things you have to be aware of.
 
-Let's flush the cache, by appending `?flush` to the URL, and go back into the CMS. Try adding an incorrect page type under Travel Guides. Notice that the dropdown is forcing the ArticlePage page type on us.
+Let's flush the cache, by appending `?flush` to the URL, and go back into the CMS. Try adding an incorrect page type under Travel Guides. Notice that the dropdown is forcing the `ArticlePage` page type on us.
 
 But what about pages at the root level? Because there is no page type for the root, we can't specify `$allowed_children`. For this, we can use the boolean variable `$allowed_children` on our `ArticlePage` class, and flush the cache.
 
@@ -241,9 +241,9 @@ But what about pages at the root level? Because there is no page type for the ro
 private static $can_be_root = false;
 ```
 
-Now if we try to create an **ArticlePage** at the root level of the site tree, the action is disallowed.
+Now if we try to create an **`ArticlePage`** at the root level of the site tree, the action is disallowed.
 
-Now if we go through the process of creating a new **ArticlePage**, it feels much more forgiving and streamlined.
+Now if we go through the process of creating a new **`ArticlePage`**, it feels much more forgiving and streamlined.
 
 ### Creating a database-backup
 
