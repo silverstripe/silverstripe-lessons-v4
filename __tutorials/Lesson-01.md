@@ -1,6 +1,6 @@
 ### Creating your first project
 
-In this tutorial, we’ll cover how to build your first project in SilverStripe. The SilverStripe installer ships with its own default theme -- _Simple_, but it's more likely you’ll want to override this to use your own custom design.
+In this tutorial, we’ll cover how to build your first project in SilverStripe. The SilverStripe installer ships with its own default theme – _Simple_, but it's more likely you’ll want to override this to use your own custom design.
 
 #### Themes versus projects
 
@@ -27,7 +27,7 @@ themes/
 
 Most of these folders are self-descriptive, but note that the only folders with compulsory names are `templates/`, and its `Includes/` and `Layout/` subfolders.
 
-##### What about /public/?
+##### What about `/public/`?
 
 You might have noticed that many of the above folders should be web-accessible resources. In the `themes/` directory, they won't be. This would be fine if we were distributing this theme for others to install on their projects (for instance, a blog theme) because, on installation, a special composer plugin will expose all of the web accessible resources to the `public/` directory through symlinking. Most of the time, however, your theme is a one-off custom design for your project and won't be distributed. In this case, we should move all those directories to `public/`. Let's do that.
 
@@ -91,7 +91,7 @@ your theme to be available to the web.
 
 #### Creating your first template
 
-Next we’ll create the most fundamental component of a theme -- a template. In SilverStripe, templates are not HTML documents, but rather PHP code that is compiled from SilverStripe’s own template syntax behind the scenes. In alignment with that key distinction, it is imperative that template files use the `.ss` extension.
+Next we’ll create the most fundamental component of a theme – a template. In SilverStripe, templates are not HTML documents, but rather PHP code that is compiled from SilverStripe’s own template syntax behind the scenes. In alignment with that key distinction, it is imperative that template files use the `.ss` extension.
 
 In your `templates/` directory, create a file called `Page.ss`. Inside that file, create a basic HTML document.
 
@@ -104,7 +104,7 @@ In your `templates/` directory, create a file called `Page.ss`. Inside that file
 </html>
 ```
 
-Why `Page.ss`? A default installation of SilverStripe ships with a page type called `Page`. Typically, this page type is used to display the most basic form of content for a project. A common use case is for the “About Us” page, or even something more plain, like "Terms and Conditions."
+Why `Page.ss`? A default installation of SilverStripe ships with a page type called `Page`. Typically, this page type is used to display the most basic form of content for a project. A common use case is for the "About Us" page, or even something more plain, like "Terms and Conditions."
 
 #### Activating the theme
 
@@ -120,6 +120,7 @@ SilverStripe\View\SSViewer:
 
 If you have chosen to keep your `themes/` directory, you will have to supply the theme name in this list.
 
+***app/_config/theme.yml***
 ```yml
 SilverStripe\View\SSViewer:
   themes:
@@ -131,11 +132,11 @@ SilverStripe\View\SSViewer:
 
 In this configuration file, the theme `my-theme` is given the highest priority. If a template can't be found in that theme, SilverStipe will continue working down the list, trying each theme until it finds a match. As a fallback, you'll want to have `$default` as the last entry in your list to ensure the base templates get loaded.
 
-#### Don't forget to ?flush
+#### Don't forget to `?flush`
 
-These files are written in YAML, which is a markup language, similar to JSON or XML, that is very [well-documented](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml). Configuration is a very rich topic in SilverStripe that we’ll cover in later tutorials, but for now, the only important bit you need to know is that any changes you make to these files requires a cache refresh in order to be used. To clear the cache, simply access any page on your site and append ?flush to the URL, e.g. <http://localhost:8888/?flush>
+These files are written in YAML, which is a markup language, similar to JSON or XML, that is very [well-documented](https://github.com/Animosity/CraftIRC/wiki/Complete-idiot%27s-introduction-to-yaml). Configuration is a very rich topic in SilverStripe that we’ll cover in later tutorials, but for now, the only important bit you need to know is that any changes you make to these files requires a cache refresh in order to be used. To clear the cache, simply access any page on your site and append `?flush` to the URL, e.g. <http://localhost:8888/?flush>
 
-Once the page is loaded, you should see your “Hello, world” page template.
+Once the page is loaded, you should see your "Hello, world" page template.
 
 #### Setup psr-4 autoloading
 
