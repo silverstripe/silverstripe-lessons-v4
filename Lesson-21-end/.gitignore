@@ -5,3 +5,6 @@
 /_resources/
 /public/_resources/
 .devcontainer/mysql-data/
+
+## ignore error log
+errors.log
