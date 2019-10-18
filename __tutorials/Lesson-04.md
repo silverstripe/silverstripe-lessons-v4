@@ -43,13 +43,13 @@ Let's go into the CMS at the URL `/admin`, log in if necessary, and edit the pag
 
 Leave the CMS and reload the home page in your browser. You should see the default page type with the home page content.
 
-### Using the $Layout variable
+### Using the `$Layout` variable
 
 As a matter of best practice, we never want to repetitively hardcode any values in our template that are subject to change. This principle is more commonly referred to as **DRY** (Don't Repeat Yourself). One glaring problem you may have noticed is that, as we add new page types, we'll have to copy over a lot of content (e.g. the head, navigation, and footer) to each page, but with little variation, all of our templates are going to share this content. This type of outer content is often called the "chrome" or your site. To prevent the redundancy of chrome in each template, SilverStripe offers template **layouts**.
 
 To illustrate how this works, let's first find all the content that will not be common between our default page and our [home page][Home]. A quick glance through the mockups reveals that [everything between the closing `</header>` tag and the opening `<footer>` tag][ChangedContent] is unique content.
 
-In your `app/templates/Page.ss` file highlight all of the content between `</header>` and `<footer>` and cut it into your clipboard. Replace all of that content with the variable **$Layout**.
+In your `app/templates/Page.ss` file highlight all of the content between `</header>` and `<footer>` and cut it into your clipboard. Replace all of that content with the variable **`$Layout`**.
 
 Create a new template in `app/templates/Layout` called `Page.ss`. Paste the content from your clipboard into that file, and save.
 
@@ -63,9 +63,9 @@ Any time we create a new template, we need to flush the cache, so append `?flush
 
 It may seem trivial, but you've just achieved massive gains in efficiency and code organisation. Here's how it works:
 
-*   SilverStripe sees that you are requesting a URL for a page that uses the `HomePage.ss` template
-*   It first looks in the main `app/templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Example\HomePage`, which is `Page`, and uses it.
-*   The `$Layout` variable tells SilverStripe to look in the `app/templates/{page namespace}/Layout` directory for a template that matches this page type. It finds `app/templates/SilverStripe/Example/HomePage.ss` and uses it. If it had not found `app/templates/SilverStripe/Example/HomePage.ss`, it would chase up the ancestry and find `app/templates/Page.ss`, and use that as a fallback.
+* SilverStripe sees that you are requesting a URL for a page that uses the `HomePage.ss` template
+* It first looks in the main `app/templates/` directory to find the chrome for this page. If it finds `HomePage.ss` in there, it will select that as your chrome. If not, it will go through the ancestry of that page type until it finds a match. It finds the parent class of `SilverStripe\Example\HomePage`, which is `Page`, and uses it.
+* The `$Layout` variable tells SilverStripe to look in the `app/templates/{page namespace}/Layout` directory for a template that matches this page type. It finds `app/templates/SilverStripe/Example/HomePage.ss` and uses it. If it had not found `app/templates/SilverStripe/Example/HomePage.ss`, it would chase up the ancestry and find `app/templates/Page.ss`, and use that as a fallback.
 
 A vast majority of SilverStripe projects have only one template, `Page.ss`, in the root `app/templates/`, leaving everything else to `{namespace}/Layout/`. In some circumstances, you may have a page type that has such a distinct design that it needs its own chrome. A common example of this is a login page, where the user is presented with a very streamlined, isolated form.
 
@@ -118,7 +118,7 @@ Repeat this process for `<div id="nav-section" />`, and call the template `MainN
 
 Repeat the process once again for the entire `<footer />` tag, and call the template `Footer.ss`.
 
-Lastly, remove all of the HTML comments from your Page.ss, as the template is now too sparse to require such guides.
+Lastly, remove all of the HTML comments from your `Page.ss`, as the template is now too sparse to require such guides.
 
 <!--- References -->
 [Home]: https://github.com/silverstripe/silverstripe-lessons-v4/blob/54ab42ff71cbb53eefa842973fa1c51963fa78f0/Lesson-04-begin/__assets/home.html
