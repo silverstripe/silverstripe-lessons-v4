@@ -10,7 +10,12 @@
 
                 <div id="blog-listing" class="list-style clearfix">
                     <div class="row">
-                        <% loop $Children %>
+                        <% if $SelectedRegion %>
+                            <h3>Region: $SelectedRegion.Title</h3>
+                        <% else_if $SelectedCategory %>
+                            <h3>Category: $SelectedCategory.Title</h3>
+                        <% end_if %>
+                        <% loop $PaginatedArticles %>
                             <div class="item col-md-6">
                                 <div class="image">
                                     <a href="$Link">
@@ -41,20 +46,35 @@
 
 
                 <!-- BEGIN PAGINATION -->
-                <div class="pagination">
-                    <ul id="previous">
-                        <li><a href="#"><i class="fa fa-chevron-left"></i></a></li>
-                    </ul>
-                    <ul>
-                        <li class="active"><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
-                        <li><a href="#">3</a></li>
-                        <li><a href="#">4</a></li>
-                    </ul>
-                    <ul id="next">
-                        <li><a href="#"><i class="fa fa-chevron-right"></i></a></li>
-                    </ul>
-                </div>
+                <% if $PaginatedArticles.MoreThanOnePage %>
+                    <div class="pagination">
+                        <% if $PaginatedArticles.NotFirstPage %>
+                            <ul id="previous col-xs-6">
+                                <li>
+                                    <a href="$PaginatedArticles.PrevLink"><i class="fa fa-chevron-left"></i></a>
+                                </li>
+                            </ul> 
+                        <% end_if %>
+                        <ul class="hidden-xs">
+                            <% loop $PaginatedArticles.PaginationSummary %>
+                                <% if $Link %>
+                                    <li <% if $CurrentBool %>class="active"<% end_if %>>
+                                        <a href="$Link">$PageNum</a>
+                                    </li>
+                                <% else %>
+                                    <li>...</li>
+                                <% end_if %>
+                            <% end_loop %>
+                        </ul>
+                        <% if $PaginatedArticles.NotLastPage %>
+                            <ul id="next col-xs-6">
+                                <li>
+                                    <a href="$PaginatedArticles.NextLink"><i class="fa fa-chevron-right"></i></a>
+                                </li>
+                            </ul>
+                        <% end_if %>
+                    </div>
+                <% end_if %>
                 <!-- END PAGINATION -->
 
             </div>
@@ -66,13 +86,9 @@
 
                 <h2 class="section-title">Categories</h2>
                 <ul class="categories">
-                    <li><a href="#">Business <span>(2)</span></a></li>
-                    <li><a href="#">Commercial <span>(1)</span></a></li>
-                    <li><a href="#">Land <span>(3)</span></a></li>
-                    <li><a href="#">Loans <span>(2)</span></a></li>
-                    <li><a href="#">News and Updates <span>(6)</span></a></li>
-                    <li><a href="#">Properties for Sale <span>(1)</span></a></li>
-                    <li><a href="#">Real Estate <span>(1)</span></a></li>
+                    <% loop $Categories %>
+                        <li><a href="$Link">$Title <span>($Articles.count)</span></a></li>
+                    <% end_loop %>
                 </ul>
 
                 <!-- BEGIN ARCHIVES ACCORDION -->
@@ -141,23 +157,12 @@
                 </div>
                 <!-- END  ARCHIVES ACCORDION -->
 
-
-                <!-- BEGIN TAGS -->
-                <h2 class="section-title">Tags</h2>
-                <ul class="tags col-sm-12">
-                    <li><a href="#">Apartments</a></li>
-                    <li><a href="#">Residential</a></li>
-                    <li><a href="#">News</a></li>
-                    <li><a href="#">Real estate</a></li>
-                    <li><a href="#">Land</a></li>
-                    <li><a href="#">Business</a></li>
-                    <li><a href="#">Villas</a></li>
-                    <li><a href="#">Loans</a></li>
-                    <li><a href="#">Commercial</a></li>
-                    <li><a href="#">Rent</a></li>
+                <h2 class="section-title">Regions</h2>
+                <ul class="categories">
+                    <% loop $Regions %>
+                        <li><a href="$ArticlesLink">$Title <span>($Articles.count)</span></a></li>
+                    <% end_loop %>
                 </ul>
-                <!-- BEGIN TAGS -->
-
 
                 <!-- BEGIN LATEST NEWS -->
                 <h2 class="section-title">Latest News</h2>

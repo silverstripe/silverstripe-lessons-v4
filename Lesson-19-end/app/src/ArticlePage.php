@@ -23,7 +23,8 @@ class ArticlePage extends Page
 
     private static $has_one = [
         'Photo' => Image::class,
-        'Brochure' => File::class
+        'Brochure' => File::class,
+        'Region' => Region::class
     ];
 
     private static $has_many = [
@@ -62,6 +63,11 @@ class ArticlePage extends Page
             'Selected categories',
             $this->Parent()->Categories()->map('ID','Title')
         ));
+        $fields->addFieldToTab('Root.Main', DropdownField::create(
+            'RegionID',
+            'Region',
+            Region::get()->map('ID','Title')
+        )->setEmptyString('-- None --'), 'Content');
         return $fields;
     }
 
