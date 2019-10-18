@@ -1,22 +1,22 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
+use PageController;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Control\HTTPRequest;
-use PageController;
 
 class ArticleHolderController extends PageController
 {
+    protected $articleList;
+
     private static $allowed_actions = [
         'category',
         'region',
         'date'
     ];
 
-    protected $articleList;
-
-    protected function init ()
+    protected function init()
     {
         parent::init();
 
@@ -25,7 +25,7 @@ class ArticleHolderController extends PageController
         ])->sort('Date DESC');
     }
 
-    public function category (HTTPRequest $r)
+    public function category(HTTPRequest $r)
     {
         $category = ArticleCategory::get()->byID(
             $r->param('ID')
@@ -63,7 +63,7 @@ class ArticleHolderController extends PageController
         ];
     }
 
-    public function PaginatedArticles ($num = 10)
+    public function PaginatedArticles($num = 10)
     {
         return PaginatedList::create(
             $this->articleList,
