@@ -52,6 +52,64 @@ BEGIN
             BrochureID
           FROM SilverStripe_Example_ArticlePage
         WHERE ID = @id;
+
+        INSERT INTO SiteTree
+        VALUES (
+            @id,
+            'SilverStripe\\Example\\ArticlePage',
+            NOW(),
+            NOW(),
+            'Inherit',
+            'Inherit',
+            1,
+            CONCAT('test-article-', i + 4),
+            CONCAT('Test Article ', i + 4),
+            NULL,
+            CONCAT('Content of test article', i + 4),
+            '',
+            '',
+            1,
+            1,
+            i + 4,
+            0,
+            0,
+            NULL,
+            9
+        );
+    
+        INSERT INTO SiteTree_Live
+        SELECT * FROM SiteTree WHERE ID = @id;
+
+        INSERT INTO SiteTree_Versions
+        SELECT
+            NULL,
+            ID,
+            1,
+            1,
+            0,
+            0,
+            1,
+            1,
+            ClassName,
+            LastEdited,
+            Created,
+            CanViewType,
+            CanEditType,
+            URLSegment,
+            Title,
+            MenuTitle,
+            Content,
+            MetaDescription,
+            ExtraMeta,
+            ShowInMenus,
+            ShowInSearch,
+            Sort,
+            HasBrokenFile,
+            HasBrokenLink,
+            ReportClass,
+            ParentID
+          FROM SiteTree
+        WHERE ID = @id;
         SET i = i + 1;
     END WHILE;
 END; $$
