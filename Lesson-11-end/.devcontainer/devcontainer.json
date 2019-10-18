@@ -1,0 +1,6 @@
+{
+    "name": "SilverStripe Development",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "silverstripe",
+    "workspaceFolder": "/var/www/html"
+}
