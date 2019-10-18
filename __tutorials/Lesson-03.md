@@ -23,11 +23,11 @@ Let's examine what each piece of syntax does:
 
 **`$LinkingMode`** A helper method that indicates the state of our menu. For each item in the list, this method will return one of three strings:
 
-*   **`link`**: the page is not active
-*   **`current`**: this is the current page
-*   **`section`**: the current page is a descendant of this page (i.e. on the URL `/about-us/company`, the "company" page is current, and the "about-us" page is "section."
+* **`link`**: the page is not active
+* **`current`**: this is the current page
+* **`section`**: the current page is a descendant of this page (i.e. on the URL `/about-us/company`, the "company" page is current, and the "about-us" page is "section."
 
-Refresh the page. You should now see the three default pages SilverStripe creates for you in the primary navigation: Home, About Us, and Contact Us.
+Refresh the page. You should now see the three default pages SilverStripe creates for you in the primary navigation: "Home", "About Us", and "Contact Us."
 
 ### Adding a base URL
 
