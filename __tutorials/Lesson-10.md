@@ -71,7 +71,7 @@ class ArticleCategory extends DataObject
 
 Notice once again that we have the reciprocal `$has_one` back to the `ArticleHolder`. 
 
-Also take note that we won't use versioning for this DataObject. This is a deliberate decision based on the knowledge that there are no views where all of the categories will be listed. We know that the only way a category will appear on the frontend is when it is associated with an article. So based on that, we don't need to worry about the published state of categories.
+Also take note that we won't use versioning for this `DataObject`. This is a deliberate decision based on the knowledge that there are no views where all of the categories will be listed. We know that the only way a category will appear on the frontend is when it is associated with an article. So based on that, we don't need to worry about the published state of categories.
 
 Run `dev/build` again and see that we get a new table. Edit the "Travel Guides" page in the CMS and add a few sample categories.
 
@@ -115,11 +115,11 @@ class ArticleCategory extends DataObject
 
 We changed a static variable, so run `?flush`.
 
-#### $many_many vs $belongs_many_many
+#### `$many_many` vs `$belongs_many_many`
 
 So if both sides of the relationship have many associated records, how do you know which one gets the `$many_many` and which one is `$belongs_many_many`? Typically, the object that contains the interface gets the `$many_many`. In this case, we'll add categories to the articles using checkboxes, so that's where our `$many_many` goes. Again, the `$belongs_many_many` just provides the convenience of an accessor method for getting the articles from within a category.
 
-### Adding interface for $many_many
+### Adding interface for `$many_many`
 
 Speaking of interface, we need to add some to the `ArticlePage` object. Let's introduce `CheckboxSetField`.
 
@@ -189,8 +189,7 @@ class ArticlePage extends Page
     // ...
     public function CategoriesList()
     {
-        if ($this->Categories()->exists())
-        {
+        if ($this->Categories()->exists()) {
             return implode(', ', $this->Categories()->column('Title'));
         }
         
