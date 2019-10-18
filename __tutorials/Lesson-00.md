@@ -220,7 +220,7 @@ Now we have a new problem. The slideshow module is incompatible with the version
 
 Installing packages with Composer solves all these issues because you simply execute a nice, declarative command, asking to install a package and a specific version, and it handles all the orchestration for you.
 
-```
+```bash
 composer require example/some-module
 ```
 
