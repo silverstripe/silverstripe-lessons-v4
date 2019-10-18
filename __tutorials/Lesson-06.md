@@ -18,7 +18,7 @@ Clicking through to the detail page, we see that one additional field has been a
 
 ### Adding new database fields
 
-Since all these fields appear on the `ArticlePage` records, we'll only need to be working with that class. Remember, even though we see the fields on the `ArticleHolder` template, it doesn't necessarily mean those fields belong to the ArticleHolder. In this case, they appear in a loop of `ArticlePage` records, so that's where we'll define them. It's very important to maintain a clear conceptual separation of the template and the model.
+Since all these fields appear on the `ArticlePage` records, we'll only need to be working with that class. Remember, even though we see the fields on the `ArticleHolder` template, it doesn't necessarily mean those fields belong to the `ArticleHolder`. In this case, they appear in a loop of `ArticlePage` records, so that's where we'll define them. It's very important to maintain a clear conceptual separation of the template and the model.
 
 Let's define a new private static variable in `ArticlePage.php` called `$db`. Set it to an empty array.
 
@@ -54,14 +54,14 @@ If you've done a bit of databasing, you're probably familiar with field types. S
 
 Common field types in MySQL include:
 
-* `Varchar`: A string of characters, with variable length
-* `Boolean`: True or false values
-* `Integer`: A number, with no decimals
-* `Date`: The year, month, and day
+* **`Varchar`**: A string of characters, with variable length
+* **`Boolean`**: True or false values
+* **`Integer`**: A number, with no decimals
+* **`Date`**: The year, month, and day
 
 And many, many more.
 
-SilverStripe puts its own layer of abstraction over these database field types. While many of them overlap, such as "Varchar," "Boolean," and "Date," a lot of them are unique to the SilverStripe Framework, as well. This is because a field type in SilverStripe not only informs the database how to store the data, but also how the template should display the data. For instance, a field with the type `Text` will escape any HTML, but `HTMLText` will not. In the database, they're both stored as `Text`, but the custom field type `HTMLText` has a very important effect on how SilverStripe handles the rendering of the data. We'll talk more about all the features afforded by custom field types in future lessons, but for now, it is important to be mindful of what kinds of data you expect to be storing in each field and how you will display it.
+SilverStripe puts its own layer of abstraction over these database field types. While many of them overlap, such as `Varchar`, `Boolean`, and `Date`, a lot of them are unique to the SilverStripe Framework, as well. This is because a field type in SilverStripe not only informs the database how to store the data, but also how the template should display the data. For instance, a field with the type `Text` will escape any HTML, but `HTMLText` will not. In the database, they're both stored as `Text`, but the custom field type `HTMLText` has a very important effect on how SilverStripe handles the rendering of the data. We'll talk more about all the features afforded by custom field types in future lessons, but for now, it is important to be mindful of what kinds of data you expect to be storing in each field and how you will display it.
 
 So how do you know which field types are available? Your best resource in this case is the source code. Just browse `vendor/silverstripe/framework/src/ORM/FieldType` and you'll see a list of PHP classes whose names can all be used as field types. In version 4, they include:
 
@@ -100,7 +100,7 @@ It looks a bit daunting, but rest assured that 90% of the time, you're going to 
 
 ### Adding CMS Interface
 
-Our database is ready to store these new fields on our page type, so now it's time to offer the user a way to populate those fields in the CMS. Once again, we'll be dealing strictly with the **ArticlePage** class for this.
+Our database is ready to store these new fields on our page type, so now it's time to offer the user a way to populate those fields in the CMS. Once again, we'll be dealing strictly with the **`ArticlePage`** class for this.
 
 Let's define a new method that exposes the API for updating the CMS interface for this page.
 
