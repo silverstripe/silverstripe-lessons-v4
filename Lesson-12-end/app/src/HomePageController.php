@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;    
 
@@ -12,5 +12,4 @@ class HomePageController extends PageController
             ->sort('Created', 'DESC')
             ->limit($count);
     }
-
 }
