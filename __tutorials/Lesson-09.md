@@ -230,7 +230,7 @@ Let's go back into the CMS and edit our "Regions" page. See that we have a tab n
 
 #### Configuring the `GridField`
 
-As stated earlier, `GridField` is highly configurable. One of the most common customisations you'll want to make to your grid is the columns that are displayed. In this case, there are only a handful of fields, so only showing `Title` and `Description` isn't so bad, but you can imagine that if the DataObject had 10 distinct fields, we would probably want to tighten that up a bit.
+As stated earlier, `GridField` is highly configurable. One of the most common customisations you'll want to make to your grid is the columns that are displayed. In this case, there are only a handful of fields, so only showing `Title` and `Description` isn't so bad, but you can imagine that if the `DataObject` had 10 distinct fields, we would probably want to tighten that up a bit.
 
 In our case, let's make a minor enhancement, and just add the `Photo` field to our list view. By default, only fields in the `$db` array get included. Since `Photo` is in the `$has_one`, we have to specifically include it.
 
@@ -262,7 +262,7 @@ Because we changed a private static variable, we need to run ?flush to see the u
 
 #### Using a custom getter
 
-Fortunately, `$summary_fields` accepts more than just field names. We can provide any public method on our DataObject as a column value. Let's create a method that returns a resized photo.
+Fortunately, `$summary_fields` accepts more than just field names. We can provide any public method on our `DataObject` as a column value. Let's create a method that returns a resized photo.
 
 ***app/src/Region.php***
 ```php
@@ -297,16 +297,16 @@ We could have saved ourselves a lot of time by using a method that SilverStripe 
 Another great feature of `$summary_fields` is that you can traverse relationships to get foreign fields, using a dot-separated syntax. Suppose we wanted to show the `Filename` field on the `Photo`:
 
 ```php
-//...
+// ...
 class Region extends DataObject
 {
-    //...
+    // ...
     private static $summary_fields = [
         'Photo.Filename' => 'Photo file name',
         'Title' => 'Title',
         'Description' => 'Description'
     ];
-    //...
+    // ...
 }
 ```
 
@@ -349,7 +349,7 @@ Notice that we're skipping over the links. We'll address that in a future lesson
 Include the `region-photos` to git by changing the content of the `.gitignore`-file in the `assets`-folder as followed:
 
 ***public/assets/.gitignore***
-```bash
+```ignore
 /**/*
 !.gitignore
 !.htaccess

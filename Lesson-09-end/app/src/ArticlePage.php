@@ -17,7 +17,7 @@ class ArticlePage extends Page
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'ArticleAuthor' => 'Varchar',
+        'ArticleAuthor' => 'Varchar'
     ];
 
     private static $has_one = [
@@ -27,7 +27,7 @@ class ArticlePage extends Page
 
     private static $owns = [
         'Photo',
-        'Brochure',
+        'Brochure'
     ];
 
     public function getCMSFields()
