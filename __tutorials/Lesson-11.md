@@ -42,7 +42,7 @@ In the `FieldList` of actions for our form, we specified a single form action th
 
 ```php
     public function ContactForm()
-     {
+    {
         // ...
     }
 
@@ -53,7 +53,7 @@ In the `FieldList` of actions for our form, we specified a single form action th
 
         if(strlen($message) < 10)
         {
-            $form->addErrorMessage('YourMessage','Your message is too short', 'bad');
+            $form->addErrorMessage('YourMessage', 'Your message is too short', 'bad');
             return $this->redirectBack();
         }
 

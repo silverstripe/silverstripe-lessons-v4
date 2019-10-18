@@ -18,7 +18,7 @@ class ArticlePage extends Page
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'ArticleAuthor' => 'Varchar',
+        'ArticleAuthor' => 'Varchar'
     ];
 
     private static $has_one = [
@@ -27,12 +27,12 @@ class ArticlePage extends Page
     ];
 
     private static $many_many = [
-        'Categories' => ArticleCategory::class,
+        'Categories' => ArticleCategory::class
     ];
 
     private static $owns = [
         'Photo',
-        'Brochure',
+        'Brochure'
     ];
 
     public function getCMSFields()
@@ -63,8 +63,7 @@ class ArticlePage extends Page
 
     public function CategoriesList()
     {
-        if ($this->Categories()->exists())
-        {
+        if ($this->Categories()->exists()) {
             return implode(', ', $this->Categories()->column('Title'));
         }
         
