@@ -4,9 +4,9 @@ The ORM provides a layer of abstraction between your PHP code and the contents o
 
 Here's an easy way to conceptualise the ORM:
 
-*   **Classes** refer to tables
-*   **Instances** of classes refer to records
-*   **Properties** of objects refer to columns
+* **Classes** refer to tables
+* **Instances** of classes refer to records
+* **Properties** of objects refer to columns
 
 For a class to follow this paradigm, it must be a descendant of `SilverStripe\ORM\DataObject`. So far, we've been dealing only with subclasses of `Page`, which is itself a `DataObject` (`SilverStripe\ORM\DataObject` => `SilverStripe\CMS\Model\SiteTree` => `Page`). For generic data types that do not need page functionality, you can go further up the inheritance chain and simply subclass `DataObject` directly. We'll be talking a lot more about non-page database content in the next tutorial.
 
@@ -21,17 +21,17 @@ class Product extends DataObject
 {
     private static $db = [
       'Title' => 'Varchar(100)',
-      'Price' => 'Currency',
+      'Price' => 'Currency'
     ];
  }
 ```
 
 The DataObject class gives us four properties to start with:
 
-*   **`ID`** - primary key
-*   **`ClassName`** - a hint to ORM what class should be created for the record. In this case its default value is `Product`.
-*   **`Created`** - a timestamp of when the record was stored in the database first time
-*   **`LastEdited`** - a timestamp that is updated every time the record is written to the database.
+* **`ID`** - primary key
+* **`ClassName`** - a hint to ORM what class should be created for the record. In this case its default value is `Product`.
+* **`Created`** - a timestamp of when the record was stored in the database first time
+* **`LastEdited`** - a timestamp that is updated every time the record is written to the database.
 
 In adherence to the ORM pattern, creating a record is as simple as creating an instance of your DataObject subclass.
 
