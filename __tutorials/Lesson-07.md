@@ -100,7 +100,7 @@ Log into the CMS and try uploading a few files. Save, and see that the fields ho
 
 This works well, but we can tighten it up a bit. First, giving a written indication of the file type we're expecting (PDF) is good, but it would be better if we could actually enforce that constraint. After all, we should always expect that if it can be broken, a user will break it.
 
-For this, we'll tap into the UploadField's **validator**.
+For this, we'll tap into the `UploadField`'s **validator**.
 
 ***app/src/ArticlePage.php***
 ```php
@@ -281,10 +281,10 @@ So how do you publish files? The most obvious way is in the **Files** section of
 ```php
 class ArticlePage extends Page
 {
-    //...
+    // ...
     private static $owns = [
         'Photo',
-        'Brochure',
+        'Brochure'
     ];
 }
 ```
@@ -297,7 +297,7 @@ As we want the brochures and photos to presist when recreating the docker-enviro
 Add following lines to the `public/assets/.gitignore` file:
 
 ***public/assets/.gitignore***
-```bash
+```ignore
 !/.protected/
 /.protected/*
 
