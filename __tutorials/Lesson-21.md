@@ -103,7 +103,6 @@ SilverStripe\Core\Injector\Injector:
     #...
 ```
 
-
 A better option for low-level errors is writing to a log file. Let's set that up for anything over `notice()` level.
 
 ***app/_config/logging.yml***
