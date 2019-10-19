@@ -1,12 +1,13 @@
 <?php
 
-use SilverStripe\CMS\Model\SiteTree;
+namespace {
 
-class Page extends SiteTree
-{
-    private static $db = array(
-    );
+    use SilverStripe\CMS\Model\SiteTree;
 
-    private static $has_one = array(
-    );
+    class Page extends SiteTree
+    {
+        private static $db = [];
+
+        private static $has_one = [];
+    }
 }
