@@ -13,6 +13,6 @@ class ArticleComment extends DataObject
     ];
 
     private static $has_one = [
-        'ArticlePage' => ArticlePage::class,
+        'ArticlePage' => ArticlePage::class
     ];
 }

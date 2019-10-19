@@ -55,14 +55,14 @@ class Property extends DataObject
         $fields->addFieldsToTab('Root.Main', [
             TextField::create('Title'),
             TextareaField::create('Description'),
-            CurrencyField::create('PricePerNight','Price (per night)'),
+            CurrencyField::create('PricePerNight', 'Price (per night)'),
             DropdownField::create('Bedrooms')
                 ->setSource(ArrayLib::valuekey(range(1,10))),
             DropdownField::create('Bathrooms')
                 ->setSource(ArrayLib::valuekey(range(1,10))),
-            DropdownField::create('RegionID','Region')
-                ->setSource(Region::get()->map('ID','Title')),
-            CheckboxField::create('FeaturedOnHomepage','Feature on homepage'),
+                DropdownField::create('RegionID', 'Region')
+                    ->setSource(Region::get()->map('ID', 'Title')),
+                CheckboxField::create('FeaturedOnHomepage', 'Feature on homepage'),
             DateField::create('AvailableStart', 'Date available (start)'),
             DateField::create('AvailableEnd', 'Date available (end)')
         ]);
@@ -72,7 +72,7 @@ class Property extends DataObject
         ));
 
         $upload->getValidator()->setAllowedExtensions(array(
-            'png','jpeg','jpg','gif'
+            'png', 'jpeg', 'jpg', 'gif'
         ));
         $upload->setFolderName('property-photos');
 
@@ -92,7 +92,7 @@ class Property extends DataObject
                 'title' => 'Region',
                 'field' => DropdownField::create('RegionID')
                     ->setSource(
-                        Region::get()->map('ID','Title')
+                        Region::get()->map('ID', 'Title')
                     )
                     ->setEmptyString('-- Any region --')
             ],
