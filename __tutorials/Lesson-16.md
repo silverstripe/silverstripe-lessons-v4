@@ -36,15 +36,14 @@ Let's look at `PropertySearchPageController.php` again and find the return value
 
 ***app/src/PropertySearchPageController.php***
 ```php
-//...
+// ...
 use SilverStripe\ORM\PaginatedList;
 
 class PropertySearchPageController extends PageController
 {
     public function index(HTTPRequest $request)
     {
-
-        //...
+        // ...
 
         $paginatedProperties = PaginatedList::create(
             $properties,
@@ -148,7 +147,6 @@ This all works great, but the pagination is still configured with default values
 ```php
     public function index(HTTPRequest $request)
     {
-
         // ...
 
         $paginatedProperties = PaginatedList::create(
@@ -166,7 +164,6 @@ Another parameter we might want to customise is the request parameter that is us
 ```php
     public function index(HTTPRequest $request)
     {
-
         // ...
 
         $paginatedProperties = PaginatedList::create(
