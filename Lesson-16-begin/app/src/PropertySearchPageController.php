@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;
 use SilverStripe\Forms\Form;
@@ -13,6 +13,63 @@ use SilverStripe\Control\HTTPRequest;
 
 class PropertySearchPageController extends PageController
 {
+    public function PropertySearchForm()
+    {
+        $nights = [];
+
+        foreach(range(1,14) as $i) {
+            $nights[$i] = "$i night" . (($i > 1) ? 's' : '');
+        }
+
+        $prices = [];
+
+        foreach(range(100, 1000, 50) as $i) {
+            $prices[$i] = '$'.$i;
+        }
+
+        $form = Form::create(
+            $this,
+            'PropertySearchForm',
+            FieldList::create(
+                TextField::create('Keywords')
+                    ->setAttribute('placeholder', 'City, State, Country, etc...')
+                    ->setAttribute('class', 'form-control'),
+                TextField::create('ArrivalDate', 'Arrive on...')
+                    ->setAttribute('data-datepicker', true)
+                    ->setAttribute('data-date-format', 'DD-MM-YYYY')
+                    ->setAttribute('class', 'form-control'),
+                DropdownField::create('Nights', 'Stay for...')
+                    ->setSource($nights)
+                    ->setAttribute('class', 'form-control'),
+                DropdownField::create('Bedrooms')
+                    ->setSource(ArrayLib::valuekey(range(1,5)))
+                    ->setAttribute('class', 'form-control'),
+                DropdownField::create('Bathrooms')
+                    ->setSource(ArrayLib::valuekey(range(1,5)))
+                    ->setAttribute('class', 'form-control'),
+                DropdownField::create('MinPrice', 'Min. price')
+                    ->setEmptyString('-- any --')
+                    ->setSource($prices)
+                    ->setAttribute('class', 'form-control'),
+                DropdownField::create('MaxPrice', 'Max. price')
+                    ->setEmptyString('-- any --')
+                    ->setSource($prices)
+                    ->setAttribute('class', 'form-control')
+            ),
+            FieldList::create(
+                FormAction::create('doPropertySearch', 'Search')
+                    ->addExtraClass('btn-lg btn-fullcolor')
+            )
+        );
+
+        $form
+            ->setFormMethod('GET')
+            ->setFormAction($this->Link())
+            ->disableSecurityToken()
+            ->loadDataFrom($this->request->getVars());
+
+        return $form;
+    }
 
     public function index(HTTPRequest $request)
     {
@@ -29,11 +86,11 @@ class PropertySearchPageController extends PageController
             $nightAdder = '+'.$request->getVar('Nights').' days';
             $startDate = date('Y-m-d', $arrivalStamp);
             $endDate = date('Y-m-d', strtotime($nightAdder, $arrivalStamp));
-            $properties = $properties->filter([
-                'AvailableStart:LessThanOrEqual' => $startDate,
-                'AvailableEnd:GreaterThanOrEqual' => $endDate
-            ]);
 
+            $properties = $properties->filter([
+                'AvailableStart:GreaterThanOrEqual' => $startDate,
+                'AvailableEnd:LessThanOrEqual' => $endDate
+            ]);
         }
 
         $filters = [
@@ -43,8 +100,9 @@ class PropertySearchPageController extends PageController
             ['MaxPrice', 'PricePerNight', 'LessThanOrEqual'],
         ];
 
-        foreach($filters as $filterKeys) {
+        foreach ($filters as $filterKeys) {
             list($getVar, $field, $filter) = $filterKeys;
+    
             if ($value = $request->getVar($getVar)) {
                 $properties = $properties->filter([
                     "{$field}:{$filter}" => $value
@@ -55,59 +113,5 @@ class PropertySearchPageController extends PageController
         return [
             'Results' => $properties
         ];
-    }
-
-    public function PropertySearchForm()
-    {
-        $nights = [];
-        foreach(range(1,14) as $i) {
-            $nights[$i] = "$i night" . (($i > 1) ? 's' : '');
-        }
-        $prices = [];
-        foreach(range(100, 1000, 50) as $i) {
-            $prices[$i] = '$'.$i;
-        }
-
-        $form = Form::create(
-            $this,
-            'PropertySearchForm',
-            FieldList::create(
-                TextField::create('Keywords')
-                    ->setAttribute('placeholder', 'City, State, Country, etc...')
-                    ->addExtraClass('form-control'),
-                TextField::create('ArrivalDate','Arrive on...')
-                    ->setAttribute('data-datepicker', true)
-                    ->setAttribute('data-date-format', 'DD-MM-YYYY')
-                    ->addExtraClass('form-control'),
-                DropdownField::create('Nights','Stay for...')
-                    ->setSource($nights)
-                    ->addExtraClass('form-control'),
-                DropdownField::create('Bedrooms')
-                    ->setSource(ArrayLib::valuekey(range(1,5)))
-                    ->addExtraClass('form-control'),
-                DropdownField::create('Bathrooms')
-                    ->setSource(ArrayLib::valuekey(range(1,5)))
-                    ->addExtraClass('form-control'),
-                DropdownField::create('MinPrice','Min. price')
-                    ->setEmptyString('-- any --')
-                    ->setSource($prices)
-                    ->addExtraClass('form-control'),
-                DropdownField::create('MaxPrice','Max. price')
-                    ->setEmptyString('-- any --')
-                    ->setSource($prices)
-                    ->addExtraClass('form-control')
-            ),
-            FieldList::create(
-                FormAction::create('doPropertySearch','Search')
-                    ->addExtraClass('btn-lg btn-fullcolor')
-            )
-        );
-
-        $form->setFormMethod('GET')
-            ->setFormAction($this->Link())
-            ->disableSecurityToken()
-            ->loadDataFrom($this->request->getVars());
-
-        return $form;
     }
 }

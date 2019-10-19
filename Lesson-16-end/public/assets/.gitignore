@@ -1,0 +1,19 @@
+/**/*
+!.gitignore
+!.htaccess
+!web.config
+
+!/.protected/
+/.protected/*
+
+# Ignore everything but travel-brochures, travel-photos, property-photos and region-photos
+!/**/travel-brochures/
+!/**/travel-photos/
+!/**/travel-*/**/*
+!/**/property-photos/
+!/**/property-photos/**/*
+!/**/region-photos/
+!/**/region-photos/**/*
+
+# Ignore mutated files
+**/*__*.*
