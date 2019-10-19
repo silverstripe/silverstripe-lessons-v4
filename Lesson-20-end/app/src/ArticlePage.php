@@ -18,7 +18,7 @@ class ArticlePage extends Page
     private static $db = [
         'Date' => 'Date',
         'Teaser' => 'Text',
-        'ArticleAuthor' => 'Varchar',
+        'ArticleAuthor' => 'Varchar'
     ];
 
     private static $has_one = [
@@ -37,7 +37,7 @@ class ArticlePage extends Page
 
     private static $owns = [
         'Photo',
-        'Brochure',
+        'Brochure'
     ];
 
     public function getCMSFields()
@@ -48,7 +48,7 @@ class ArticlePage extends Page
             ->setDescription('This is the summary that appears on the article list page.'),
             'Content'
         );
-        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor','Author of article'),'Content');
+        $fields->addFieldToTab('Root.Main', TextField::create('ArticleAuthor', 'Author of article'), 'Content');
         $fields->addFieldToTab('Root.Attachments', $photo = UploadField::create('Photo'));
         $fields->addFieldToTab('Root.Attachments', $brochure = UploadField::create(
             'Brochure',
@@ -61,7 +61,7 @@ class ArticlePage extends Page
         $fields->addFieldToTab('Root.Categories', CheckboxSetField::create(
             'Categories',
             'Selected categories',
-            $this->Parent()->Categories()->map('ID','Title')
+            $this->Parent()->Categories()->map('ID', 'Title')
         ));
         $fields->addFieldToTab('Root.Main', DropdownField::create(
             'RegionID',
@@ -73,8 +73,7 @@ class ArticlePage extends Page
 
     public function CategoriesList()
     {
-        if ($this->Categories()->exists())
-        {
+        if ($this->Categories()->exists()) {
             return implode(', ', $this->Categories()->column('Title'));
         }
         
