@@ -1,10 +1,22 @@
 ---
+Name: lessons-all-logging
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\Log\LoggerInterface: 
+    calls:
+      FileLogger: [ pushHandler, [ %$FileLogger ] ]
+  FileLogger:
+    class: Monolog\Handler\StreamHandler
+    constructor:
+      - "../errors.log"
+      - "notice"
+--- 
 Name: lessons-live-logging
 Only:
   environment: live
 ---
 SilverStripe\Core\Injector\Injector:
-  Psr\Log\LoggerInterface:
+  Psr\Log\LoggerInterface: 
     calls:
       EmailHandler: [ pushHandler, [ %$EmailHandler ] ]
   EmailHandler:
@@ -17,15 +29,3 @@ SilverStripe\Core\Injector\Injector:
       properties:
         ContentType: text/html
         Formatter: %$SilverStripe\Logging\DetailedErrorFormatter
----
-Name: lessons-all-logging
----
-SilverStripe\Core\Injector\Injector:
-  Psr\Log\LoggerInterface:
-    calls:
-      FileLogger: [ pushHandler, [ %$FileLogger ] ]
-  FileLogger:
-    class: Monolog\Handler\StreamHandler
-    constructor:
-      - "../errors.log"
-      - "notice"

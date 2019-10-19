@@ -1,24 +1,24 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
+use Page;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\Versioned\Versioned;
-use SilverStripe\ORM\Queries\SQLSelect;
 use SilverStripe\View\ArrayData;
-use Page;
+use SilverStripe\ORM\Queries\SQLSelect;
 
 class ArticleHolder extends Page
 {
-    private static $has_many = [
-        'Categories' => ArticleCategory::class,
+    private static $allowed_children = [
+        ArticlePage::class
     ];
 
-	private static $allowed_children = [
-		ArticlePage::class
-	];
+    private static $has_many = [
+        'Categories' => ArticleCategory::class
+    ];
 
     public function getCMSFields()
     {
@@ -31,15 +31,6 @@ class ArticleHolder extends Page
         ));
 
         return $fields;
-    }
-
-    public function Regions ()
-    {
-        $page = RegionsPage::get()->first();
-
-        if($page) {
-            return $page->Regions();
-        }
     }
 
     public function ArchiveDates()
@@ -59,21 +50,31 @@ class ArticleHolder extends Page
         $result = $query->execute();
 
         if ($result) {
-            foreach ($result as $record) {
+            foreach($result as $record) {
                 list($year, $monthName, $monthNumber) = explode('_', $record['DateString']);
+
                 $list->push(ArrayData::create([
                     'Year' => $year,
                     'MonthName' => $monthName,
                     'MonthNumber' => $monthNumber,
                     'Link' => $this->Link("date/$year/$monthNumber"),
                     'ArticleCount' => ArticlePage::get()->where([
-                        "DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
-                        "\"ParentID\"" => $this->ID
-                    ])->count()
+                            "DATE_FORMAT(\"Date\",'%Y_%m')" => "{$year}_{$monthNumber}",
+                            "\"ParentID\"" => $this->ID
+                        ])->count()
                 ]));
             }
         }
 
         return $list;
+    }
+
+    public function Regions()
+    {
+        $page = RegionsPage::get()->first();
+
+        if ($page) {
+            return $page->Regions();
+        }
     }
 }
