@@ -127,7 +127,6 @@ Another really useful feature of `ViewableData` is that the object itself can be
 ```php
 class Address extends ViewableData
 {
-
     // ...
 
     public function forTemplate()
@@ -168,7 +167,6 @@ class PropertySearchPageController extends PageController
 
     public function index(HTTPRequest $request)
     {
-
         // ...
 
         if ($request->isAjax()) {
@@ -191,14 +189,14 @@ Of these two options, the latter is much more favourable. There are cases where 
 
 ***app/src/PropertySearchPageController.php***
 ```php
-//...
+// ...
 class PropertySearchPageController extends PageController
 {
+    // ...
 
     public function index(HTTPRequest $request)
     {
-
-        //...
+        // ...
 
         if($request->isAjax()) {
             return $this->customise([
@@ -220,9 +218,10 @@ We now have repeated our array of data, so let's clean that up a bit.
 // ...
 class PropertySearchPageController extends PageController
 {
+    // ...
 
-
-    public function index(HTTPRequest $request) {
+    public function index(HTTPRequest $request)
+    {
 
         // ...
 
@@ -339,6 +338,7 @@ Earlier in the tutorial, we talked about a common endpoint for standard HTTP req
 
 We need to update our Javascript so that the Ajax request has a slightly different URL than the URL that is being stored in history. Let's just append a simple `ajax=1` request parameter to the URL.
 
+***public/javascript/scripts.js***
 ```js
     // Pagination
     if ($('.pagination').length) {
