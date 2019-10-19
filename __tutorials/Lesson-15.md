@@ -46,7 +46,7 @@ In the interest of teaching the concept over meeting the requirements of an imag
 
 ***app/src/Property.php***
 ```php
-//...
+// ...
 class Property extends DataObject
 {
 
@@ -94,15 +94,14 @@ class Property extends DataObject
         'AvailableStart' => 'Date',
         'AvailableEnd'=> 'Date'
     ];
-
-  //...
+    // ...
     public function getCMSFields()
     {
         $fields = FieldList::create(TabSet::create('Root'));
         $fields->addFieldsToTab('Root.Main', [
             TextField::create('Title'),
             TextareaField::create('Description'),
-      // ...
+            // ...
 ```
 
 Run `dev/build`, and we're ready to roll!
@@ -111,7 +110,7 @@ Run `dev/build`, and we're ready to roll!
 
 The page that renders the search results for property is pretty distinct. In the assets for this lesson, you'll find the HTML for a new template in [`__assets/property-search-results.html`](https://github.com/silverstripe/silverstripe-lessons-v4/blob/7d9eb3c2ba476989f326a41dbbe930d3ff68fcfc/Lesson-15-begin/__assets/property-search-results.html). Let's import that into our project.
 
-Copy the contents of the file into **app/templates/SilverStripe/Example/Layout/PropertySearchPage.ss**.
+Copy the contents of the file into `app/templates/SilverStripe/Example/Layout/PropertySearchPage.ss`.
 
 Then, create new classes for the Page.
 
@@ -170,10 +169,13 @@ class PropertySearchPageController extends PageController
     public function PropertySearchForm()
     {
         $nights = [];
+
         foreach(range(1,14) as $i) {
             $nights[$i] = "$i night" . (($i > 1) ? 's' : '');
         }
+
         $prices = [];
+
         foreach(range(100, 1000, 50) as $i) {
             $prices[$i] = '$'.$i;
         }
@@ -185,11 +187,11 @@ class PropertySearchPageController extends PageController
                 TextField::create('Keywords')
                     ->setAttribute('placeholder', 'City, State, Country, etc...')
                     ->setAttribute('class', 'form-control'),
-                TextField::create('ArrivalDate','Arrive on...')
+                TextField::create('ArrivalDate', 'Arrive on...')
                     ->setAttribute('data-datepicker', true)
                     ->setAttribute('data-date-format', 'DD-MM-YYYY')
                     ->setAttribute('class', 'form-control'),
-                DropdownField::create('Nights','Stay for...')
+                DropdownField::create('Nights', 'Stay for...')
                     ->setSource($nights)
                     ->setAttribute('class', 'form-control'),
                 DropdownField::create('Bedrooms')
@@ -268,6 +270,7 @@ public function PropertySearchForm()
         ->setFormMethod('GET')
         ->setFormAction($this->Link())
         ->disableSecurityToken();
+
     return $form;
 }
 ```
@@ -452,7 +455,7 @@ public function index(HTTPRequest $request)
         ['MaxPrice', 'PricePerNight', 'LessThanOrEqual'],
     ];
 
-    foreach($filters as $filterKeys) {
+    foreach ($filters as $filterKeys) {
         list($getVar, $field, $filter) = $filterKeys;
 
         if ($value = $request->getVar($getVar)) {
