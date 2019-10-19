@@ -31,7 +31,7 @@ class ArticleHolderController extends PageController
             $r->param('ID')
         );
 
-        if(!$category) {
+        if (!$category) {
             return $this->httpError(404,'That category was not found');
         }
 
@@ -50,7 +50,7 @@ class ArticleHolderController extends PageController
             $r->param('ID')
         );
 
-        if(!$region) {
+        if (!$region) {
             return $this->httpError(404,'That region was not found');
         }
 

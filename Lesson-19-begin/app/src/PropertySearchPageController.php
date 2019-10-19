@@ -20,10 +20,13 @@ class PropertySearchPageController extends PageController
     public function PropertySearchForm()
     {
         $nights = [];
+
         foreach(range(1,14) as $i) {
             $nights[$i] = "$i night" . (($i > 1) ? 's' : '');
         }
+
         $prices = [];
+
         foreach(range(100, 1000, 50) as $i) {
             $prices[$i] = '$'.$i;
         }
@@ -35,11 +38,11 @@ class PropertySearchPageController extends PageController
                 TextField::create('Keywords')
                     ->setAttribute('placeholder', 'City, State, Country, etc...')
                     ->setAttribute('class', 'form-control'),
-                TextField::create('ArrivalDate','Arrive on...')
+                TextField::create('ArrivalDate', 'Arrive on...')
                     ->setAttribute('data-datepicker', true)
                     ->setAttribute('data-date-format', 'DD-MM-YYYY')
                     ->setAttribute('class', 'form-control'),
-                DropdownField::create('Nights','Stay for...')
+                DropdownField::create('Nights', 'Stay for...')
                     ->setSource($nights)
                     ->setAttribute('class', 'form-control'),
                 DropdownField::create('Bedrooms')
@@ -48,17 +51,17 @@ class PropertySearchPageController extends PageController
                 DropdownField::create('Bathrooms')
                     ->setSource(ArrayLib::valuekey(range(1,5)))
                     ->setAttribute('class', 'form-control'),
-                DropdownField::create('MinPrice','Min. price')
+                DropdownField::create('MinPrice', 'Min. price')
                     ->setEmptyString('-- any --')
                     ->setSource($prices)
                     ->setAttribute('class', 'form-control'),
-                DropdownField::create('MaxPrice','Max. price')
+                DropdownField::create('MaxPrice', 'Max. price')
                     ->setEmptyString('-- any --')
                     ->setSource($prices)
                     ->setAttribute('class', 'form-control')
             ),
             FieldList::create(
-                FormAction::create('doPropertySearch','Search')
+                FormAction::create('doPropertySearch', 'Search')
                     ->addExtraClass('btn-lg btn-fullcolor')
             )
         );
@@ -68,6 +71,7 @@ class PropertySearchPageController extends PageController
             ->setFormAction($this->Link())
             ->disableSecurityToken()
             ->loadDataFrom($this->request->getVars());
+
         return $form;
     }
 
@@ -100,14 +104,14 @@ class PropertySearchPageController extends PageController
         }
 
         $filters = [
-            ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual', '%s bedrooms'],
-            ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual', '%s bathrooms'],
-            ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual', 'Min. $%s'],
-            ['MaxPrice', 'PricePerNight', 'LessThanOrEqual', 'Max. $%s'],
+            ['Bedrooms', 'Bedrooms', 'GreaterThanOrEqual'],
+            ['Bathrooms', 'Bathrooms', 'GreaterThanOrEqual'],
+            ['MinPrice', 'PricePerNight', 'GreaterThanOrEqual'],
+            ['MaxPrice', 'PricePerNight', 'LessThanOrEqual'],
         ];
 
-        foreach($filters as $filterKeys) {
-            list($getVar, $field, $filter, $labelTemplate) = $filterKeys;
+        foreach ($filters as $filterKeys) {
+            list($getVar, $field, $filter) = $filterKeys;
     
             if ($value = $request->getVar($getVar)) {
                 $activeFilters->push(ArrayData::create([
