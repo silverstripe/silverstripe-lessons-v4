@@ -33,7 +33,7 @@ First you need to create an image which provides all components for running Silv
 
 Luckily there is an image available online called `manuth/silverstripe-dev` which provides all components required for running SilverStripe 4.
 
-In your project-folder create a `.devcontainer`-folder. This folder will contain all files and folders
+In your project-folder create a `.devcontainer`-folder. This folder will contain all files and folders related to your virtual docker-environment.
 
 In the `.devcontainer`-folder create a file called `Dockerfile` with the following content:
 
