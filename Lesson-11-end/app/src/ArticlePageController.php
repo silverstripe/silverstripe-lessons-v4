@@ -41,11 +41,6 @@ class ArticlePageController extends PageController
                 ->setAttribute('placeholder', $field->getName().'*');
         }
 
-        foreach($form->Fields() as $field) {
-            $field->addExtraClass('form-control')
-                ->setAttribute('placeholder', $field->getName().'*');
-        }
-
         $data = $this->getRequest()->getSession()->get("FormData.{$form->getName()}.data");
 
         return $data ? $form->loadDataFrom($data) : $form;
