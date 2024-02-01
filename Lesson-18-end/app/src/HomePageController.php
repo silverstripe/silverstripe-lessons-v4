@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;    
 
@@ -16,10 +16,9 @@ class HomePageController extends PageController
     public function FeaturedProperties()
     {
         return Property::get()
-            ->filter(array(
-                'FeaturedOnHomepage' => true
-            ))
-            ->limit(6);
+                ->filter(array(
+                    'FeaturedOnHomepage' => true
+                ))
+                ->limit(6);
     }
-
 }
