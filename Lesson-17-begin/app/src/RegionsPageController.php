@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use PageController;
 use SilverStripe\Control\HTTPRequest;
@@ -15,14 +15,13 @@ class RegionsPageController extends PageController
     {
         $region = Region::get()->byID($request->param('ID'));
 
-        if(!$region) {
+        if (!$region) {
             return $this->httpError(404,'That region could not be found');
         }
 
         return [
             'Region' => $region,
-            'Title' => $region->Title,
+            'Title' => $region->Title
         ];
     }
-
 }

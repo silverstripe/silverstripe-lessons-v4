@@ -1,6 +1,6 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Assets\Image;
@@ -13,15 +13,18 @@ use SilverStripe\Control\Controller;
 
 class Region extends DataObject
 {
-
     private static $db = [
         'Title' => 'Varchar',
-        'Description' => 'HTMLText',
+        'Description' => 'HTMLText'
     ];
 
     private static $has_one = [
         'Photo' => Image::class,
-        'RegionsPage' => RegionsPage::class,
+        'RegionsPage' => RegionsPage::class
+    ];
+    
+    private static $owns = [
+        'Photo'
     ];
 
     private static $summary_fields = [
@@ -30,30 +33,20 @@ class Region extends DataObject
         'Description' => 'Description'
     ];
 
-    private static $owns = [
-        'Photo',
+    private static $searchable_fields = [
+        'Title',
+        'Description'
     ];
 
     private static $extensions = [
-        Versioned::class,
+        Versioned::class
     ];
-
-    private static $versioned_gridfield_extensions = true;
-
-    public function getGridThumbnail()
-    {
-        if($this->Photo()->exists()) {
-            return $this->Photo()->ScaleWidth(100);
-        }
-
-        return "(no image)";
-    }
 
     public function getCMSFields()
     {
         $fields = FieldList::create(
             TextField::create('Title'),
-            HtmlEditorField::create('Description'),
+            HTMLEditorField::create('Description'),
             $uploader = UploadField::create('Photo')
         );
 
@@ -61,6 +54,16 @@ class Region extends DataObject
         $uploader->getValidator()->setAllowedExtensions(['png','gif','jpeg','jpg']);
 
         return $fields;
+    }
+
+    public function getGridThumbnail()
+    {
+        if($this->Photo()->exists())
+        {
+            return $this->Photo()->ScaleWidth(100);
+        }
+
+        return "(no image)";
     }
 
     public function Link()
@@ -72,5 +75,4 @@ class Region extends DataObject
     {
         return Controller::curr()->getRequest()->param('ID') == $this->ID ? 'current' : 'link';
     }
-
 }
