@@ -1,19 +1,19 @@
 <?php
 
-namespace SilverStripe\Lessons;
+namespace SilverStripe\Example;
 
+use Page;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
-use Page;
 
 class RegionsPage extends Page
 {
     private static $has_many = [
-        'Regions' => Region::class,
+        'Regions' => Region::class
     ];
 
     private static $owns = [
-        'Regions',
+        'Regions'
     ];
 
     public function getCMSFields()
@@ -28,5 +28,4 @@ class RegionsPage extends Page
 
         return $fields;
     }
-
 }
