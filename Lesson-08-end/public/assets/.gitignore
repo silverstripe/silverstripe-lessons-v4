@@ -1,0 +1,15 @@
+/**/*
+!.gitignore
+!.htaccess
+!web.config
+
+!/.protected/
+/.protected/*
+
+# Ignore everything but travel-brochures and travel-photos
+!/**/travel-brochures/
+!/**/travel-photos/
+!/**/travel-*/**/*
+
+# Ignore mutated files
+**/*__*.*
